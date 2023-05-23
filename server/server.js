@@ -3,6 +3,7 @@ const express = require('express');
 const cors = require("cors");
 const mongoose = require('mongoose');
 const {connectDB} = require('./config/dbConnection');
+const {corsOptions} = require("./config/corsOptions");
 
 //Connect to Database (MongoDB)
 connectDB();
@@ -11,17 +12,24 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 //Middlewares
-app.use(express.json());
-app.use(express.urlencoded({extended: true}));
-app.use(cors());
-app.use((req,res,next) => {
+app.use(express.json()); //JSON-DATA
+app.use(cors(corsOptions));
+// Path logger middleware
+app.use((req, res, next) => {
     console.info(`Method: ${req.method} at "${req.path}" (${new Date().toLocaleString()})`);
     next();
-})
+});
 
-//Redirects
 //Routers
+app.use('/register', require('./routes/register'));
 
+
+//Handle 404
+app.get('/*', (req, res) => {
+    res
+        .status(404)
+        .json({error: "404 Not Found"})
+})
 
 //If the connection is successfull, start HTTP server
 mongoose.connection.once('open', () => {

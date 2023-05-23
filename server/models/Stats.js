@@ -24,7 +24,7 @@ const statsSchema = new mongoose.Schema({
     workoutsCount: [{
         count: Number,
         date: Date,
-    }], //
+    }],
     setsCount: [{
         count: Number,
         date: Date,
@@ -41,7 +41,7 @@ const statsSchema = new mongoose.Schema({
         time: Number,
         date: Date,
     }],
-    // averageTime: średni czas treningu tygodniowo / miesięcznie
+
 
 });
 module.exports = mongoose.model("Stat", statsSchema);

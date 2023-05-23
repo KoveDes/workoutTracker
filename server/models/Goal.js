@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const goalSchema = new mongoose.Schema({
+exports.goalSchema = new mongoose.Schema({
     category: {
         type: String,
         enum: {
@@ -27,4 +27,3 @@ const goalSchema = new mongoose.Schema({
     }, // Bench press 120kg
 
 });
-module.exports = mongoose.model('Goal', goalSchema);

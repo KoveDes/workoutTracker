@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const {bodyParamsSchema} = require('BodyParams');
+const {bodyParamsSchema} = require('./BodyParams');
 const {goalSchema} = require("./Goal");
 const {customExerciseSchema} = require("./CustomExercise");
 
@@ -8,12 +8,13 @@ const userSchema = new mongoose.Schema({
     login: {
         type: String,
         trim: true,
-        minLength: 4,
+        minLength: [4, "Login should be at least 4 characters long"],
         required: true,
     },
     password: {
         type: String,
         trim: true,
+        minLength: 4,
         required: true,
     },
     refreshToken: {
@@ -22,7 +23,6 @@ const userSchema = new mongoose.Schema({
     email: {
         type: String
     },
-    timestamps: true, //createdAt, updatedAt
     username: {
         minLength: 4,
         type: String
@@ -50,6 +50,8 @@ const userSchema = new mongoose.Schema({
         type: customExerciseSchema,
     }]
 
+}, {
+    timestamps: true, //createdAt, updatedAt
 });
 // collection: users
 module.exports = mongoose.model('User', userSchema);
