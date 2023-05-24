@@ -3,8 +3,6 @@ const bcrypt = require('bcrypt');
 
 const createUser = async (req, res) => {
     const {login, password} = req.body; //String or undefined
-    console.log({login, password});
-    console.log(typeof login);
     //check if login exits, is String and is 4 char
     if (!login || !password) {
         return res.status(400).json({
@@ -35,7 +33,7 @@ const createUser = async (req, res) => {
         //TODO Co przesłać
         res.status(200).json({status: "OK"});
     } catch (e) {
-        res.status(500).json({message: e.errors.login.message})
+        res.status(500).json({message: e.message})
     }
 
     //#1 check if params exist

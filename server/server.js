@@ -4,6 +4,8 @@ const cors = require("cors");
 const mongoose = require('mongoose');
 const {connectDB} = require('./config/dbConnection');
 const {corsOptions} = require("./config/corsOptions");
+const cookieParser = require('cookie-parser');
+const {logger} = require("./middlewares/logger");
 
 //Connect to Database (MongoDB)
 connectDB();
@@ -14,15 +16,18 @@ const port = process.env.PORT || 3000;
 //Middlewares
 app.use(express.json()); //JSON-DATA
 app.use(cors(corsOptions));
-// Path logger middleware
-app.use((req, res, next) => {
-    console.info(`Method: ${req.method} at "${req.path}" (${new Date().toLocaleString()})`);
-    next();
-});
+app.use(cookieParser());
+app.use(logger); //logging path and method
 
 //Routers
 app.use('/register', require('./routes/register'));
+app.use('/auth', require('./routes/auth'));
+app.use('/refresh', require('./routes/refresh'));
 
+/*
+ Protected Route example:
+ app.use('/example', verifyJWT, someRouter)
+*/
 
 //Handle 404
 app.get('/*', (req, res) => {
