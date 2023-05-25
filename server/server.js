@@ -22,7 +22,6 @@ app.use(logger); //logging path and method
 //Routers
 app.use('/register', require('./routes/register'));
 app.use('/auth', require('./routes/auth'));
-app.use('/refresh', require('./routes/refresh'));
 
 /*
  Protected Route example:

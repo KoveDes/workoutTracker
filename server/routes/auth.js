@@ -1,7 +1,9 @@
 const express = require('express');
-const {handleLogin} = require('../controllers/authController.js');
+const {handleLogout, handleLogin, handleRefreshToken} = require("../controllers/authController");
 const router = express.Router();
 
-router.post('/', handleLogin);
+router.post('/login', handleLogin);
+router.get('/logout', handleLogout);
+router.get('/refresh', handleRefreshToken);
 
 module.exports = router;

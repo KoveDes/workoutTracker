@@ -50,3 +50,54 @@ exports.handleLogin = async (req, res) => {
         res.status(500).json({message: e.message})
     }
 }
+
+exports.handleLogout = async (req, res) => {
+    const cookies = req.cookies;
+    if (!cookies?.jwt) return res.sendStatus(401) //No content status
+    const refreshToken = cookies.jwt;
+    try {
+        const foundUser = await User.findOne({refreshToken});
+        if (!foundUser) {
+            return res.sendStatus(401);
+        }
+        foundUser.refreshToken = "";
+        await foundUser.save();
+        res.clearCookie('jwt', {
+            httpOnly: true,
+            maxAge: 24 * 60 * 60 * 1000
+        });
+        res.sendStatus(205); //Reset Content -> logout successful
+    } catch (e) {
+        res.status(500).json({message: e.message})
+    }
+
+};
+
+exports.handleRefreshToken = async (req, res) => {
+    const cookies = req.cookies;
+    if (!cookies?.jwt) {
+        return res.status(401).json({message: "Unauthorized"});
+    }
+    const refreshToken = cookies.jwt;
+    try {
+        const foundUser = await User.findOne({refreshToken});
+        console.log(foundUser);
+        if (!foundUser) return res.status(403).json({
+            message: "Forbidden no user",
+        });
+        const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+        //check payload
+        if (foundUser.login !== decoded.login) {
+            return res.status(403).json({message: "Forbidden"});
+        }
+        const accessToken = jwt.sign(
+            {"login": decoded.login},
+            process.env.ACCESS_TOKEN_SECRET,
+            {expiresIn: '30m'}
+        );
+        res.json({accessToken});
+
+    } catch (e) {
+        res.status(500).json({message: e.message});
+    }
+}
