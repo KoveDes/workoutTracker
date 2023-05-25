@@ -29,9 +29,7 @@ const createUser = async (req, res) => {
             login: String(login),
             password: String(hashedPassword),
         });
-
-        //TODO Co przesłać
-        res.status(200).json({status: "OK"});
+        res.status(201).json({message: "New User created"});
     } catch (e) {
         res.status(500).json({message: e.message})
     }

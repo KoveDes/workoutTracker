@@ -17,9 +17,8 @@ const userSchema = new mongoose.Schema({
         minLength: 4,
         required: true,
     },
-    refreshToken: {
-        type: String
-    }, //Security
+    //Security
+    refreshToken: [String],
     email: {
         type: String
     },

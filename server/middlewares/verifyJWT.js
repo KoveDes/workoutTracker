@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 
 const verifyJWT = (req, res, next) => {
-    const authHeader = req.headers.authorization;
+    const authHeader = req.headers.authorization || req.headers.Authorization;
     if (!authHeader) return res.status(401).json({message: "Unauthorized access (No auth token is provided)"})
     const token = authHeader.split(' ')[1] //pull token from header
     try{
