@@ -6,6 +6,7 @@ const {connectDB} = require('./config/dbConnection');
 const {corsOptions} = require("./config/corsOptions");
 const cookieParser = require('cookie-parser');
 const {logger} = require("./middlewares/logger");
+const {credentials} = require("./middlewares/credentials");
 
 //Connect to Database (MongoDB)
 connectDB();
@@ -15,6 +16,7 @@ const port = process.env.PORT || 3000;
 
 //Middlewares
 app.use(express.json()); //JSON-DATA
+app.use(credentials); //fetch cookies credentials requirement
 app.use(cors(corsOptions));
 app.use(cookieParser());
 app.use(logger); //logging path and method

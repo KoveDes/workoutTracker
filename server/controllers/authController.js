@@ -35,6 +35,7 @@ exports.handleLogin = async (req, res) => {
 
             res.cookie('jwt', refreshToken, {
                 httpOnly: true,
+                sameSite: "none",
                 maxAge: 24 * 60 * 60 * 1000 //24 hours
             });
             res.json({
@@ -64,6 +65,8 @@ exports.handleLogout = async (req, res) => {
         await foundUser.save();
         res.clearCookie('jwt', {
             httpOnly: true,
+            sameSite: "none",
+            // secure: true, //doesn't allow to test API in development
             maxAge: 24 * 60 * 60 * 1000
         });
         res.sendStatus(205); //Reset Content -> logout successful
