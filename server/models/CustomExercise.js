@@ -3,6 +3,7 @@ const {Schema} = require('mongoose');
 exports.customExerciseSchema = new Schema({
     name: {
         type: String,
+        required: true,
     },
     picture: Buffer, //upload picture to database
     gif: String, //upload gif URL to database
