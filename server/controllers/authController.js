@@ -23,7 +23,7 @@ exports.handleLogin = async (req, res) => {
                     //TODO store something else in AT? f.e nickname, role, current workout?
                 },
                 process.env.ACCESS_TOKEN_SECRET,
-                {expiresIn: '15min'}
+                {expiresIn: '55min'}
             );
             const newRefreshToken = jwt.sign(
                 {"login": foundUser.login},
@@ -93,7 +93,6 @@ exports.handleRefreshToken = async (req, res) => {
     if (!cookies?.jwt) {
         return res.status(401).json({message: "Unauthorized"}); //request doesn't have jwt cookie
     }
-    console.log(cookies.jwt);
     const refreshToken = cookies.jwt;
     res.clearCookie('jwt', {httpOnly: true, sameSite: "none"});
     try {

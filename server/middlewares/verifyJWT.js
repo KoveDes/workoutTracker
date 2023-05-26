@@ -13,3 +13,8 @@ const verifyJWT = (req, res, next) => {
     }
 }
 module.exports = verifyJWT;
+
+/*
+* Klient może posiadać kilka AT, które są aktywne
+*Przedawnić wcześniejszy AT po stronie klienta
+* */
