@@ -1,6 +1,5 @@
 const User = require('../models/User');
 const {bodyParamsSchema} = require("../models/BodyParams");
-const {get} = require("mongoose");
 
 
 const getLatestAll = async (req, res) => {
@@ -46,24 +45,40 @@ const paramExists = (req,res,next) => {
 }
 
 
-const addMeasurement = async (req, res) => {
-    const {param, size} = req.params;
-    console.log(param, size)
-    //validate param
-    //1) is param provided
-    //2) is param in keys
-}
-
-
 
 const getMeasurement = async (req,res) => {
     const {param} = req.params;
-    try {}
+    try {
+        const user = await User.findOne({login:req.user},
+            {[`bodyParameters.${param}`]: 1, _id: 0,}
+        );
+
+        res.json(user.bodyParameters[param]);
+    }
     catch(e) {
         res.status(500).json({message: e.message});
     }
 }
-const changeMeasurement = async (req,res) => {}
+
+const addMeasurement = async (req, res) => {
+    const {param} = req.params;
+    const {size} = req.body;
+    if(!req?.body?.size || typeof req.body.size !== 'number') {
+        return res.status(400).json({message: "Size is required or is not a number"});
+    }
+    try {
+        const user = await User.findOne({login:req.user});
+        user.bodyParameters[param] = [...user.bodyParameters[param], {size}];
+        const result = await user.save();            //save in database
+        res.json(result);
+    }
+    catch(e) {
+        res.status(500).json({message: e.message});
+    }
+}
+
+const changeMeasurement = async (req,res) => {
+}
 const deleteMeasurement = async (req,res) => {}
 
     // try {
