@@ -45,9 +45,7 @@ const userSchema = new mongoose.Schema({
         type: goalSchema,
     }],
     bodyParameters: bodyParamsSchema,
-    customExercises: [{
-        type: customExerciseSchema,
-    }]
+    customExercises: [customExerciseSchema]
 
 }, {
     timestamps: true, //createdAt, updatedAt

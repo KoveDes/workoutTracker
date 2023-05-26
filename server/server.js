@@ -7,6 +7,7 @@ const {corsOptions} = require("./config/corsOptions");
 const cookieParser = require('cookie-parser');
 const {logger} = require("./middlewares/logger");
 const {credentials} = require("./middlewares/credentials");
+const verifyJWT = require('./middlewares/verifyJWT');
 
 //Connect to Database (MongoDB)
 connectDB();
@@ -24,6 +25,7 @@ app.use(logger); //logging path and method
 //Routers
 app.use('/register', require('./routes/register'));
 app.use('/auth', require('./routes/auth'));
+app.use('/body', verifyJWT, require('./routes/bodyParams'))
 
 /*
  Protected Route example:

@@ -9,7 +9,7 @@ const verifyJWT = (req, res, next) => {
         req.user = decoded.login;
         next();
     } catch(e) {
-        return res.status(403).json({message: "Access is Forbidden"});
+        return res.status(403).json({message: "Invalid token"});
     }
 }
 module.exports = verifyJWT;

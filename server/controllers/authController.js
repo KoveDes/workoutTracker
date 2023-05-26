@@ -12,7 +12,7 @@ exports.handleLogin = async (req, res) => {
     try {
         const foundUser = await User.findOne({login}).exec();
         if (!foundUser) return res.status(401).json({
-            message: "Unauthorized",
+            message: "No User found",
         });
         const match = await bcrypt.compare(String(password), foundUser.password)
         if (match) {
@@ -23,7 +23,7 @@ exports.handleLogin = async (req, res) => {
                     //TODO store something else in AT? f.e nickname, role, current workout?
                 },
                 process.env.ACCESS_TOKEN_SECRET,
-                {expiresIn: '15m'}
+                {expiresIn: '15min'}
             );
             const newRefreshToken = jwt.sign(
                 {"login": foundUser.login},
@@ -42,9 +42,8 @@ exports.handleLogin = async (req, res) => {
                     maxAge: 24 * 60 * 60 * 1000
                 });
             }
-            foundUser.refreshToken = [newRTArray, newRefreshToken];
+            foundUser.refreshToken = [...newRTArray, newRefreshToken];
             await foundUser.save();
-            console.log(`User after save: ${foundUser}`);
 
             res.cookie('jwt', newRefreshToken, {
                 httpOnly: true,
@@ -94,8 +93,9 @@ exports.handleRefreshToken = async (req, res) => {
     if (!cookies?.jwt) {
         return res.status(401).json({message: "Unauthorized"}); //request doesn't have jwt cookie
     }
+    console.log(cookies.jwt);
     const refreshToken = cookies.jwt;
-    res.clearCookie('jwt', {httpOnly: true, sameSite: "none", maxAge: 24 * 60 * 60 * 1000});
+    res.clearCookie('jwt', {httpOnly: true, sameSite: "none"});
     try {
         const foundUser = await User.findOne({refreshToken}).exec();
 
@@ -114,6 +114,7 @@ exports.handleRefreshToken = async (req, res) => {
         jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, async (err, decoded) => {
             //RT is invalid
             if (err) {
+                console.log('err');
                 foundUser.refreshToken = newRTArray;
                 await foundUser.save();
             }
@@ -124,7 +125,7 @@ exports.handleRefreshToken = async (req, res) => {
             const accessToken = jwt.sign(
                 {"login": decoded.login},
                 process.env.ACCESS_TOKEN_SECRET,
-                {expiresIn: '30m'}
+                {expiresIn: '15m'}
             );
 
             //create new RT
@@ -134,7 +135,8 @@ exports.handleRefreshToken = async (req, res) => {
                 {expiresIn: '1d'}
             );
             foundUser.refreshToken = [...newRTArray, newRefreshToken];
-            res.cookie('jwt', refreshToken, {
+            console.log(foundUser.refreshToken);
+            res.cookie('jwt', newRefreshToken, {
                 httpOnly: true,
                 sameSite: "none",
                 maxAge: 24 * 60 * 60 * 1000 //24 hours

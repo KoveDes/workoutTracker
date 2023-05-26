@@ -16,7 +16,9 @@ const createUser = async (req, res) => {
     }
     if(password.includes(' ') || password.length < 4) {
         return res.status(400).json({
-            message: "Password must not contain spaces and be at least 4 char long"
+            message: "Invalid password",
+            tipLength: "Password must be at least 4 characters long",
+            tipSpace: "Password must not contain spaces"
         });
     }
     try {
