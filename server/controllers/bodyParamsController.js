@@ -127,8 +127,8 @@ const deleteMeasurement = async (req, res) => {
 
 module.exports = {
     getLatestAll,
-    addMeasurement,
+    addMeasurement: [paramExists, addMeasurement],
     getMeasurement: [paramExists, getMeasurement],
-    changeMeasurement,
-    deleteMeasurement
+    changeMeasurement: [paramExists, changeMeasurement],
+    deleteMeasurement: [paramExists, deleteMeasurement],
 };
