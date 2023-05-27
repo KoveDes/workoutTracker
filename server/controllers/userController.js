@@ -54,6 +54,7 @@ const getAll = async (req, res) => {
 };
 const getInfo = async (req, res) => {
     try {
+        //newest weight
         const user = await User.aggregate([
             {$match: {login: req.user}},
             {$unwind: "$weightHistory"},
@@ -62,8 +63,6 @@ const getInfo = async (req, res) => {
             {$limit: 1}
         ]);
         res.json({user});
-        // const user = await User.findOne({login: req.user}, {email: 1, username: 1, gender: 1, age: 1, height: 1, weightHistory: 1});
-        //get latestWeightHistory
     } catch (e) {
         res.status(500).json({message: e.message});
     }

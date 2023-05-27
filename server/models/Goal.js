@@ -4,11 +4,15 @@ exports.goalSchema = new mongoose.Schema({
     category: {
         type: String,
         enum: {
-            values: ['weight', 'load', 'sets', 'days', 'measurement'],
+            values: ['weight', 'load', 'workoutCount', 'measurement'],
             message: "{VALUE} is not supported"
         },
+        required: true,
 
-    }, //f.e. load
+    },
+    exercise: String,
+    bodyParameter: String,
+    //f.e. load
     startedAt: {
         type: Date,
         immutable: true,
@@ -16,14 +20,10 @@ exports.goalSchema = new mongoose.Schema({
     }, //10th January 2021
     currentValue: Number, // 30kg
     endValue: Number, // 120kg
-    progress: Number, // 100%
-    finished: {
-        type: Boolean,
-        default: false
-        }, // true
+    // progress: Number, // take care of progress in Front-end based on curr and end value
     finishedAt: Date, // 12th June 2022
-    description: {
-        type: String,
-    }, // Bench press 120kg
-
+      finished: {
+          type: Boolean,
+          default: false
+      }
 });

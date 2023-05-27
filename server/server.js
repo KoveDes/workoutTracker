@@ -28,6 +28,7 @@ app.use('/auth', require('./routes/auth'));
 app.use('/body', verifyJWT, require('./routes/bodyParams'));
 app.use('/customExercise', verifyJWT, require('./routes/customExercise'));
 app.use('/user', verifyJWT, require('./routes/user'));
+app.use('/goal', verifyJWT, require('./routes/goal'));
 
 //Handle 404
 app.get('/*', (req, res) => {
