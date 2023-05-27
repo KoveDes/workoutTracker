@@ -6,7 +6,7 @@ const {getAll, getSingle, create, update, remove} = require('../controllers/cust
 router.route("/")
     .get(getSingle)
     .post(create)
-    .put(update)
+    .patch(update)
     .delete(remove)
 
 router.route("/all")

@@ -1,15 +1,7 @@
 const CustomExercise = require('../models/CustomExercise');
 const User = require('../models/User');
-const mongoose = require("mongoose");
+const verifyId = require("../middlewares/verifyID");
 
-const verifyId = (req,res,next) => {
-    if (!req?.body?.id) {
-        return res.status(400).json({message: "ID is required"});
-    }
-    req.body.id = new mongoose.Types.ObjectId(req.body.id);
-    next();
-
-}
 
 const getAll = async (req, res) => {
     try {
@@ -54,11 +46,11 @@ const create = async (req, res) => {
         const user = await User.findOne({login: req.user}, {customExercises: 1});
         //TODO sprawdzic czy znajduja się w liscie miesni (enum?)
         const exercise = {
-            name: name.trim(),
+            name: String(name.trim()),
             url: String(url),
             activeMuscles: activeMuscles.map(muscle => muscle.trim().toLowerCase()),
             equipment,
-            primaryMuscle: primaryMuscle.trim().toLowerCase(),
+            primaryMuscle: String(primaryMuscle).trim().toLowerCase(),
         };
         user.customExercises = [...user.customExercises, exercise];
         const result = await user.save();
@@ -88,11 +80,11 @@ const update = async (req, res) => {
             return res.sendStatus(204); //no content
         }
         const updatedProperties = {
-            name: name? name.trim() : exercise.name,
+            name: name? String(name.trim()) : exercise.name,
             url: url ? String(url) : exercise.url,
             activeMuscles: activeMuscles ? activeMuscles.map(muscle => muscle.trim().toLowerCase()) : exercise.activeMuscles,
-            equipment: equipment? equipment.toLowerCase() : exercise.equipment,
-            primaryMuscle: primaryMuscle ? primaryMuscle.trim().toLowerCase() : exercise.primaryMuscle,
+            equipment: equipment? String(equipment).toLowerCase() : exercise.equipment,
+            primaryMuscle: primaryMuscle ? String(primaryMuscle).trim().toLowerCase() : exercise.primaryMuscle,
 
         };
         user.customExercises = user.customExercises.map(obj => {
