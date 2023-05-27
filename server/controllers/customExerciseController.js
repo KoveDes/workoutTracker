@@ -2,6 +2,14 @@ const CustomExercise = require('../models/CustomExercise');
 const User = require('../models/User');
 const mongoose = require("mongoose");
 
+const verifyId = (req,res,next) => {
+    if (!req?.body?.id) {
+        return res.status(400).json({message: "ID is required"});
+    }
+    req.body.id = new mongoose.Types.ObjectId(req.body.id);
+    next();
+
+}
 
 const getAll = async (req, res) => {
     try {
@@ -15,13 +23,11 @@ const getAll = async (req, res) => {
 }
 const getSingle = async (req, res) => {
     let {id} = req.body;
-    if (!req?.body?.id) {
-        return res.status(400).json({message: "ID is required"});
-    }
+
     try {
         const user = await User.findOne({login: req.user});
         const exercise = user.customExercises.find(obj => {
-            return  obj._id.equals(new mongoose.Types.ObjectId(id));
+            return  obj._id.equals(req.body.id);
         });
         if (!exercise) {
             return res.sendStatus(204); //no content
@@ -57,24 +63,44 @@ const create = async (req, res) => {
      catch (e) {
          res.status(500).json({message: e.message});
      }
-    //name
-    // activeMuscles []
-    //equipment
-    //primaryMuscle
 
 
 }
 const update = async (req, res) => {
+    const {name, active: activeMuscles, equipment, primary: primaryMuscle} = req.body;
+    try {
+        const user = await User.findOne({login: req.user}, {customExercises: 1});
+        //TODO sprawdzic czy znajduja się w liscie miesni (enum?)
+        const exercise = user.customExercises.find(obj => {
+            return  obj._id.equals(req.body.id);
+        });
+        console.log(exercise)
+        if(!exercise) {
+            return res.sendStatus(204); //no content
+        }
+        const updatedProperties = {
+            name: name? name.trim() : exercise.name,
+            activeMuscles: activeMuscles ? activeMuscles.map(muscle => muscle.trim().toLowerCase()) : exercise.activeMuscles,
+            equipment: equipment? equipment.toLowerCase() : exercise.equipment,
+            primaryMuscle: primaryMuscle ? primaryMuscle.trim().toLowerCase() : exercise.primaryMuscle,
+
+        };
+        user.customExercises = user.customExercises.map(obj => {
+           return obj.equals(exercise) ? {...obj, ...updatedProperties} : obj; //don't change obj's ID
+        });
+        const result = await user.save();
+        res.json(result);
+    }
+    catch (e) {
+        res.status(500).json({message: e.message});
+    }
+
 }
 const remove = async (req, res) => {
-    let {id} = req.body;
-    if (!req?.body?.id) {
-        return res.status(400).json({message: "ID is required"});
-    }
     try {
         const user = await User.findOne({login: req.user});
         const exercise = user.customExercises.find(obj => {
-            return  obj._id.equals(new mongoose.Types.ObjectId(id));
+            return  obj._id.equals(req.body.id);
         });
         if (!exercise) {
             return res.sendStatus(204); //no content
@@ -87,4 +113,4 @@ const remove = async (req, res) => {
     }
 }
 
-module.exports = {getAll, getSingle, create, update, remove};
+module.exports = {getAll, getSingle: [verifyId,getSingle], create, update: [verifyId, update], remove: [verifyId, remove]};
