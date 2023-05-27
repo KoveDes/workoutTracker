@@ -37,8 +37,14 @@ const userSchema = new mongoose.Schema({
     height: Number, //in cm
     weightHistory: [
         {
-            date: Date,
-            weight: mongoose.Schema.Types.Decimal128, //float
+            date: {
+                type: Date,
+                immutable: true,
+                default: function () {
+                    return Date.now()
+                }
+            },
+            weight: Number,
         }
     ],
     goals: [{
