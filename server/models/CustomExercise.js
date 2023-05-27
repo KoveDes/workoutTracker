@@ -5,8 +5,7 @@ exports.customExerciseSchema = new Schema({
         type: String,
         required: true,
     },
-    picture: Buffer, //upload picture to database
-    gif: String, //upload gif URL to database
+    url: String, //upload image/gif URL to database
     activeMuscles: {
         type: [String],
         required: true,

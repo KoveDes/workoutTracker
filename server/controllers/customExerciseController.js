@@ -40,11 +40,14 @@ const getSingle = async (req, res) => {
 
 }
 const create = async (req, res) => {
-    const {name, active: activeMuscles, equipment, primary: primaryMuscle} = req.body;
+    const {name, active: activeMuscles, equipment, primary: primaryMuscle, url} = req.body;
     if(!req?.body?.name || !req?.body?.active|| !req?.body?.primary) {
         return res.status(400).json({message: 'Required parameters are missing'});
     }
-
+    //check if url is png,jpg, jpeg or gif file
+    if(!new RegExp(/.(png|jpe?g|gif)$/i).test(url)) {
+        return res.status(400).json({message: "URL should contain image in .png | .jpg | .jpeg | .gif format"})
+    }
 
     if(!(activeMuscles instanceof Array)) return res.status(400).json({message: "'active' must be an array"})
     try {
@@ -52,6 +55,7 @@ const create = async (req, res) => {
         //TODO sprawdzic czy znajduja się w liscie miesni (enum?)
         const exercise = {
             name: name.trim(),
+            url: String(url),
             activeMuscles: activeMuscles.map(muscle => muscle.trim().toLowerCase()),
             equipment,
             primaryMuscle: primaryMuscle.trim().toLowerCase(),
@@ -67,7 +71,12 @@ const create = async (req, res) => {
 
 }
 const update = async (req, res) => {
-    const {name, active: activeMuscles, equipment, primary: primaryMuscle} = req.body;
+    const {name, active: activeMuscles, equipment, primary: primaryMuscle, url} = req.body;
+    //check if url is png,jpg, jpeg or gif file
+    if(!new RegExp(/.(png|jpe?g|gif)$/i).test(url) && url) {
+        return res.status(400).json({message: "URL should contain image in .png | .jpg | .jpeg | .gif format"})
+    }
+
     try {
         const user = await User.findOne({login: req.user}, {customExercises: 1});
         //TODO sprawdzic czy znajduja się w liscie miesni (enum?)
@@ -80,6 +89,7 @@ const update = async (req, res) => {
         }
         const updatedProperties = {
             name: name? name.trim() : exercise.name,
+            url: url ? String(url) : exercise.url,
             activeMuscles: activeMuscles ? activeMuscles.map(muscle => muscle.trim().toLowerCase()) : exercise.activeMuscles,
             equipment: equipment? equipment.toLowerCase() : exercise.equipment,
             primaryMuscle: primaryMuscle ? primaryMuscle.trim().toLowerCase() : exercise.primaryMuscle,
