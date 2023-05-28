@@ -8,7 +8,8 @@ const {
     getRoutine,
     addRoutine,
     updateRoutine,
-    removeRoutine
+    removeRoutine,
+
 } = require('../controllers/workoutPlanController')
 const router = express.Router();
 
@@ -25,7 +26,7 @@ router.route('/routine')
     .get(getRoutine)
     .post(addRoutine)
     .patch(updateRoutine)
-    .delete(removeRoutine)
-//to get all routines, use /workoutPlan GET
+    .delete(removeRoutine);
+
 
 module.exports = router;

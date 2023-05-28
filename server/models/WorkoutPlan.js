@@ -22,7 +22,7 @@ const workoutGroup = new mongoose.Schema({
                     return Date.now()
                 }
             },
-            days: [String],
+            days: [Number], // Sunday - Saturday : 0 - 6
             exercises: [{
                 name: String,
                 restTime: Number,
