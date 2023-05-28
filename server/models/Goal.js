@@ -4,7 +4,7 @@ exports.goalSchema = new mongoose.Schema({
     category: {
         type: String,
         enum: {
-            values: ['weight', 'load', 'workoutCount', 'measurement'],
+            values: ['weightUp', 'weightDown', 'load', 'workoutCount', 'measurement'],
             message: "{VALUE} is not supported"
         },
         required: true,

@@ -1,6 +1,6 @@
 //TODO
 --measurement--
-Aktualizować podczas POST/bodyParameter
+Aktualizować podczas POST i PATCH bodyParameter
 
 --weight--
 Aktualizować podczas POST/user

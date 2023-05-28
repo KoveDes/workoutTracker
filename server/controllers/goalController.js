@@ -7,8 +7,10 @@ const params = Object.keys(bodyParamsSchema.obj);
 
 
 const getGoals = async (req, res) => {
+    const {current} = req.body;
     try {
         const user = await User.findOne({login: req.user}, {goals: 1});
+        if (current === 1) return res.json(user.goals.filter(obj => !obj.finished))
         res.json(user.goals);
     } catch (e) {
         res.status(500).json({message: e.message});
@@ -36,34 +38,40 @@ const createGoal = async (req, res) => {
     if (category === "measurement" && !req?.body?.bodyParameter || !params.includes(bodyParameter)) {
         return res.status(400).json({message: "bodyParameter is required or invalid"});
     }
-    if ((typeof currentValue !== 'number' && Number.isNaN(currentValue)) || (typeof endValue !== 'number' && Number.isNaN(endValue)) || endValue < currentValue)
+    if ((typeof currentValue !== 'number' && Number.isNaN(currentValue)) || (typeof endValue !== 'number' && Number.isNaN(endValue))) {
+    }
+    if (category === 'weightDown' && endValue > currentValue)
+        return res.status(400).json({message: "Goal values are invalid"});
+    if (category !== 'weightDown' && endValue < currentValue)
         return res.status(400).json({message: "Goal values are invalid"});
 
 
     try {
         const user = await User.findOne({login: req.user}, {goals: 1});
-        if(user.goals.filter(obj => !obj.finished).length === 3) {
+        if (user.goals.filter(obj => !obj.finished).length === 3) {
             return res.status(406).json({message: "You can have only 3 unfinished goals"});
         }
-        if(exercise && user.goals.findIndex(obj => obj.exercise === exercise) !== -1) {
-           return  res.status(406).json({message: "Goal with this exercise already exists"});
+        if (exercise && user.goals.find(obj => (obj.exercise === exercise && !obj.finished))) {
+            return res.status(406).json({message: "Goal with this exercise already exists"});
         }
-        if(bodyParameter && user.goals.findIndex(obj => obj.bodyParameter === bodyParameter) !== -1) {
+        if (bodyParameter && user.goals.find(obj => (obj.bodyParameter === bodyParameter && !obj.finished))) {
             return res.status(406).json({message: "Goal with this bodyParameter already exists"});
         }
-        if(category === 'weight' && user.goals.findIndex(obj => obj.category === 'measurement') !== -1){
+        if (category.includes('weight') && user.goals.find(obj => (obj.category.includes('weight') && !obj.finished))) {
             return res.status(406).json({message: "Weight goal already exists"});
         }
+
         const newGoal = {
             category: String(category),
             exercise: (exercise && category === 'measurement') ? String(exercise) : undefined,
-            bodyParameter: (bodyParameter && category === 'measurement')? String(bodyParameter) : undefined,
-            currentValue : currentValue ? currentValue : 0,
+            bodyParameter: (bodyParameter && category === 'measurement') ? String(bodyParameter) : undefined,
+            currentValue: currentValue ? currentValue : 0,
             endValue
         }
         user.goals = [...user.goals, newGoal];
+        console.log(user)
         const result = await user.save();
-        res.json(result);
+        res.json(newGoal);
 
     } catch (e) {
         res.status(500).json({
@@ -74,15 +82,21 @@ const createGoal = async (req, res) => {
 };
 const updateGoal = async (req, res) => {
     const {endValue} = req.body;
-    if (!req?.body?.endValue ) return res.status(400).json({message: "endValue is required"});
+    if (!req?.body?.endValue) return res.status(400).json({message: "endValue is required"});
     if (typeof endValue !== 'number' && Number.isNaN(endValue))
         return res.status(400).json({message: "endValue is invalid"});
     try {
         const user = await User.findOne({login: req.user}, {goals: 1});
         const goal = user.goals.find(obj => obj._id.equals(req.body.id));
-       if(goal.finished) {
-           return res.status(406).json({message: "You can't update finished goal!"});
-       }
+        if (goal.finished) {
+            return res.status(406).json({message: "You can't update finished goal!"});
+        }
+        if (endValue >= goal.currentValue && goal.category === 'weightDown') {
+            return res.status(406).json({message: "You can't finish goal this way!"});
+        }
+        if (endValue <= goal.currentValue && goal.category !== 'weightDown') {
+            return res.status(406).json({message: "You can't finish goal this way!"});
+        }
         goal.endValue = endValue;
         const result = await user.save();
         res.json(result);
