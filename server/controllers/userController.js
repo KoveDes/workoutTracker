@@ -14,45 +14,56 @@ const getSingleWeight = async (req, res) => {
     }
 };
 const updateWeight = async (req, res) => {
-    const {weight} = req.body;
-    if (weight && (typeof weight !== 'number' || Number.isNaN(weight) || weight <= 0)) {
-        return res.status(400).json({message: "Invalid weight",});
-    }
-    try {
-        const user = await User.findOne({login: req.user}, {weightHistory: 1, goals: 1});
-        const weightEntry = user.weightHistory.find(obj => obj._id.equals(req.body.id));
-        if (!weightEntry) return res.sendStatus(204) //no content
-        weightEntry.weight = weight ? weight : weightEntry.weight;
-        //update goal
-        const weightGoal = user.goals.find(obj => (obj.category === 'weight' && !obj.finished));
-        if (weightGoal) {
-            weightGoal.currentValue = weight > weightGoal.currentValue ? weight : weightGoal.currentValue;
-            if (weight >= weightGoal.endValue) weightGoal.finished = true;
-
+        const {weight} = req.body;
+        if (weight && (typeof weight !== 'number' || Number.isNaN(weight) || weight <= 0)) {
+            return res.status(400).json({message: "Invalid weight",});
         }
+        try {
+            const user = await User.findOne({login: req.user}, {weightHistory: 1, goals: 1});
+            const weightEntry = user.weightHistory.find(obj => obj._id.equals(req.body.id));
+            if (!weightEntry) return res.sendStatus(204) //no content
 
-        const result = await user.save();
-        res.json({
-            message: "Weight in entry updated",
-            id: weightEntry._id
-        });
-    } catch (e) {
-        res.status(500).json({message: e.message});
+            //update goal
+            const weightGoal = user.goals.find(obj => ((obj.category.includes('weight')) && !obj.finished));
+            console.log(weightGoal)
+            if (weightGoal && weightEntry.weight === weightGoal.currentValue) {
+                if (weightGoal.category === 'weightDown' && weight <= weightGoal.endValue) {
+                    weightGoal.finished = true;
+                }
+                if (weightGoal.category === 'weightUp' && weight >= weightGoal.endValue) {
+                    weightGoal.finished = true;
+                }
+            }
+            if(weightGoal) weightGoal.currentValue = weight;
+            weightEntry.weight = weight ? weight : weightEntry.weight;
+            const result = await user.save();
+            res.json({
+                message: "Weight in entry updated",
+                id: weightEntry._id
+            });
+        } catch
+            (e) {
+            res.status(500).json({message: e.message});
+        }
     }
-};
+;
 const removeWeight = async (req, res) => {
     try {
         const user = await User.findOne({login: req.user}, {weightHistory: 1, goals: 1});
         const weightEntry = user.weightHistory.find(obj => obj._id.equals(req.body.id));
         if (!weightEntry) return res.sendStatus(204) //no content
         user.weightHistory = user.weightHistory.filter(obj => !obj.equals(weightEntry));
-        //TODO if weight = currentValue in goal with weight category, update goal
-        const weightGoal = user.goals.find(obj => (obj.category === 'weight' && !obj.finished));
+        const weightGoal = user.goals.find(obj => ((obj.category.includes('weight')) && !obj.finished));
         if (weightGoal && weightEntry.weight === weightGoal.currentValue) {
             const maxWeight = user.weightHistory.reduce((prev, curr) => new Date(curr.date) > new Date(prev.date) ? curr : prev);
             weightGoal.currentValue = maxWeight.weight;
+            if (weightGoal.category === 'weightDown' && maxWeight.weight <= weightGoal.endValue) {
+                weightGoal.finished = true;
+            }
+            if (weightGoal.category === 'weightUp' && maxWeight.weight >= weightGoal.endValue) {
+                weightGoal.finished = true;
+            }
         }
-
 
         await user.save();
         res.json({message: "Entry deleted"});
@@ -124,12 +135,16 @@ const updateInfo = async (req, res) => {
         user.age = age ? age : user.age;
         user.height = height ? height : height;
         user.weightHistory = [...user.weightHistory, {weight}];
-        const weightGoal = user.goals.find(obj => ((obj.category === 'weight') && !obj.finished));
-        if (weightGoal) {
+        const weightGoal = user.goals.find(obj => ((obj.category.includes('weight')) && !obj.finished));
+        if (weightGoal.category === 'weightUp') {
             if (weight >= weightGoal.endValue) weightGoal.finished = true;
             weightGoal.currentValue = weight > weightGoal.currentValue ? weight : weightGoal.currentValue;
         }
-        // const result = await user.save();
+        if (weightGoal.category === 'weightDown') {
+            if (weight <= weightGoal.endValue) weightGoal.finished = true;
+            weightGoal.currentValue = weight < weightGoal.currentValue ? weight : weightGoal.currentValue;
+        }
+        const result = await user.save();
         res.json(user);
     } catch (e) {
         res.status(500).json({message: e.message});

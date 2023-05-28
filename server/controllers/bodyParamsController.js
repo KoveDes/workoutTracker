@@ -71,6 +71,8 @@ const addMeasurement = async (req, res) => {
     try {
         const user = await User.findOne({login: req.user});
         user.bodyParameters[param] = [...user.bodyParameters[param], {size}];
+        //TODO if size > currentValue in goal with weight category, update goal
+
         const result = await user.save();            //save in database
         res.json(result);
     } catch (e) {
@@ -97,6 +99,7 @@ const changeMeasurement = async (req, res) => {
             return res.sendStatus(204); //no content
         }
         record.size = size;
+        //TODO if size > currentValue in goal with weight category, update goal
         const result = await user.save();
 
         res.json({record, result});
@@ -119,6 +122,7 @@ const deleteMeasurement = async (req, res) => {
         if (!record) {
             return res.sendStatus(204); //no content
         }
+        //TODO if deleted object's size = currentValue in goal with weight category, get biggest size from different object
         user.bodyParameters[param] =user.bodyParameters[param].filter(obj => !obj.equals(record));
         const result = await user.save();
 
