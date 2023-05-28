@@ -29,6 +29,7 @@ app.use('/body', verifyJWT, require('./routes/bodyParams'));
 app.use('/customExercise', verifyJWT, require('./routes/customExercise'));
 app.use('/user', verifyJWT, require('./routes/user'));
 app.use('/goal', verifyJWT, require('./routes/goal'));
+app.use('/workoutPlan', verifyJWT, require('./routes/workoutPlan'));
 
 //Handle 404
 app.get('/*', (req, res) => {
