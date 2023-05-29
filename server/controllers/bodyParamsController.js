@@ -1,6 +1,7 @@
 const User = require('../models/User');
 const {bodyParamsSchema} = require("../models/BodyParams");
 const mongoose = require("mongoose");
+const verifyId = require("../middlewares/verifyID");
 
 
 const getLatestAll = async (req, res) => {
@@ -30,8 +31,7 @@ const getLatestAll = async (req, res) => {
     try {
         const latestSizes = await User.aggregate(pipeline).exec();
         res.json(latestSizes[0]);
-    }
-    catch(e) {
+    } catch (e) {
         res.status(500).json({message: e.message})
     }
 }
@@ -69,13 +69,26 @@ const addMeasurement = async (req, res) => {
         return res.status(400).json({message: "Size is required or is not a number"});
     }
     try {
+        let goalMessage;
         const user = await User.findOne({login: req.user});
         user.bodyParameters[param] = [...user.bodyParameters[param], {size}];
-        //TODO if size > currentValue in goal with weight category, update goal
-
+        //if user edited only the last
+        const measurementGoal = user.goals.find(obj => (obj.bodyParameter === String(param) && !obj.finished));
+        if (measurementGoal) {
+            if (size >= measurementGoal.currentValue) measurementGoal.currentValue = size;
+            if (size >= measurementGoal.endValue) {
+                measurementGoal.finished = true;
+                goalMessage = {
+                    message: "Goal has been achieved!",
+                    goal: measurementGoal
+                }
+            }
+        }
+        const paramArr = user.bodyParameters[param];
         const result = await user.save();            //save in database
-        res.json(result);
-    } catch (e) {
+        res.json({paramArr, goalMessage});
+    } catch
+        (e) {
         res.status(500).json({message: e.message});
     }
 }
@@ -83,9 +96,6 @@ const addMeasurement = async (req, res) => {
 const changeMeasurement = async (req, res) => {
     const {param} = req.params;
     let {id, size} = req.body;
-    if (!req?.body?.id) {
-        return res.status(400).json({message: "ID is required"});
-    }
     if (!req?.body?.size || typeof req.body.size !== 'number') {
         return res.status(400).json({message: "Size is required or is not a number"});
     }
@@ -93,16 +103,19 @@ const changeMeasurement = async (req, res) => {
         const user = await User.findOne({login: req.user});
         console.log(user)
         const record = user.bodyParameters[param].find(obj => {
-          return  obj._id.equals(new mongoose.Types.ObjectId(id));
+            return obj._id.equals(id);
         });
         if (!record) {
             return res.sendStatus(204); //no content
         }
         record.size = size;
-        //TODO if size > currentValue in goal with weight category, update goal
-        const result = await user.save();
-
-        res.json({record, result});
+        const lastResult = user.bodyParameters[param][user.bodyParameters[param].length - 1];
+        const measurementGoal = user.goals.find(obj => (obj.bodyParameter === String(param) && !obj.finished));
+        if (measurementGoal && lastResult._id.equals(id) && record.size >= measurementGoal.currentValue) {
+            measurementGoal.currentValue = lastResult.size;
+        }
+        await user.save();
+        res.json({record});
     } catch (e) {
         res.status(500).json({message: e.message});
     }
@@ -111,22 +124,26 @@ const changeMeasurement = async (req, res) => {
 const deleteMeasurement = async (req, res) => {
     const {param} = req.params;
     let {id} = req.body;
-    if (!req?.body?.id) {
-        return res.status(400).json({message: "ID is required"});
-    }
+
     try {
         const user = await User.findOne({login: req.user});
         let record = user.bodyParameters[param].find(obj => {
-            return  obj._id.equals(new mongoose.Types.ObjectId(id));
+            return obj._id.equals(id);
         });
         if (!record) {
             return res.sendStatus(204); //no content
         }
-        //TODO if deleted object's size = currentValue in goal with weight category, get biggest size from different object
-        user.bodyParameters[param] =user.bodyParameters[param].filter(obj => !obj.equals(record));
-        const result = await user.save();
+        const measurementGoal = user.goals.find(obj => (obj.bodyParameter === String(param) && !obj.finished));
+        if (measurementGoal && record.size === measurementGoal.currentValue) {
+            //set currentValue as last result
+            const lastResult = user.bodyParameters[param][user.bodyParameters[param].length - 1];
+            measurementGoal.currentValue = lastResult.size;
 
-        res.json({record, result});
+        }
+        user.bodyParameters[param] = user.bodyParameters[param].filter(obj => !obj.equals(record));
+        const result = await user.save();
+        res.json({message: "Entry has been deleted!"});
+
     } catch (e) {
         res.status(500).json({message: e.message});
     }
@@ -137,6 +154,6 @@ module.exports = {
     getLatestAll,
     addMeasurement: [paramExists, addMeasurement],
     getMeasurement: [paramExists, getMeasurement],
-    changeMeasurement: [paramExists, changeMeasurement],
-    deleteMeasurement: [paramExists, deleteMeasurement],
+    changeMeasurement: [paramExists,verifyId, changeMeasurement],
+    deleteMeasurement: [paramExists, verifyId, deleteMeasurement],
 };
