@@ -29,19 +29,47 @@ const saveWorkout = async (req, res) => {
     if (!req?.body?.exercises || !(exercises instanceof Array)) {
         return res.status(400).json({message: 'Exercises are missing or are not an Array'});
     }
-    if(!exercises.every(ex => ex.sets)) return res.status(400).json({message: 'Sets are required'});
+    if (!exercises.every(ex => ex.sets)) return res.status(400).json({message: 'Sets are required'});
     //Other exercises validation will happen in FrontEnd
     try {
-        const {_id: userId} = await User.findOne({login: req.user}, {_id: 1});
-        //TODO change goals if needed
-        //TODO category === workoutCount
-        //TODO category === load
+        let goalMessage;
+        const user = await User.findOne({login: req.user}, {goals: 1});
+        //GOAL category === workoutCount
+        const workoutCountGoal = user.goals.find(goal => (goal.category === "workoutCount" && !goal.finished));
+        if (workoutCountGoal) {
+            workoutCountGoal.currentValue++;
+            if (workoutCountGoal.currentValue >= workoutCountGoal.endValue) {
+                workoutCountGoal.finished = true;
+                goalMessage = {
+                    message: "Goal has been achieved!",
+                    goal: workoutCountGoal
+                }
+            }
+        }
+        //GOAL category === load
+        const loadGoal = user.goals.find(goal => (goal.category === "load" && !goal.finished));
+        const goalExercise = exercises.filter(obj => obj.name === loadGoal.exercise)[0];
+        if (loadGoal && goalExercise) {
+            //get bes load of the exercises
+            const {load: bestLoad} = goalExercise.sets.reduce((prev, curr) => {
+                return (curr.load > prev.load) ? curr : prev;
+            });
+            if (bestLoad > loadGoal.currentValue) loadGoal.currentValue = bestLoad;
+            if (loadGoal.currentValue >= loadGoal.endValue) {
+                loadGoal.finished = true;
+                goalMessage = {
+                    message: "Goal has been achieved!",
+                    goal: loadGoal
+                }
+            }
+        }
+        await user.save();
         const workout = await Workout.create({
-            user: userId,
+            user: user._id,
             note : note ? String(note) : undefined,
             exercises,
         })
-        res.json(workout)
+        res.json({workout, goalMessage})
 
     } catch (e) {
         res.status(500).json({message: e.message});

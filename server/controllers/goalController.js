@@ -35,7 +35,7 @@ const createGoal = async (req, res) => {
     if (category === "load" && !req?.body?.exercise) {
         return res.status(400).json({message: "exercise is required"});
     }
-    if (category === "measurement" && !req?.body?.bodyParameter || !params.includes(bodyParameter)) {
+    if (category === "measurement" && (!req?.body?.bodyParameter || !params.includes(bodyParameter))) {
         return res.status(400).json({message: "bodyParameter is required or invalid"});
     }
     if ((typeof currentValue !== 'number' && Number.isNaN(currentValue)) || (typeof endValue !== 'number' && Number.isNaN(endValue))) {
@@ -48,8 +48,8 @@ const createGoal = async (req, res) => {
 
     try {
         const user = await User.findOne({login: req.user}, {goals: 1});
-        if (user.goals.filter(obj => !obj.finished).length === 3) {
-            return res.status(406).json({message: "You can have only 3 unfinished goals"});
+        if (user.goals.filter(obj => !obj.finished).length === 4) {
+            return res.status(406).json({message: "You can have only 4 unfinished goals"});
         }
         if (exercise && user.goals.find(obj => (obj.exercise === exercise && !obj.finished))) {
             return res.status(406).json({message: "Goal with this exercise already exists"});
@@ -57,13 +57,16 @@ const createGoal = async (req, res) => {
         if (bodyParameter && user.goals.find(obj => (obj.bodyParameter === bodyParameter && !obj.finished))) {
             return res.status(406).json({message: "Goal with this bodyParameter already exists"});
         }
+        if (category === "workoutCount" && user.goals.find(obj => (obj.category === 'workoutCount' && !obj.finished))) {
+            return res.status(406).json({message: "Workout count goal already exists"});
+        }
         if (category.includes('weight') && user.goals.find(obj => (obj.category.includes('weight') && !obj.finished))) {
             return res.status(406).json({message: "Weight goal already exists"});
         }
 
         const newGoal = {
             category: String(category),
-            exercise: (exercise && category === 'measurement') ? String(exercise) : undefined,
+            exercise: (exercise && category === 'load') ? String(exercise) : undefined,
             bodyParameter: (bodyParameter && category === 'measurement') ? String(bodyParameter) : undefined,
             currentValue: currentValue ? currentValue : 0,
             endValue

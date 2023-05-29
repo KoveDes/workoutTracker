@@ -136,11 +136,11 @@ const updateInfo = async (req, res) => {
         user.height = height ? height : height;
         user.weightHistory = [...user.weightHistory, {weight}];
         const weightGoal = user.goals.find(obj => ((obj.category.includes('weight')) && !obj.finished));
-        if (weightGoal.category === 'weightUp') {
+        if (weightGoal.category === 'weightUp' && weightGoal) {
             if (weight >= weightGoal.endValue) weightGoal.finished = true;
             weightGoal.currentValue = weight > weightGoal.currentValue ? weight : weightGoal.currentValue;
         }
-        if (weightGoal.category === 'weightDown') {
+        if (weightGoal.category === 'weightDown' && weightGoal) {
             if (weight <= weightGoal.endValue) weightGoal.finished = true;
             weightGoal.currentValue = weight < weightGoal.currentValue ? weight : weightGoal.currentValue;
         }
