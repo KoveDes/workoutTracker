@@ -85,8 +85,8 @@ const getRoutine = async (req, res) => {
         const {_id: userId} = await User.findOne({login: req.user}, {_id: 1});
         const plan = await WorkoutPlan.findOne({user: userId, _id: id});
         if (!plan) return res.sendStatus(204); // no workoutPlan
-        const routine = plan.workoutRoutine.find(obj => obj._id.equals(routineId));
-        res.json(routine);
+        // const routine = plan.workoutRoutine.find(obj => obj._id.equals(routineId));
+        res.json(plan);
     } catch (e) {
         res.status(500).json({message: e.message});
     }
