@@ -29,8 +29,8 @@ const getLatestAll = async (req, res) => {
     //add projection
     pipeline.push({$project: {_id: 0, bodyParameters: 1}});
     try {
-        const latestSizes = await User.aggregate(pipeline).exec();
-        res.json(latestSizes[0]);
+        const latestSizes = await User.aggregate(pipeline).limit(1).exec();
+        res.json(latestSizes);
     } catch (e) {
         res.status(500).json({message: e.message})
     }

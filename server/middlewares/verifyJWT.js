@@ -16,5 +16,5 @@ module.exports = verifyJWT;
 
 /*
 * Klient może posiadać kilka AT, które są aktywne
-*Przedawnić wcześniejszy AT po stronie klienta
+* Umożliwia do jednoczesne zalogowanie się na kilku urządzeniach
 * */

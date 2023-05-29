@@ -37,10 +37,6 @@ const statsSchema = new mongoose.Schema({
         count: Number,
         date: Date,
     }],
-    workoutTime: [{
-        time: Number,
-        date: Date,
-    }],
 
 
 });

@@ -16,7 +16,7 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 //Middlewares
-app.use(express.json()); //JSON-DATA
+app.use(express.json());
 app.use(credentials); //fetch cookies credentials requirement
 app.use(cors(corsOptions));
 app.use(cookieParser());
@@ -31,12 +31,11 @@ app.use('/user', verifyJWT, require('./routes/user'));
 app.use('/goal', verifyJWT, require('./routes/goal'));
 app.use('/workoutPlan', verifyJWT, require('./routes/workoutPlan'));
 app.use('/workout', verifyJWT, require('./routes/workout'));
+app.use('/stats', verifyJWT, require('./routes/stats'));
 
 //Handle 404
 app.get('/*', (req, res) => {
-    res
-        .status(404)
-        .json({error: "404 Not Found"})
+    res.status(404).json({error: "404 Not Found"});
 })
 
 //If the connection is successfull, start HTTP server

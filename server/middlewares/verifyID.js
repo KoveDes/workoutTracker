@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-
 const verifyId = (req,res,next) => {
     if (!req?.body?.id) {
         return res.status(400).json({message: "ID is required"});
@@ -8,5 +7,4 @@ const verifyId = (req,res,next) => {
     next();
 
 }
-
 module.exports = verifyId;

@@ -3,7 +3,6 @@ const bcrypt = require('bcrypt');
 
 const createUser = async (req, res) => {
     const {login, password} = req.body; //String or undefined
-    //check if login exits, is String and is 4 char
     if (!login || !password) {
         return res.status(400).json({
             message: "Login and password are required"
@@ -35,14 +34,6 @@ const createUser = async (req, res) => {
     } catch (e) {
         res.status(500).json({message: e.message})
     }
-
-    //#1 check if params exist
-    //#2 validate params
-    //#3 Check for duplicate login
-    //#4 Encrypt password
-    //#5 store new User
-    //#6
-
 }
 
 

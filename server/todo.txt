@@ -1,9 +1,0 @@
-//TODO
---measurement--
-Aktualizować podczas POST i PATCH bodyParameter
-
---weight--
-Aktualizować podczas POST/user
-
---load-- i --workoutCount--
-Aktualizować podczas dodawania sesji treningowej

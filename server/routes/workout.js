@@ -11,5 +11,6 @@ router.route("/")
 
 router.route('/all')
     .get(getWorkouts);
+//TODO prepare for pagination f.e max 10 results
 
 module.exports = router;

@@ -13,13 +13,6 @@ const workoutSchema = new mongoose.Schema({
             return Date.now()
         }
     },
-    //TODO
-    // startedAt: Date,
-    // routine: {
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: "User>",
-    //     required: true,
-    // },
     note: String,
     exercises: [{
         name: {type: String, required: true},
