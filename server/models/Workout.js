@@ -23,13 +23,16 @@ const workoutSchema = new mongoose.Schema({
     note: String,
     exercises: [{
         name: {type: String, required: true},
-        sets: [{
-            restTime: Number,
-            reps: Number,
-            load: Number,
-            duration: Number,
-            rpe: Number,
-        }],
+        sets: {
+           type: [{
+                restTime: Number,
+                reps: Number,
+                load: Number,
+                duration: Number,
+                rpe: Number,
+            }],
+            required: true,
+        },
         note: String,
     }]
 });
