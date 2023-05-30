@@ -1,6 +1,7 @@
 const User = require('../models/User');
 const bcrypt = require('bcrypt');
 const verifyId = require("../middlewares/verifyID");
+const pagination = require("../utils/transformToPagination");
 
 //Weight
 const getSingleWeight = async (req, res) => {
@@ -75,9 +76,10 @@ const removeWeight = async (req, res) => {
 
 
 const getAll = async (req, res) => {
+    const {limit,skip} = req.params;
     try {
         const user = await User.findOne({login: req.user}, {weightHistory: 1});
-        res.json(user.weightHistory);
+        res.json(pagination(user.weightHistory, limit, skip));
     } catch (e) {
         res.status(500).json({message: e.message});
     }

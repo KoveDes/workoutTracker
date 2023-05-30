@@ -9,8 +9,12 @@ router.route("/")
     // .patch() user can't change the finished workout values
     .delete(removeWorkout);
 
-router.route('/all')
+router.route('/all/:limit?/:skip?')
     .get(getWorkouts);
-//TODO prepare for pagination f.e max 10 results
+
+
+//router.route('/notes')
+//  .get(getNotes);
+// /
 
 module.exports = router;

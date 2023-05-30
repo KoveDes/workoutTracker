@@ -30,7 +30,7 @@ app.use('/customExercise', verifyJWT, require('./routes/customExercise'));
 app.use('/user', verifyJWT, require('./routes/user'));
 app.use('/goal', verifyJWT, require('./routes/goal'));
 app.use('/workoutPlan', verifyJWT, require('./routes/workoutPlan'));
-app.use('/workout', verifyJWT, require('./routes/workout'));
+app.use('/workouts', verifyJWT, require('./routes/workout'));
 app.use('/stats', verifyJWT, require('./routes/stats'));
 
 //Handle 404

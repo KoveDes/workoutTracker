@@ -13,11 +13,12 @@ const workoutSchema = new mongoose.Schema({
             return Date.now()
         }
     },
+    duration: Number,
     note: String,
     exercises: [{
         name: {type: String, required: true},
         sets: {
-           type: [{
+            type: [{
                 restTime: Number,
                 reps: Number,
                 load: Number,
@@ -27,6 +28,12 @@ const workoutSchema = new mongoose.Schema({
             required: true,
         },
         note: String,
+    }],
+
+    //Implementation for musclesUsed in Stats
+    musclesUsed: [{
+        muscleGroup: String,
+        count: Number
     }]
 });
 // collection: workouts

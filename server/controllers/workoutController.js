@@ -1,13 +1,15 @@
 const verifyId = require("../middlewares/verifyID");
 const User = require('../models/User');
 const Workout = require('../models/Workout');
+const pagination = require("../utils/transformToPagination");
 
 const getWorkouts = async (req, res) => {
+    const {limit, skip} = req.params;
     try {
         const {_id: userId} = await User.findOne({login: req.user}, {_id: 1});
         const workouts = await Workout.find({user: userId}, {user: 0});
         if (!workouts.length) return res.sendStatus(204);
-        res.json(workouts);
+        res.json(pagination(workouts,limit, skip));
     } catch (e) {
         res.status(500).json({message: e.message});
     }

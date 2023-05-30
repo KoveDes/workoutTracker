@@ -9,8 +9,7 @@ router.route('/weight')
     .patch(updateWeight)
     .delete(removeWeight);
 
-//TODO prepare for pagination f.e max 5 results
-router.route("/weight/all").get(getAll);
+router.route("/weight/all/:limit?/:skip?").get(getAll);
 
 
 

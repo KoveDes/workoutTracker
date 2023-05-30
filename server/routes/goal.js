@@ -9,8 +9,7 @@ router.route("/")
     .patch(updateGoal) //change only endValue. If you want to change anything else, create new goal instead
     .delete(removeGoal);
 
-router.route("/all")
+router.route("/all/:limit?/:skip?")
     .get(getGoals)
-//TODO prepare for pagination f.e max 10 results
 
 module.exports = router;

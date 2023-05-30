@@ -10,7 +10,12 @@ const statsSchema = new mongoose.Schema({
         {
             exerciseName: String,
             load: Number,
-            date: Date,
+            date: {
+                type: Date,
+                default: function () {
+                    return Date.now()
+                }
+            },
         }
     ],
     //How many times each muscle group has been used in 1 day
@@ -40,4 +45,10 @@ const statsSchema = new mongoose.Schema({
 
 
 });
+
+statsSchema.records.pre('save', (next) => {
+    this.date = Date.now();
+    next();
+})
+
 module.exports = mongoose.model("Stat", statsSchema);
