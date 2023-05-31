@@ -1,61 +1,67 @@
 const User = require("../models/User");
 const Workout = require("../models/Workout");
 const getRecords = async (req, res) => {
+    //rekord dla każdego ćwiczenia
+    try {
+        const {_id: userId} = await User.findOne({login: req.user}, {_id: 1});
+        const stats = await Workout.aggregate([
+            {$match: {user: userId}},
+            {$unwind: "$exercises"},
+            {$unwind: "$exercises.sets"},
+            {
+                $group: {
+                    _id: "$exercises.name",
+                    maxLoad: {$max: "$exercises.sets.load"}
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    name: "$_id",
+                    maxLoad: 1
+                }
+            }
+            // {
+            //     $project: {
+            //         _id: 0,
+            //         exercises: {
+            //             $map: {
+            //                 input: "$exercises",
+            //                 as: "exercise",
+            //                 in: {
+            //                     name: "$$exercise.name",
+            //                     maxLoad: {
+            //                         $max: '$$exercise.sets.load'
+            //                     }
+            //                 },
+            //
+            //             }
+            //         }
+            //     },
+            // }
+
+        ]);
+        res.json(stats);
+
+    } catch (e) {
+        res.status(500).json({message: e.message});
+    }
 }
 
 const getStats = async (req, res) => {
     try {
-        // const {_id: userId} = await User.findOne({login: req.user}, {_id: 1});
-        // const workoutsCount = await Workout.countDocuments({user: userId})
-        res.json({
-            muscleUsage,
-            workoutsCount,
-            setsCount,
-            repsCount,
-            totalWorkoutTime,
-            avgWorkoutTime,
-        });
-    } catch (e) {
-        res.status(500).json({message: e.message});
-    }
-
-}
-const getMuscleUsage = async (req, res) => {
-}
-const getWorkoutsCount = async (req, res) => {
-    try {
         const {_id: userId} = await User.findOne({login: req.user}, {_id: 1});
-        const workoutsCount = await Workout.countDocuments({user: userId})
-        res.json({count: workoutsCount});
-    } catch (e) {
-        res.status(500).json({message: e.message});
-    }
-}
-const getSetsCount = async (req, res) => {
-    try {
-        const {_id: userId} = await User.findOne({login: req.user}, {_id: 1});
-        // const workouts = await Workout.find({user: userId}, {user: 0});
-        // const setsCount = workouts.reduce((total, workout) => {
-        //     return total + workout.exercises.reduce((setsTotal, exercise) => {
-        //         return setsTotal + exercise.sets.length
-        //     }, 0)
-        // }, 0);
-        // res.json({count: setsCount});
-
-        const setsCount = await Workout.aggregate([
+        const stats = await Workout.aggregate([
             {
-                //znajdź dokumenty zalogowanego użytkownika
                 $match: {
                     user: userId
                 }
             },
             {
-                //zwraca tylko określone pole => stworzone setsInWorkout
                 $project: {
-                    //zawiera sumę setów pojedynczego dokumentu
+                    totalTime: "$duration",
                     setsInWorkout: {
                         $sum: {
-                            //zwraca listę obiektów zawierających liczbę setów ćwiczenia
                             $map: {
                                 input: "$exercises",
                                 as: "obj",
@@ -64,26 +70,73 @@ const getSetsCount = async (req, res) => {
                                 }
                             }
                         }
+                    },
+                    repsInWorkout: {
+                        $sum: {
+                            $map: {
+                                input: "$exercises",
+                                as: "exercise",
+                                in: {
+                                    $sum: {
+                                        $map: {
+                                            input: "$$exercise.sets",
+                                            as: "set",
+                                            in: "$$set.reps"
+
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             },
             {
                 $group: {
-                    _id: "ada", //dowolna wartość, bo chcemy uzyskać jedną grupę
-                    total: {$sum: "$setsInWorkout"} //łączna lista setów
+                    _id: null, //dowolna wartość, bo chcemy uzyskać jedną grupę
+                    setsCount: {$sum: "$setsInWorkout"}, //łączna lista setów
+                    repsCount: {$sum: "$repsInWorkout"},
+                    totalTime: {$sum: "$totalTime"},
+                    totalWorkouts: {$count: {}}
+
+                }
+            },
+            {
+                $project: {
+                    _id: 0
                 }
             }
 
         ]);
-        res.json({count: setsCount[0].total});
+        const bodyPartsStats = await Workout.aggregate([
+            {$match: {user: userId}},
+            {$unwind: "$bodyPartsUsed"},
+            {
+                $group: {
+                    _id: "$bodyPartsUsed.bodyPart",
+                    totalCount: {$sum: "$bodyPartsUsed.count"}
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    "bodyPart": "$_id",
+                    count: "$totalCount"
+                }
+            }
+        ]);
+        res.json({
+            workoutsCount: stats[0].totalWorkouts,
+            setsCount: stats[0].setsCount,
+            repsCount: stats[0].repsCount,
+            totalWorkoutTime: stats[0].totalTime,
+            avgWorkoutTime: stats[0].totalTime / stats[0].totalWorkouts,
+            bodyPartsUsage: bodyPartsStats
+        });
     } catch (e) {
         res.status(500).json({message: e.message});
     }
-}
-const getRepsCount = async (req, res) => {
-}
-const getWorkoutTime = async (req, res) => {
+
 }
 
-
-module.exports = {getStats,getRecords, getMuscleUsage, getWorkoutsCount, getSetsCount, getRepsCount, getWorkoutTime};
+module.exports = {getStats, getRecords};

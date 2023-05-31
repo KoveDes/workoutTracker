@@ -31,8 +31,9 @@ const workoutSchema = new mongoose.Schema({
     }],
 
     //Implementation for musclesUsed in Stats
-    musclesUsed: [{
-        muscleGroup: String,
+    //for each exercise in exercises[] add exercise.bodyPart
+    bodyPartsUsed: [{
+        bodyPart: String,
         count: Number
     }]
 });

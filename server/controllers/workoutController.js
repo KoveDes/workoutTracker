@@ -27,7 +27,7 @@ const getWorkout = async (req, res) => {
     }
 }
 const saveWorkout = async (req, res) => {
-    const {note, exercises} = req.body;
+    const {note, exercises, duration, bodyPartsUsed} = req.body;
     if (!req?.body?.exercises || !(exercises instanceof Array)) {
         return res.status(400).json({message: 'Exercises are missing or are not an Array'});
     }
@@ -70,6 +70,8 @@ const saveWorkout = async (req, res) => {
             user: user._id,
             note : note ? String(note) : undefined,
             exercises,
+            duration,
+            bodyPartsUsed,
         })
         res.json({workout, goalMessage})
 
