@@ -93,10 +93,23 @@ const removeWorkout = async (req, res) => {
     }
 }
 
+const getNotes = async (req,res) => {
+    const {limit, skip} = req.params;
+    try {
+        const {_id: userId} = await User.findOne({login: req.user}, {_id: 1});
+        const workoutsNotes = await Workout.find({user: userId}, {note: 1});
+        if(!workoutsNotes) return res.sendStatus(204);
+        res.json(pagination(workoutsNotes, limit, skip));
+    }
+    catch (e) {
+        res.status(500).json({message: e.message});
+    }
+}
 
 module.exports = {
     getWorkouts,
     getWorkout: [verifyId, getWorkout],
     saveWorkout,
+    getNotes,
     removeWorkout: [verifyId, removeWorkout]
 }

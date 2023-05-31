@@ -27,7 +27,6 @@ const workoutSchema = new mongoose.Schema({
             }],
             required: true,
         },
-        note: String,
     }],
 
     //Implementation for musclesUsed in Stats

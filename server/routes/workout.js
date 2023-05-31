@@ -1,5 +1,5 @@
 const express = require('express');
-const {getWorkout, saveWorkout, removeWorkout, getWorkouts} = require("../controllers/workoutController.js");
+const {getWorkout, saveWorkout, removeWorkout, getWorkouts, getNotes} = require("../controllers/workoutController.js");
 
 const router = express.Router();
 
@@ -13,8 +13,7 @@ router.route('/all/:limit?/:skip?')
     .get(getWorkouts);
 
 
-//router.route('/notes')
-//  .get(getNotes);
-// /
+router.route('/notes/:limit?/:skip?')
+ .get(getNotes);
 
 module.exports = router;
