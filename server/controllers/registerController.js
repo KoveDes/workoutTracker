@@ -30,7 +30,7 @@ const createUser = async (req, res) => {
             login: String(login),
             password: String(hashedPassword),
         });
-        res.status(201).json({message: "New User created"});
+        res.status(201).json({message: "New user created"});
     } catch (e) {
         res.status(500).json({message: e.message})
     }

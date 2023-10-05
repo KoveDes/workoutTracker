@@ -154,7 +154,8 @@ const updateInfo = async (req, res) => {
 };
 const getAuth = async (req, res) => {
     try {
-        const user = await User.findOne({login: req.user}, {login: 1});
+        const user = await User.findOne({login: req.query.user}, {login: 1});
+        console.log(user)
         res.json(user);
     } catch (e) {
         res.status(500).json({message: e.message});

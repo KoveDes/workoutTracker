@@ -4,12 +4,14 @@ const verifyId = require("../middlewares/verifyID");
 const verifyRoutineId = require("../middlewares/verifyRoutineID");
 
 const getPlan = async (req, res) => {
-    const {id} = req.body;
+    const {id} = req.query;
     try {
-        const {_id: userId} = await User.findOne({login: req.user}, {_id: 1});
+        const {_id: userId} = await User.findOne({login: req.query.user}, {_id: 1});
         const plan = await WorkoutPlan.findOne({user: userId, _id: id}, {user: 0});
-        if (!plan) res.sendStatus(204);
-        res.json(plan);
+        if (!plan) res.sendStatus(204)
+        else {
+            res.json(plan);
+        }
     } catch (e) {
         res.status(500).json({message: e.message});
     }
@@ -69,10 +71,13 @@ const removePlan = async (req, res) => {
 }
 const getAllPlans = async (req, res) => {
     try {
-        const {_id: userId} = await User.findOne({login: req.user}, {_id: 1});
+        const {_id: userId} = await User.findOne({login: req.query.user}, {_id: 1});
         const plans = await WorkoutPlan.find({user: userId}, {user: 0, workoutRoutine: 0});
         if (!plans.length) res.sendStatus(204);
-        res.json(plans);
+        else {
+            console.log(plans)
+            res.json(plans);
+        }
     } catch (e) {
         res.status(500).json({message: e.message});
     }
@@ -82,11 +87,12 @@ const getAllPlans = async (req, res) => {
 const getRoutine = async (req, res) => {
     const {id, routineId} = req.body;
     try {
-        const {_id: userId} = await User.findOne({login: req.user}, {_id: 1});
+        const {_id: userId} = await User.findOne({login: req.query.user}, {_id: 1});
         const plan = await WorkoutPlan.findOne({user: userId, _id: id});
         if (!plan) return res.sendStatus(204); // no workoutPlan
-        // const routine = plan.workoutRoutine.find(obj => obj._id.equals(routineId));
-        res.json(plan);
+        const routine = plan.workoutRoutine.find(obj => obj._id.equals(routineId));
+        res.json(routine);
+        // res.json(plan);
     } catch (e) {
         res.status(500).json({message: e.message});
     }
@@ -161,7 +167,7 @@ const removeRoutine = async (req, res) => {
         const plan = await WorkoutPlan.findOne({user: userId, _id: id});
         if (!plan) return res.sendStatus(204); // no workoutPlan
         const routine = plan.workoutRoutine.find(obj => obj._id.equals(routineId));
-        if(!routine) return res.sendStatus(204);
+        if (!routine) return res.sendStatus(204);
         plan.workoutRoutine = plan.workoutRoutine.filter(obj => obj !== routine);
         await plan.save();
         res.json(plan.workoutRoutine);
@@ -172,12 +178,14 @@ const removeRoutine = async (req, res) => {
 
 
 module.exports = {
-    getPlan: [verifyId, getPlan],
+    // getPlan: [verifyId, getPlan],
+    getPlan,
     addPlan,
     updatePlan: [verifyId, updatePlan],
     removePlan: [verifyId, removePlan],
     getAllPlans,
-    getRoutine: [verifyId, verifyRoutineId, getRoutine],
+    // getRoutine: [verifyId, verifyRoutineId, getRoutine],
+    getRoutine,
     addRoutine: [verifyId, addRoutine],
     updateRoutine: [verifyId, verifyRoutineId, updateRoutine],
     removeRoutine: [verifyId, verifyRoutineId, removeRoutine]
