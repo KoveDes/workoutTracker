@@ -1,0 +1,73 @@
+.weight {
+    background-color: rgba(252, 129, 129, 0.78);
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+table *{
+    border: 1px solid black;
+}
+.entries {
+    width: 90%;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    /*background-color: #fff;*/
+    padding: 10px;
+
+}
+.entry {
+    /*background-color: #fbfbfb;*/
+    width:95%;
+    /*margin: 10px;*/
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 10px;
+    margin: 2px 0;
+    border: 1px solid #392323;
+    /*padding: 0 10px;*/
+    /*border-radius: 25px;*/
+    /*box-shadow: -2px 3px 9px 0 #c1bcbc;*/
+}
+label span, label input{
+    margin-left: 7px;
+}
+.entry span {
+    /*color: #4299e1;*/
+}
+.buttons {
+    display: flex;
+    /*background-color: red;*/
+    /*width: 30%;*/
+    justify-content: space-around;
+    align-items: baseline;
+}
+.button {
+    border: 1px solid #392323;
+    /*width: 90px;*/
+    padding: 0 10px;
+    border-bottom-width: 4px;
+    border-left-width:2px;
+    border-radius: 25px;
+}
+.button:hover {
+    cursor: pointer;
+}
+.edit {
+    background-color: #60bfff;
+}
+.edit:hover {
+    background-color: #436dff;
+}
+.delete {
+    background-color:#ff6060;
+    margin-top: 5px;
+    margin-left: 5px;
+}
+.delete:hover {
+    background-color: red;
+    /*border-width: 1px 2px 4px 1px;*/
+}

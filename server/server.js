@@ -13,7 +13,7 @@ const verifyJWT = require('./middlewares/verifyJWT');
 connectDB();
 
 const app = express();
-const port = process.env.PORT || 3501;
+const port = process.env.PORT || 3500;
 
 //Middlewares
 app.use(express.json());

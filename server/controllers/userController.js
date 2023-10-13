@@ -20,7 +20,7 @@ const updateWeight = async (req, res) => {
             return res.status(400).json({message: "Invalid weight",});
         }
         try {
-            const user = await User.findOne({login: req.user}, {weightHistory: 1, goals: 1});
+            const user = await User.findOne({login: req.body.user}, {weightHistory: 1, goals: 1});
             const weightEntry = user.weightHistory.find(obj => obj._id.equals(req.body.id));
             if (!weightEntry) return res.sendStatus(204) //no content
 
@@ -50,8 +50,8 @@ const updateWeight = async (req, res) => {
 ;
 const removeWeight = async (req, res) => {
     try {
-        const user = await User.findOne({login: req.user}, {weightHistory: 1, goals: 1});
-        const weightEntry = user.weightHistory.find(obj => obj._id.equals(req.body.id));
+        const user = await User.findOne({login: req.query.user}, {weightHistory: 1, goals: 1});
+        const weightEntry = user.weightHistory.find(obj => obj._id.equals(req.query.id));
         if (!weightEntry) return res.sendStatus(204) //no content
         user.weightHistory = user.weightHistory.filter(obj => !obj.equals(weightEntry));
         const weightGoal = user.goals.find(obj => ((obj.category.includes('weight')) && !obj.finished));
@@ -78,7 +78,7 @@ const removeWeight = async (req, res) => {
 const getAll = async (req, res) => {
     const {limit,skip} = req.params;
     try {
-        const user = await User.findOne({login: req.user}, {weightHistory: 1});
+        const user = await User.findOne({login: req.query.user}, {weightHistory: 1});
         res.json(pagination(user.weightHistory, limit, skip));
     } catch (e) {
         res.status(500).json({message: e.message});
@@ -101,7 +101,7 @@ const getInfo = async (req, res) => {
 };
 
 const updateInfo = async (req, res) => {
-    const {email, username, gender, age, height, weight} = req.body;
+    const {email, username, gender, age, height, weight} = req?.body;
 
     if ((typeof email !== 'string' || !new RegExp(/^[^\s@]+@[^\s@]+\.[^\s@]+$/).test(email)) && email) {
         return res.status(400).json({message: "Invalid email"});
@@ -138,11 +138,11 @@ const updateInfo = async (req, res) => {
         user.height = height ? height : height;
         user.weightHistory = [...user.weightHistory, {weight}];
         const weightGoal = user.goals.find(obj => ((obj.category.includes('weight')) && !obj.finished));
-        if (weightGoal.category === 'weightUp' && weightGoal) {
+        if (weightGoal?.category === 'weightUp' && weightGoal) {
             if (weight >= weightGoal.endValue) weightGoal.finished = true;
             weightGoal.currentValue = weight > weightGoal.currentValue ? weight : weightGoal.currentValue;
         }
-        if (weightGoal.category === 'weightDown' && weightGoal) {
+        if (weightGoal?.category === 'weightDown' && weightGoal) {
             if (weight <= weightGoal.endValue) weightGoal.finished = true;
             weightGoal.currentValue = weight < weightGoal.currentValue ? weight : weightGoal.currentValue;
         }
@@ -189,7 +189,8 @@ const changeAuth = async (req, res) => {
 module.exports = {
     getSingleWeight: [verifyId, getSingleWeight],
     updateWeight: [verifyId, updateWeight],
-    removeWeight: [verifyId, removeWeight],
+    removeWeight,
+    // removeWeight: [verifyId, removeWeight],
     getAll,
     getInfo,
     updateInfo,

@@ -8,7 +8,7 @@ const getLatestAll = async (req, res) => {
     //lista parametrów
     const params = Object.keys(bodyParamsSchema.obj);
     const pipeline = [
-        {$match: {login: req.user}}
+        {$match: {login: req.query.user}}
     ];
     //Dla każdego parametru zwróc najnowszy wynik
     params.forEach(param => {
@@ -52,7 +52,7 @@ const paramExists = (req, res, next) => {
 const getMeasurement = async (req, res) => {
     const {param} = req.params;
     try {
-        const user = await User.findOne({login: req.user},
+        const user = await User.findOne({login: req.query.user},
             {[`bodyParameters.${param}`]: 1, _id: 0,}
         );
 
@@ -123,7 +123,7 @@ const changeMeasurement = async (req, res) => {
 }
 const deleteMeasurement = async (req, res) => {
     const {param} = req.params;
-    let {id} = req.body;
+    let {id} = req.query;
 
     try {
         const user = await User.findOne({login: req.user});
@@ -155,5 +155,5 @@ module.exports = {
     addMeasurement: [paramExists, addMeasurement],
     getMeasurement: [paramExists, getMeasurement],
     changeMeasurement: [paramExists,verifyId, changeMeasurement],
-    deleteMeasurement: [paramExists, verifyId, deleteMeasurement],
+    deleteMeasurement: [paramExists, deleteMeasurement],
 };
