@@ -3,7 +3,7 @@ import * as Yup from "yup";
 const registerSchemaAuth = Yup.object({
     login: Yup.string().trim()
         .required('Required')
-        .min(4, `Login contain at least 4 characters.`)
+        .min(4, `Login should contain at least 4 characters.`)
         .matches(/^(?![.\s])[^.]*$/, 'Login should not contain spaces or dots'),
     password: Yup.string()
         .required('Required')
@@ -20,10 +20,10 @@ const registerSchemaAuth = Yup.object({
 const registerSchemaDetails = Yup.object({
     email: Yup.string().required('Required').email('Enter a proper email'),
     username: Yup.string().required("Required").min(4, 'Username should contain at least 4 characters'),
-    gender: Yup.string().oneOf(['female', 'male']).required('Required'),
-    age: Yup.number().min(10).max(100).integer(),
-    height: Yup.number().min(65).max(272),
-    weight: Yup.number().min(30).max(442),
+    gender: Yup.string().required().oneOf(['female', 'male']).required('Required'),
+    age: Yup.number().required('Required').min(10).max(100).integer(),
+    height: Yup.number().required('Required').min(65).max(272),
+    weight: Yup.number().required('Required').min(30).max(442),
 
 
 })

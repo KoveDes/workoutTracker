@@ -1,14 +1,25 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useField} from "formik";
+import {FormControlLabel, IconButton, InputAdornment, Radio, TextField} from "@mui/material";
+import {Visibility, VisibilityOff} from "@mui/icons-material";
 
-export default function CustomInput({label, ...props}) {
-    const [field,meta] = useField(props);
-    const id = props.name
+export default function CustomInput({label,adornment, ...props}) {
+    const [field, meta, helpers] = useField(props);
+    const id = props.name;
+
     return (
         <>
             <label htmlFor={id}>{label}</label>
-            <input {...field} {...props} id={id} type={props.type || "text"}
-                   className={meta.touched && meta.error ? 'input-error' : ''}
+
+            <TextField
+                size='small' fullWidth
+                error={meta.touched && meta.error}
+                InputProps={{
+                    endAdornment: adornment ? <InputAdornment position="start">{adornment}</InputAdornment> : null,
+                }}
+
+                {...field} {...props} id={id} type={props.type || "text"}
+                // className={meta.touched && meta.error ? 'input-error' : ''} //style MUI classes instead
             />
             {meta.touched && meta.error ? (
                 <p className='error'>{meta.error}</p>
@@ -16,25 +27,27 @@ export default function CustomInput({label, ...props}) {
         </>
     );
 }
-export  function CustomRadio({label, ...props}) {
-    const [field,meta] = useField(props);
-    const id = props.value
+
+export function CustomRadio({label, ...props}) {
+    const [field, meta] = useField(props);
     return (
         <>
-            <label htmlFor={id}>{label}
-            <input {...field} {...props} id={id} type='radio'
-                   className={meta.touched && meta.error ? 'input-error' : ''}
-            />
-            </label>
-            {meta.touched && meta.error ? (
-                <p className='error'>{meta.error}</p>
-            ) : null}
+            <FormControlLabel
+                // labelPlacement={}
+                className={meta.touched && meta.error ? 'error' : ''}
+                control={<Radio size='small'/>} label={label} {...field} {...props}/>
+            {/*<label htmlFor={id}>{label}*/}
+            {/*    <input {...field} {...props} id={id} type='radio'*/}
+            {/*           className={meta.touched && meta.error ? 'input-error' : ''}*/}
+            {/*    />*/}
+            {/*</label>*/}
+
         </>
     );
 }
 
 
-export function CustomCheckbox ({ label, ...props }) {
+export function CustomCheckbox({label, ...props}) {
     const [field, meta] = useField({...props, type: 'checkbox'});
     const id = props.name
 
@@ -56,9 +69,9 @@ export function CustomCheckbox ({ label, ...props }) {
     );
 };
 
-export function PasswordInput({label,emojiVisible='🤗', emojiInvisible='🤐', ...props}) {
-    const [field,meta] = useField(props);
-    const [visible,setVisible] = useState(false);
+export function PasswordInput({label, emojiVisible = '🤗', emojiInvisible = '🤐', ...props}) {
+    const [field, meta] = useField(props);
+    const [visible, setVisible] = useState(false);
     const id = props.name;
     const handleClick = () => {
         setVisible(!visible);
@@ -68,12 +81,27 @@ export function PasswordInput({label,emojiVisible='🤗', emojiInvisible='🤐',
         <>
             <label htmlFor={id}>{label}</label>
             <div className="passwordContainer">
-                <input {...field} {...props}
+                <TextField
+                    error={meta.touched && meta.error}
+                    fullWidth
+                    size='small'
+
+                    // END OF MUI PROPS
+                    {...field} {...props}
                     id={id}
-                       type={visible ? 'text' : 'password'}
-                       className={meta.touched && meta.error ? 'input-error' : ''}
+                    type={visible ? 'text' : 'password'}
+                    className={meta.touched && meta.error ? 'input-error' : ''}
+
+                    InputProps={{
+                        endAdornment: (
+                            <IconButton onClick={handleClick}>
+                                {visible ? <Visibility /> : <VisibilityOff />}
+                            </IconButton>
+                        ),
+                    }}
+
                 />
-                <p className='togglePwd' onClick={handleClick}>{visible ? emojiVisible : emojiInvisible}</p>
+                {/*<p className='togglePwd' onClick={handleClick}>{visible ? emojiVisible : emojiInvisible}</p>*/}
             </div>
             {meta.touched && meta.error ? (
                 <p className='error'>{meta.error}</p>
