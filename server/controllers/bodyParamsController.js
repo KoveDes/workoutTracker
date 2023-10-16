@@ -71,6 +71,7 @@ const addMeasurement = async (req, res) => {
     try {
         let goalMessage;
         const user = await User.findOne({login: req.user});
+        console.log(user.bodyParameters);
         user.bodyParameters[param] = [...user.bodyParameters[param], {size}];
         //if user edited only the last
         const measurementGoal = user.goals.find(obj => (obj.bodyParameter === String(param) && !obj.finished));

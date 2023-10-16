@@ -15,6 +15,7 @@ import {AuthProvider} from "./context/authProvider.jsx";
 import Missing from "./pages/Missing.jsx";
 import RequireAuth from "./components/RequireAuth.jsx";
 import PersistLogin from "./components/PersistLogin.jsx";
+import AddDetails from "./components/AddDetails.jsx";
 
 function App() {
     return (
@@ -35,6 +36,7 @@ function App() {
                                 </Route>
                                 <Route path='settings' element={<Settings/>}/>
                                 <Route path='exercises' element={<Exercises/>}/>
+                                <Route path='reg2' element={<AddDetails />} />
                             </Route>
                         </Route>
                         <Route path='*' element={<Missing/>}/>

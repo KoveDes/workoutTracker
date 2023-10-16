@@ -34,7 +34,11 @@ const userSchema = new mongoose.Schema({
         min: 10,
         max: 100,
     },
-    height: Number, //in cm
+    height: {
+        type: Number,
+        min: 65,
+        max: 251,
+    }, //in cm
     weightHistory: [
         {
             date: {
@@ -50,11 +54,33 @@ const userSchema = new mongoose.Schema({
     goals: [{
         type: goalSchema,
     }],
-    bodyParameters: bodyParamsSchema,
+    bodyParameters: {
+        type: bodyParamsSchema,
+        default: () => ({
+            leftCalf : [],
+            rightCalf : [],
+            leftThigh : [],
+            rightThigh : [],
+            hips : [],
+            waist : [],
+            chest : [],
+            neck : [],
+            shoulders : [],
+            leftForearm : [],
+            rightForearm : [],
+            leftArm : [],
+            rightArm : [],
+
+        })
+    }
+    ,
     customExercises: [customExerciseSchema]
 
 }, {
     timestamps: true, //createdAt, updatedAt
 });
+
+
+
 // collection: users
 module.exports = mongoose.model('User', userSchema);

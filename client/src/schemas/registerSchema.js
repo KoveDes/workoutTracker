@@ -1,16 +1,31 @@
 import * as Yup from "yup";
 
-const registerSchema = Yup.object({
+const registerSchemaAuth = Yup.object({
     login: Yup.string().trim()
         .required('Required')
-        .min(4, `Login should be at least 4 characters.`)
+        .min(4, `Login contain at least 4 characters.`)
         .matches(/^(?![.\s])[^.]*$/, 'Login should not contain spaces or dots'),
-    password: Yup.string().trim()
+    password: Yup.string()
         .required('Required')
-        .min(4, 'Password should be at least 4 characters.'),
-    matchPassword: Yup.string().trim()
+        .min(4, 'Password should have at least 4 characters.')
+        .test('no-space', 'Password should not contain spaces.', value => !value.includes(' ')),
+
+    matchPassword: Yup.string()
         .required('Required')
         .oneOf([Yup.ref('password')], 'Passwords must match.')
-});
+        .test('no-space', 'Password should not contain spaces', value => !value.includes(' ')),
 
-export default registerSchema
+
+});
+const registerSchemaDetails = Yup.object({
+    email: Yup.string().required('Required').email('Enter a proper email'),
+    username: Yup.string().required("Required").min(4, 'Username should contain at least 4 characters'),
+    gender: Yup.string().oneOf(['female', 'male']).required('Required'),
+    age: Yup.number().min(10).max(100).integer(),
+    height: Yup.number().min(65).max(272),
+    weight: Yup.number().min(30).max(442),
+
+
+})
+export default registerSchemaAuth
+export {registerSchemaDetails}

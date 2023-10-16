@@ -1,43 +1,31 @@
 import React, {useState} from 'react';
 import {Form, Formik, useFormik} from "formik";
-import * as Yup from 'yup';
-
-import axios from '../api/axios'
-import CustomInput, {PasswordInput} from "../components/CustomInputs.jsx";
-import registerSchema from "../schemas/registerSchema.js";
+import CustomInput, {CustomRadio, PasswordInput} from "../components/CustomInputs.jsx";
+import {default as registerSchemaAuth, registerSchemaDetails} from "../schemas/registerSchema.js";
+import {Button} from "@mui/material";
 
 const REGISTER_URL = '/register'
 
-export function RegisterForm(props) {
+export function Register(props) {
     const [success, setSuccess] = useState(false);
     const [error, setError] = useState('');
 
     return (
         <>
             <h1>Register</h1>
-            <Formik
+            <FormikStepper
                 initialValues={{
                     login: '',
                     password: '',
-                    matchPassword: ''
+                    matchPassword: '',
+                    email: '',
+                    username: '',
+                    gender: 'male',
+                    age: '',
+                    height: '',
+                    weight: ''
                 }}
-                validationSchema={Yup.object({
-                    login: Yup.string().trim()
-                        .required('Required')
-                        .min(4, `Login should have at least 4 characters.`)
-                        .matches(/^(?![.\s])[^.]*$/, 'Login should not contain dots')
-                        .test('no-space', 'Login should not contain dots or spaces', value => !value.includes(' '))
-                    ,
-                    password: Yup.string().trim()
-                        .required('Required')
-                        .min(4, 'Password should have at least 4 characters.')
-                        .matches(/^(?![.\s])[^.]*$/, 'Login should not contain dots or spaces')
-                        .test('no-space', 'Login should not contain dots or spaces', value => !value.includes(' ')),
 
-                    matchPassword: Yup.string().trim()
-                        .required('Required')
-                        .oneOf([Yup.ref('password')], 'Passwords must match.')
-                })}
                 onSubmit={async (values, actions) => {
                     // setTimeout(() => {
                     //     actions.setSubmitting(false);
@@ -46,18 +34,19 @@ export function RegisterForm(props) {
                     // }, 2000);
                     setError('');
                     const {login, password} = values;
+                    alert(JSON.stringify(values));
                     try {
-                        const response = await axios.post(
-                            'http://localhost:3500/register',
-                            JSON.stringify({login, password}),
-                            {
-                                headers: {
-                                    'Content-Type': 'application/json'
-                                },
-                                withCredentials: true,
-                            }
-                        );
-                        setSuccess(response.message);
+                        // const response = await axios.post(
+                        //     'http://localhost:3500/register',
+                        //     JSON.stringify({login, password}),
+                        //     {
+                        //         headers: {
+                        //             'Content-Type': 'application/json'
+                        //         },
+                        //         withCredentials: true,
+                        //     }
+                        // );
+                        // setSuccess(response.message);
                         actions.resetForm();
                     } catch ({response}) {
                         // console.log(response.status);
@@ -66,36 +55,79 @@ export function RegisterForm(props) {
 
                 }}
             >
-                {(props) => (
-                    <Form>
-                        <CustomInput
-                            type='text'
-                            label='Login'
-                            name='login'
-                            id='login'
-                            placeholder='login'
-                            // autoFocus
+                {/*{(props) => (*/}
+                {/*    <>*/}
+                {/*// <Form>*/}
+                <FormikStep
+                    validationSchema={registerSchemaAuth}
+                >
+                    <CustomInput
+                        type='text'
+                        label='Login'
+                        name='login'
+                        placeholder='login'
+                        // autoFocus
+                    />
+                    <PasswordInput
+                        label='Password'
+                        name='password'
+                        placeholder='password'/>
+                    <PasswordInput
+                        label='Confirm password'
+                        name='matchPassword'
+                        placeholder='password'/>
+                </FormikStep>
+                <FormikStep
+                    validationSchema={registerSchemaDetails}
+                >
+                    <CustomInput
+                        type='email'
+                        label='Email'
+                        name='email'
+                        // autoFocus
+                    />
+                    <CustomInput
+                        label='Username'
+                        name='username'
+                    />
 
-
+                    <div>
+                        <h3>Gender</h3>
+                        <CustomRadio
+                            label='Female'
+                            name='gender'
+                            value='female'
                         />
-                        <PasswordInput
-                            label='Password'
-                            name='password'
-                            id='password'
-                            placeholder='password'/>
-                        <PasswordInput
-                            id='matchPassword'
-                            label='Confirm password'
-                            name='matchPassword'
-                            placeholder='password'/>
-                        <button
-                            disabled={props.isSubmitting}
-                            type="submit">{props.isSubmitting ? "Creating an account..." : 'Register'}</button>
-                        {props.status}
-                    </Form>
-                )}
+                        <CustomRadio
+                            label='Male'
+                            name='gender'
+                            value='male'
+                        />
+                    </div>
+                    {/*Gender checkbox    */}
+                    <CustomInput
+                        name='age'
+                        label="Age"
+                        type='number'
 
-            </Formik>
+                    />
+                    <CustomInput
+                        name='height'
+                        label="Height (cm)"
+                        type='number'
+                    />
+                    <CustomInput
+                        name='weight'
+                        label="Weight (kg)"
+                        type='number'
+                    />
+
+                </FormikStep>
+
+                {/*    </>*/}
+                {/*)}*/}
+
+            </FormikStepper>
             {error ?
                 <h1>{error}</h1>
                 : null}
@@ -106,12 +138,52 @@ export function RegisterForm(props) {
         </>)
 }
 
-function Register(props) {
+export function FormikStep({children, ...props}) {
+    return <>{children}</>
+}
+
+
+export function FormikStepper({children, ...props}) {
+    const childrenArr = React.Children.toArray(children);
+    const [step, setStep] = useState(0);
+    const currentChild = childrenArr[step];
+    const isLastStep = step === childrenArr.length - 1;
+
+    return (
+        <Formik {...props}
+                validationSchema={currentChild.props.validationSchema}
+                onSubmit={async (values, actions) => {
+                    if (isLastStep) {
+                        await props.onSubmit(values, actions);
+                    } else {
+                        setStep(s => s + 1);
+                    }
+                }}
+        >
+            {(props) => (
+                <Form>
+                    <h1>Step: {step}</h1>
+                    {currentChild}
+                    {step > 0 ? <Button onClick={() => setStep(s => s - 1)}>Back</Button> : null}
+                    <Button type='submit'>Next</Button>
+                    {/*<button*/}
+                    {/*    disabled={props.isSubmitting}*/}
+                    {/*    type="submit">{props.isSubmitting ? "Creating an account..." : 'Register'}</button>*/}
+                </Form>
+            )}
+        </Formik>
+    )
+}
+
+
+export function RegisterForm(props) {
     const formik = useFormik({
         initialValues: {
             login: '',
             password: '',
-            matchPassword: ''
+            matchPassword: '',
+            username: '',
+            gender: 'male'
         },
         validationSchema: registerSchema,
         onSubmit: (values) => {

@@ -26,11 +26,11 @@ const createUser = async (req, res) => {
             message: "User already exists!"
         });
         const hashedPassword = await bcrypt.hash(password, 13);
-        await User.create({
+        const user = await User.create({
             login: String(login),
             password: String(hashedPassword),
         });
-        res.status(201).json({message: "New user created"});
+        res.status(201).json({message: "New user created", newUser: user});
     } catch (e) {
         res.status(500).json({message: e.message})
     }
