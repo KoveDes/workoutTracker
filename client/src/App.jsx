@@ -22,7 +22,6 @@ import {AuthProvider} from "./context/authProvider.jsx";
 import Missing from "./pages/Missing.jsx";
 import RequireAuth from "./components/RequireAuth.jsx";
 import PersistLogin from "./components/PersistLogin.jsx";
-import Profile from "./pages/Profile.jsx";
 
 const router = createBrowserRouter(
     createRoutesFromElements(
@@ -40,7 +39,7 @@ const router = createBrowserRouter(
                     </Route>
                     <Route path='settings' element={<Settings/>}/>
                     <Route path='exercises' element={<Exercises/>}/>
-                    <Route path='profile' element={<Profile />} />
+                    {/*<Route path='profile' element={<Profile />} />*/}
 
                 </Route>
             </Route>
