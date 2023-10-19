@@ -3,7 +3,7 @@ import useAuth from "./useAuth";
 import axios from "../api/axios";
 
 function UseRefreshToken(props) {
-    const {setAuth} = useAuth();
+    const {setAuth, setUser} = useAuth();
     return async () => {
         const response = await axios.get('/auth/refresh', {
             withCredentials: true, //allows to send cookies along with request
@@ -16,6 +16,12 @@ function UseRefreshToken(props) {
                 accessToken: response.data.accessToken
             })
         });
+        setUser((prev) => ({
+            ...prev,
+            gender: response?.data?.gender,
+            username: response?.data?.username,
+
+        }))
         return response.data.accessToken;
     };
 }

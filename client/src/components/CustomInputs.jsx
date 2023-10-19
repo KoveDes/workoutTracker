@@ -10,10 +10,9 @@ export default function CustomInput({label,adornment, ...props}) {
     return (
         <>
             <label htmlFor={id}>{label}</label>
-
             <TextField
                 size='small' fullWidth
-                error={meta.touched && meta.error}
+                error={!!(meta.touched && meta.error)}
                 InputProps={{
                     endAdornment: adornment ? <InputAdornment position="start">{adornment}</InputAdornment> : null,
                 }}
@@ -32,15 +31,15 @@ export function CustomRadio({label, ...props}) {
     const [field, meta] = useField(props);
     return (
         <>
-            <FormControlLabel
-                // labelPlacement={}
-                className={meta.touched && meta.error ? 'error' : ''}
-                control={<Radio size='small'/>} label={label} {...field} {...props}/>
-            {/*<label htmlFor={id}>{label}*/}
-            {/*    <input {...field} {...props} id={id} type='radio'*/}
-            {/*           className={meta.touched && meta.error ? 'input-error' : ''}*/}
-            {/*    />*/}
-            {/*</label>*/}
+            {/*{JSON.stringify()}*/}
+
+
+            <label  className={meta.touched && meta.error ? 'error' : ''} >{label}
+                <input {...field} {...props}  type='radio'
+                       checked={field.value === props.value}
+                       // className={meta.touched && meta.error ? 'input-error' : ''}
+                />
+            </label>
 
         </>
     );
@@ -82,7 +81,7 @@ export function PasswordInput({label, emojiVisible = 'ðŸ¤—', emojiInvisible = 'ð
             <label htmlFor={id}>{label}</label>
             <div className="passwordContainer">
                 <TextField
-                    error={meta.touched && meta.error}
+                    error={!!(meta.touched && meta.error)}
                     fullWidth
                     size='small'
 

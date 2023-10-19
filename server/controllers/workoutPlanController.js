@@ -17,22 +17,38 @@ const getPlan = async (req, res) => {
     }
 }
 const addPlan = async (req, res) => {
-    const {name, description} = req.body;
+    const {name, description, main} = req.body;
     if (!req?.body?.name) {
         return res.status(400).json({message: 'Name is required'});
     }
     try {
         const {_id: userId} = await User.findOne({login: req.user}, {_id: 1});
-        const userPlans = await WorkoutPlan.find({user: userId});
+        let userPlans = await WorkoutPlan.find({user: userId});
         const duplicate = userPlans.filter(obj => obj.name === name);
+        console.log(userPlans)
+        //if main change other mains to true
+        if (userPlans.length) {
+            for(const plan of userPlans) {
+                plan.main = false;
+                await plan.save();
+                console.log('Updated')
+            }
+        }
+        // console.log({elo: 'Hej', user: userPlans});
         if (duplicate.length) return res.status(409).json({message: "Plan with this name already exists!"});
+        // if (userPlans) {
+        //     userPlans.forEach(async (plan) => {
+        //         console.log(plan)
+        //         await plan.save()
+        //     })
+        // }
         const workoutPlan = await WorkoutPlan.create({
             user: userId,
             name: String(name),
             description: description ? String(description) : undefined,
+            main,
         })
-
-        res.json(workoutPlan);
+        res.json('Saved');
 
     } catch (e) {
         res.status(500).json({message: e.message});
@@ -40,8 +56,7 @@ const addPlan = async (req, res) => {
 
 }
 const updatePlan = async (req, res) => {
-    const {id} = req.body;
-    const {name, description} = req.body;
+    const {name, description, main, id} = req.body;
     if (!req?.body?.name) {
         return res.status(400).json({message: 'Name is required'});
     }
@@ -51,6 +66,7 @@ const updatePlan = async (req, res) => {
         if (!plan) res.sendStatus(204);
         plan.name = String(name);
         plan.description = description;
+        plan.main = main;
         const result = await plan.save();
         res.json(result);
     } catch (e) {
@@ -58,9 +74,9 @@ const updatePlan = async (req, res) => {
     }
 }
 const removePlan = async (req, res) => {
-    const {id} = req.body;
+    const {id} = req.query;
     try {
-        const {_id: userId} = await User.findOne({login: req.user}, {_id: 1});
+        const {_id: userId} = await User.findOne({login: req.query.user}, {_id: 1});
         const result = await WorkoutPlan.deleteOne({user: userId, _id: id});
         if (!result.deletedCount) return res.sendStatus(204);
         res.json(result);
@@ -182,7 +198,7 @@ module.exports = {
     getPlan,
     addPlan,
     updatePlan: [verifyId, updatePlan],
-    removePlan: [verifyId, removePlan],
+    removePlan,
     getAllPlans,
     // getRoutine: [verifyId, verifyRoutineId, getRoutine],
     getRoutine,

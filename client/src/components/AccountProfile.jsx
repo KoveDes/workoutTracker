@@ -1,17 +1,12 @@
 import React from 'react';
 import {Avatar, Box, Button, Card, CardActions, CardContent, Divider, Typography} from "@mui/material";
 
-function AccountProfile(props) {
-    const user = {
-        city: 'Los Angeles',
-        country: 'USA',
-        jobTitle: 'Senior Developer',
-        name: 'Anika Visser',
-        timezone: 'GTM-7',
-        avatar: 'https://myteenwebcam.com/fapp/gifs/516275443ca4e6303ac82e310ae3d430.gif'
-    }
+function AccountProfile({user}) {
+
+    const avatar = `https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/People/${user.gender === 'male' ? "Person" : "Woman"}.png`
     return (
-        <Card>
+        <Card
+        >
             <CardContent>
                 <Box
                     sx={{
@@ -20,31 +15,32 @@ function AccountProfile(props) {
                         flexDirection: 'column'
                     }}
                 >
-                    <Avatar
-                        src={user.avatar}
-                        sx={{
-                            height: 80,
-                            mb: 2,
-                            width: 80
-                        }}
-                    />
+                    <img src={avatar} alt="" style={{width: '160px'}}/>
+                    {/*<Avatar*/}
+                    {/*    src={user.avatar.woman}*/}
+                    {/*    sx={{*/}
+                    {/*        height: 160,*/}
+                    {/*        mb: 2,*/}
+                    {/*        width: 160*/}
+                    {/*    }}*/}
+                    {/*/>*/}
                     <Typography
                         gutterBottom
                         variant="h5"
                     >
-                        {user.name}
+                        {user.username}
                     </Typography>
                     <Typography
                         color="text.secondary"
                         variant="body2"
                     >
-                        {user.city} {user.country}
+                        {user.gender} {user.age}
                     </Typography>
                     <Typography
                         color="text.secondary"
                         variant="body2"
                     >
-                        {user.timezone}
+                        {user.email}
                     </Typography>
                 </Box>
             </CardContent>

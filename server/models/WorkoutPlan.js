@@ -8,8 +8,9 @@ const workoutGroup = new mongoose.Schema({
         name: {
             type: String,
         },
-
+        main: Boolean,
         description: String,
+
         workoutRoutine: [{
             name: {
                 type: String,
@@ -33,6 +34,8 @@ const workoutGroup = new mongoose.Schema({
                 }]
             }],
             note: String,
+            icon: String,
+            performed: Number,
         }],
     },
     {timestamps: true});

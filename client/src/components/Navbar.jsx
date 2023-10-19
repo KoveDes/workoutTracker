@@ -4,16 +4,17 @@ import {Link, useNavigate} from "react-router-dom";
 import '../Navbar.css'
 import useAuth from "../hooks/useAuth.js";
 import useLogout from "../hooks/useLogout.js";
+import ProfileMenu from "./ProfileMenu.jsx";
+import {Avatar} from "@mui/material";
+import ProfileAvatar from "./ProfileAvatar.jsx";
+import useDropdownMenu from "../hooks/useDropdownMenu.js";
 
 function Navbar(props) {
     const {auth} = useAuth();
     const logout = useLogout();
     const navigate = useNavigate();
-    const signOut = async() => {
-        await logout();
-        navigate('/');
-    }
-
+    const avatar = `https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/People/Person.png`
+    const dropdownMenu = useDropdownMenu();
     return (
         <nav>
             <div className="left">
@@ -22,16 +23,30 @@ function Navbar(props) {
                 </Link>
                 <CustomNavLink to='/'>Home</CustomNavLink>
                 <CustomNavLink to='/about'>About us</CustomNavLink>
+                <CustomNavLink to='/workoutPlans'>Workout plans</CustomNavLink>
                 <CustomNavLink to='/exercises'>Exercises</CustomNavLink>
                 <CustomNavLink to='/body'>Body</CustomNavLink>
             </div>
             <div className="right">
-                {auth.user ? (<h2 onClick={signOut}>{auth.user} 🙍‍♂</h2>) : (
-                    <>
-                    <CustomNavLink to='/login'>Log in</CustomNavLink>
-                    <CustomNavLink to='/register'>Sign up</CustomNavLink>
+                {auth.user ? (<>
+                        <div onClick={dropdownMenu.handleOpen}
+                             ref={dropdownMenu.anchorRef}>
+                        <ProfileAvatar />
+
+                        </div>
+                        <ProfileMenu
+                            anchorEl={dropdownMenu.anchorRef.current}
+                            open={dropdownMenu.open}
+                            onClose={dropdownMenu.handleClose}
+                        />
                     </>
-                    )}
+                    /*<BasicMenu/>*/
+                ) : (
+                    <>
+                        <CustomNavLink to='/login'>Log in</CustomNavLink>
+                        <CustomNavLink to='/register'>Sign up</CustomNavLink>
+                    </>
+                )}
                 {/*<CustomNavLink to='/register'>🙍‍♂️</CustomNavLink>*/}
             </div>
         </nav>

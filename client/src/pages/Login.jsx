@@ -6,11 +6,12 @@ import useAuth from "../hooks/useAuth";
 import {useLocation, useNavigate} from "react-router-dom";
 import CustomInput, {CustomCheckbox, PasswordInput} from "../components/CustomInputs.jsx";
 import loginSchema from "../schemas/loginSchema.js";
+import Button from "@mui/material/Button";
 
 
 function LoginForm(props) {
     //auth
-    const {setAuth, persist, setPersist} = useAuth();
+    const {setAuth, setUser, persist, setPersist} = useAuth();
 
 
     //navigate to site where user wanted to go
@@ -37,6 +38,7 @@ function LoginForm(props) {
             );
             const accessToken = response?.data?.accessToken;
             setAuth({user: login, accessToken});
+            setUser({gender: response?.data?.gender, username: response?.data?.username})
             setPersist(formPersist);
             setSuccess('Logged in!');
             localStorage.setItem('persist', formPersist)
@@ -84,9 +86,9 @@ function LoginForm(props) {
                                     id='password'
                                     placeholder='password'
                                 />
-                                <button type='submit' disabled={props.isSubmitting}>
+                                <Button type='submit' disabled={props.isSubmitting}>
                                     {props.isSubmitting ? "Logging in..." : 'Login'}
-                                </button>
+                                </Button>
                                 <CustomCheckbox
                                     label='Trust this device (24 hours)'
                                     name='persist'

@@ -66,6 +66,8 @@ exports.handleLogin = async (req, res) => {
             console.log('New RT: ' + newRefreshToken)
             res.json({
                 accessToken,
+                username: foundUser.username,
+                gender: foundUser.gender
             })
 
         } else {
@@ -194,6 +196,8 @@ exports.handleRefreshToken = async (req, res) => {
             res.json({
                 accessToken,
                 user: foundUser.login,
+                gender: foundUser.gender,
+                username: foundUser.username,
             });
         })
     } catch (e) {

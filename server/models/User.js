@@ -80,7 +80,21 @@ const userSchema = new mongoose.Schema({
     timestamps: true, //createdAt, updatedAt
 });
 
-
+// userSchema.pre('validate', function (next) {
+//     // Check if weightHistory or other fields are modified
+//     const weightHistoryModified = this.isModified('weightHistory');
+//     const otherFieldsModified = Object.keys(this).some(field => field !== 'weightHistory');
+//
+//     // If weightHistory is not modified but other fields are, prevent addition of new weightHistory item
+//     if (!weightHistoryModified && otherFieldsModified) {
+//         // Remove the last item from weightHistory
+//         if (this?.weightHistory?.length > 0) {
+//             this?.weightHistory.pop();
+//         }
+//     }
+//
+//     next();
+// });
 
 // collection: users
 module.exports = mongoose.model('User', userSchema);

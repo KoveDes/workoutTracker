@@ -91,7 +91,7 @@ const getInfo = async (req, res) => {
             {$match: {login: req.user}},
             {$unwind: "$weightHistory"},
             {$sort: {"weightHistory.date": -1}},
-            {$project: {email: 1, username: 1, gender: 1, age: 1, height: 1, weightHistory: 1}},
+            {$project: {email: 1, username: 1, gender: 1, age: 1, height: 1}},
             {$limit: 1}
         ]);
         res.json({user});
@@ -136,7 +136,11 @@ const updateInfo = async (req, res) => {
         user.gender = gender ? gender.trim() : user.gender;
         user.age = age ? age : user.age;
         user.height = height ? height : height;
-        user.weightHistory = [...user.weightHistory, {weight}];
+        if(weight) {
+            user.weightHistory = [...user.weightHistory, {weight}];
+        } else {
+            user.weightHistory = [...user.weightHistory];
+        }
         const weightGoal = user.goals.find(obj => ((obj.category.includes('weight')) && !obj.finished));
         if (weightGoal?.category === 'weightUp' && weightGoal) {
             if (weight >= weightGoal.endValue) weightGoal.finished = true;
