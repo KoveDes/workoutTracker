@@ -1,8 +1,14 @@
 import React, {useState} from 'react';
 import useAuth from "../hooks/useAuth.js";
 import useAxiosPrivate from "../hooks/useAxiosPrivate.js";
+import {IconButton, TableCell, TableRow, TextField, Typography} from "@mui/material";
+import {dateYearFormatter} from "../utils/formatters.js";
+import EditIcon from "@mui/icons-material/Edit.js";
+import DeleteIcon from "@mui/icons-material/Delete.js";
+import ClearIcon from '@mui/icons-material/Clear';
+import DoneIcon from '@mui/icons-material/Done';
 
-function EntryItem({data, setChange, label, payloadParam, apiPath, dataValue}) {
+function EntryItem({data, setChange, setReload, label, payloadParam, setRefresh,apiPath, dataValue}) {
     const [editing, setEditing] = useState(false);
     const [inputValue, setInputValue] = useState(dataValue);
     const {auth} = useAuth();
@@ -18,7 +24,8 @@ function EntryItem({data, setChange, label, payloadParam, apiPath, dataValue}) {
                 {signal: controller.signal})
             if (!ignore && response.statusText === 'OK') {
                 setChange(c => !c);
-                console.log(response.data)
+                setReload(v => !v);
+                setRefresh(c => !c);
             }
 
         } catch (e) {
@@ -41,8 +48,10 @@ function EntryItem({data, setChange, label, payloadParam, apiPath, dataValue}) {
                 }),
                 {signal: controller.signal})
             if (!ignore) {
-                setChange(c => !c);
                 setEditing(false);
+                setChange(c => !c);
+                setReload(c => !c);
+                setRefresh(c => !c);
                 console.log(response.data)
             }
 
@@ -59,51 +68,54 @@ function EntryItem({data, setChange, label, payloadParam, apiPath, dataValue}) {
     const formattedDate = data.date;
 
     return (
-        <div className='entry'>
-            <label htmlFor={data._id}>
-                {label}
+        <TableRow>
+            <TableCell sx={{}}>
                 {editing === true ? (
-                    <input
-                        type="number"
-                        value={inputValue}
-                        onChange={handleEdit}
-                    />
+                    <>
+                        <TextField
+                            error={inputValue < 30 || inputValue > 442}
+                            type='number'
+                            variant='outlined'
+                            size='small'
+                            helperText={inputValue < 30 || inputValue > 442 ?
+                                '(30kg - 442kg allowed)': ''}
+                            value={inputValue}
+                            onChange={handleEdit}
+                        />
+                    </>
                 ) : (
-                    <span>{dataValue}</span>
+                    <Typography variant='p'>{dataValue}</Typography>
                 )}
-            </label>
-            <p>Date: {formattedDate}</p>
-
-            <div className='buttons'>
+            </TableCell>
+            <TableCell align="right">{dateYearFormatter(data.date)}</TableCell>
+            <TableCell align='right'>
                 {editing === true ? (
                         <>
-                            <div className='button save'
-                                 onClick={handleSaveClick}>
-                                Save
-                            </div>
-                            <div className='button cancel'
-                                 onClick={() => {
-                                     setEditing(false)
-                                     setInputValue(dataValue)
-                                 }}>
-                                cancel
-                            </div>
+                            {(inputValue < 30 || inputValue > 500) ? null : (
+                                <IconButton
+                                    size='small' onClick={handleSaveClick}>
+                                    <DoneIcon fontSize="small" sx={{color: 'black'}}/>
+                                </IconButton>
+                            )}
+                            <IconButton size='small' onClick={() => {
+                                setEditing(false)
+                                setInputValue(dataValue)
+                            }}>
+                                <ClearIcon fontSize="small" sx={{color: 'black'}}/>
+                            </IconButton>
+
                         </>)
                     :
                     (
                         <>
-                            <div className='button edit'
-                                 onClick={() => setEditing(true)}>
-                                Edit
-                            </div>
-                            <div className='button delete'
-                                 onClick={handleDeleteClick}>
-                                Delete
-                            </div>
+                            <IconButton size='small' onClick={() => setEditing(true)}><EditIcon fontSize="small"
+                                                                                                sx={{color: 'black'}}/></IconButton>
+                            <IconButton size='small' onClick={handleDeleteClick}><DeleteIcon fontSize="small"
+                                                                                             sx={{color: 'black'}}/></IconButton>
                         </>
                     )}
-            </div>
-        </div>
+            </TableCell>
+        </TableRow>
     );
 }
 

@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import {Form, Formik, useFormik} from "formik";
+import React, {useEffect, useState} from 'react';
+import {Form, FieldArray, Formik, useFormik} from "formik";
 import CustomInput, {CustomRadio, PasswordInput} from "../components/CustomInputs.jsx";
 import {default as registerSchemaAuth, registerSchemaDetails} from "../schemas/registerSchema.js";
 import {
@@ -25,6 +25,8 @@ export function Register(props) {
 
         <h1>Register</h1>
         <FormikStepper
+            submittingText='Creating an account...'
+            submitText='Sign up'
             initialValues={{
                 login: '',
                 password: '',
@@ -113,19 +115,19 @@ export function Register(props) {
                             name='username'
                         />
                         <FormControl>
-                        <FormLabel id='sex'>Gender</FormLabel>
-                        <RadioGroup row id='sex'  >
-                            <CustomRadio
-                                label='Male'
-                                name='gender'
-                                value='male'
-                            />
-                            <CustomRadio
-                                label='Female'
-                                name='gender'
-                                value='female'
-                            />
-                        </RadioGroup>
+                            <FormLabel id='sex'>Gender</FormLabel>
+                            <RadioGroup row id='sex'>
+                                <CustomRadio
+                                    label='Male'
+                                    name='gender'
+                                    value='male'
+                                />
+                                <CustomRadio
+                                    label='Female'
+                                    name='gender'
+                                    value='female'
+                                />
+                            </RadioGroup>
                         </FormControl>
                     </Grid>
                     {/*Gender checkbox    */}
@@ -165,20 +167,37 @@ export function Register(props) {
     </>)
 }
 
-export function FormikStep({children, ...props}) {
-    return <>{children}</>
+export function FormikStepWithValues({children, formValues, ...props}) {
+
+    return <FieldArray>{children({formValues})}</FieldArray>;
+    // return <>
+    //     {children}
+    //
+    // </>
+}
+
+export function FormikStep({children, formValues, ...props}) {
+
+    return <>{children}</>;
+    // return <>
+    //     {children}
+    //
+    // </>
 }
 
 
-export function FormikStepper({children, ...props}) {
+export function FormikStepper({children, submittingText, submitText, exercises, ...props}) {
     const childrenArr = React.Children.toArray(children);
     const [step, setStep] = useState(0);
-    const [completed,setCompleted] = useState(false);
+    const [newInit, setNewInit] = useState(props.initialValues);
+    const [completed, setCompleted] = useState(false);
     const currentChild = childrenArr[step];
     const isLastStep = step === childrenArr.length - 1;
 
 
+
     return (<Formik {...props}
+
                     validationSchema={currentChild.props.validationSchema}
                     onSubmit={async (values, actions) => {
                         if (isLastStep) {
@@ -192,6 +211,7 @@ export function FormikStepper({children, ...props}) {
                     }}
     >
         {(props) => (<Form>
+            <pre>{JSON.stringify(props.values, undefined, 1)}</pre>
             <Stepper alternativeLabel activeStep={step}>
                 {childrenArr.map((child, index) => (
                     <Step key={child.props.label} completed={step > index || completed}>
@@ -199,9 +219,8 @@ export function FormikStepper({children, ...props}) {
                     </Step>
                 ))}
             </Stepper>
-            {currentChild}
-            <Grid container spacing={2} paddingTop={2}>
-
+            {React.cloneElement(currentChild, {formValues: props.values})}
+            <Grid container spacing={2} paddingTop={2} justifyContent='center'>
                 {step > 0 ? <Grid item>
                     <Button
                         variant='outlined'
@@ -213,7 +232,7 @@ export function FormikStepper({children, ...props}) {
                         startIcon={props.isSubmitting ? <CircularProgress size='1rem'/> : null}
                         disabled={props.isSubmitting}
                         variant={isLastStep ? 'contained' : 'outlined'} color='primary'
-                        type='submit'>{props.isSubmitting ? 'Creating an account...' : isLastStep ? 'Sign up' : 'Next'}</Button></Grid>
+                        type='submit'>{props.isSubmitting ? submittingText : isLastStep ? submitText : 'Next'}</Button></Grid>
             </Grid>
         </Form>)}
     </Formik>)

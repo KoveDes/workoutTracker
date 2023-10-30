@@ -1,12 +1,15 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {WorkoutRoutineCard} from "./WorkoutRoutineCard";
 import {Box, Container, Grid, Stack, Typography} from "@mui/material";
 import Button from "@mui/material/Button";
 import AddIcon from "@mui/icons-material/Add.js";
 import useDropdownMenu from "../hooks/useDropdownMenu.js";
 import WorkoutPlanSettingsPopover from "./WorkoutPlanSettingsPopover.jsx";
+import CustomDialog from "./CustomDialog.jsx";
+import WorkoutRoutineForm from "../forms/WorkoutRoutineForm.jsx";
 
 function WorkoutPlanItem({workoutPlan, style,setChange}) {
+    const [reload, setReload] = useState(false);
     const workoutRoutines = [
         {name: 'Push', note: 'elo', performed: 120},
         {name: 'Push', note: 'elo', performed: 120},
@@ -15,6 +18,7 @@ function WorkoutPlanItem({workoutPlan, style,setChange}) {
 
     ];
     const dropdownMenu = useDropdownMenu();
+    const newRoutineMenu = useDropdownMenu();
     return (
         <Box style={style}
              component="main"
@@ -26,6 +30,8 @@ function WorkoutPlanItem({workoutPlan, style,setChange}) {
              }}
         >
             <Container maxWidth="xl">
+                {JSON.stringify(dropdownMenu.open)}
+                {JSON.stringify(newRoutineMenu.open)}
                 <Stack>
                     <Stack
                         direction="row"
@@ -60,12 +66,23 @@ function WorkoutPlanItem({workoutPlan, style,setChange}) {
                                             backgroundColor: 'rgb(67, 56, 202)'
                                         }
                                     }}
+                                    onClick={newRoutineMenu.handleOpen}
                                 >
                                     Add Routine
                                 </Button>
+                                <CustomDialog
+                                    width='lg'
+                                    open={newRoutineMenu.open}
+                                    handleClose={newRoutineMenu.handleClose}
+                                    label={'Workout routine'}
+                                    formId='workoutRoutineForm'
+                                    showButtons={false}
+                                >
+                                    <WorkoutRoutineForm setChange={setReload}/>
+                                </CustomDialog>
                             </Stack>
                         </Stack>
-                        <div
+                        <Box
                             onClick={dropdownMenu.handleOpen}
                             ref={dropdownMenu.anchorRef}
                             style={{
@@ -75,11 +92,11 @@ function WorkoutPlanItem({workoutPlan, style,setChange}) {
                                 borderRadius: '50%',
                             }}
                         >
-                            <img
+                            <Box component='img'
                                 style={{width: '100%', height: '100%'}}
                                 src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Gear.png"
                                 alt="Gear"/>
-                        </div>
+                        </Box>
                         <WorkoutPlanSettingsPopover
                             plan={workoutPlan}
                             setChange={setChange}

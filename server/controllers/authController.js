@@ -183,7 +183,7 @@ exports.handleRefreshToken = async (req, res) => {
                 foundUser.refreshToken = foundUser.refreshToken.filter(rt => rt !== refreshToken);
                 await foundUser.save();
             }
-            if (err || foundUser.login !== decoded?.username) {
+            if (err || foundUser?.login !== decoded?.username) {
                 return res.status(403).json({message: "Forbidden"});
             }
             //RT is valid

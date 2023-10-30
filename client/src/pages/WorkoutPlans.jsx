@@ -15,9 +15,6 @@ function WorkoutPlans(props) {
         return plan.main === true;
     }) : null;
     const otherWorkoutPlans = workoutPlans ? workoutPlans?.filter(plan => plan.main === false).reverse() : [];
-    // const mainWorkoutPlan = {}
-    // const otherWorkoutPlans = [{},{}];
-    console.log(mainWorkoutPlan)
     const axiosPrivate = useAxiosPrivate();
     const {auth} = useAuth();
     useEffect(() => {
@@ -71,9 +68,17 @@ function WorkoutPlans(props) {
                             // boxShadow: "rgba(0, 0, 0, 0.04) 0px 5px 22px, rgba(0, 0, 0, 0.03) 0px 0px 0px 0.5px",
                             // boxShadow: "rgb(33 8 8 / 44%) 0px 5px 12px, rgba(0, 0, 0, 0.03) 10px 10px 10px 5px",
                         }}/>) : (
-                        <Grid container direction='column' alignItems='center'>
+                        <Grid container direction='column' alignItems='center' sx={{
+                            backgroundColor: 'lavender',
+                            borderRadius: '20px',
+                            padding: 10
+                        }}>
                             <img width='150' src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Smilies/Face%20in%20Clouds.png" alt="Face in Clouds" />
-                            <h1>Select Main Workout Plan</h1>
+                            <Typography
+                            color='lightsteelblue'
+                                fontFamily='inherit'
+                            variant={'h5'}
+                            >Select Main Workout Plan</Typography>
                         </Grid>)}
                 </Box>
                 <Divider/>
@@ -95,11 +100,24 @@ function WorkoutPlans(props) {
                         // boxShadow: "rgb(33 8 8 / 44%) 0px 5px 12px, rgba(0, 0, 0, 0.03) 10px 10px 10px 5px",
                     }}/>
                 )) : (
-                    <Grid container direction='column' alignItems='center'>
-                        <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Smilies/Confused%20Face.png" alt="Confused Face" width='100' />
-                        {/*<img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Smilies/Face%20in%20Clouds.png" alt="Face in Clouds" />*/}
-                        <h1>No Workout Plans</h1>
+                    <Grid container direction='column' alignItems='center' sx={{
+                        // backgroundColor: 'lavender',
+                        borderRadius: '20px',
+                        padding: 10,
+                        border: '4px dashed lavender'
+                    }}>
+                        <img width='150' src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Smilies/Confused%20Face.png" alt="Confused Face"  />
+
+                        <Typography
+                            color='lightsteelblue'
+                            fontFamily='inherit'
+                            variant={'h5'}
+                        >No Workout Plan</Typography>
                     </Grid>
+                    // <Grid container direction='column' alignItems='center'>
+                    //     {/*<img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Smilies/Face%20in%20Clouds.png" alt="Face in Clouds" />*/}
+                    //     <h1>No Workout Plans</h1>
+                    // </Grid>
                 )}
 
             </Grid>

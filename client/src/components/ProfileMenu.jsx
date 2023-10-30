@@ -1,8 +1,7 @@
-import React, {useCallback, useRef, useState} from 'react';
-import {Avatar, Grid, MenuItem, MenuList, Popover, Typography} from "@mui/material";
+import React from 'react';
+import {MenuItem, MenuList, Popover} from "@mui/material";
 import useLogout from "../hooks/useLogout.js";
 import {useNavigate} from "react-router-dom";
-import useAuth from "../hooks/useAuth.js";
 import useDropdownMenu from "../hooks/useDropdownMenu.js";
 
 function ProfileMenu({anchorEl, open, onClose}) {
@@ -61,11 +60,17 @@ function ProfileMenu({anchorEl, open, onClose}) {
                     {/*</MenuItem>*/}
 
                     <MenuItem onClick={() => {
+                        onClose()
                         navigate('/profile')
-                        dropdownMenu.handleClose()
                     }}>
 
                         Profile
+                    </MenuItem>
+                    <MenuItem onClick={() => {
+                        onClose();
+                        navigate('/goals')
+                    }}>
+                        Goals
                     </MenuItem>
                     <MenuItem onClick={handleSignOut}>
                         Sign out

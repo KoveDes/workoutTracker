@@ -10,9 +10,6 @@ import WorkoutPlanControls from "./WorkoutPlanControls.jsx";
 function WorkoutPlanSettingsPopover({anchorEl, open, onClose, setChange, id={id}, plan}) {
     const axiosPrivate = useAxiosPrivate();
     const {auth} = useAuth();
-    const handleEdit = () => {
-
-    }
     const handleDelete = async () => {
         try {
             const response = await axiosPrivate.delete(`/workoutPlan?id=${id}&user=${auth.user}`)
@@ -36,7 +33,7 @@ function WorkoutPlanSettingsPopover({anchorEl, open, onClose, setChange, id={id}
                 }}
                 onClose={onClose}
                 open={open}
-                PaperProps={{sx: {width: 200, boxShadow: "rgba(0, 0, 0, 0.08) 0px 3px 14px", mt: '0'}}}
+                PaperProps={{sx: { boxShadow: "rgba(0, 0, 0, 0.08) 0px 3px 14px", mt: '0'}}}
             >
 
                 <MenuList
@@ -44,13 +41,13 @@ function WorkoutPlanSettingsPopover({anchorEl, open, onClose, setChange, id={id}
                     dense
                     sx={{
                         p: '8px',
-
+                    //
                     }}
                 >
                     {/*<MenuItem onClick={handleEdit}>*/}
                     {/*    Set as Main*/}
                     {/*</MenuItem>*/}
-                    <MenuItem onClick={handleEdit}>
+                    <MenuItem >
                         <WorkoutPlanControls workoutPlan={plan} setChange={setChange}/>
 
                     </MenuItem>

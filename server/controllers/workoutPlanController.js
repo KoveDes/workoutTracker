@@ -27,7 +27,7 @@ const addPlan = async (req, res) => {
         const duplicate = userPlans.filter(obj => obj.name === name);
         console.log(userPlans)
         //if main change other mains to true
-        if (userPlans.length) {
+        if (userPlans.length && main === true) {
             for(const plan of userPlans) {
                 plan.main = false;
                 await plan.save();
@@ -88,7 +88,7 @@ const removePlan = async (req, res) => {
 const getAllPlans = async (req, res) => {
     try {
         const {_id: userId} = await User.findOne({login: req.query.user}, {_id: 1});
-        const plans = await WorkoutPlan.find({user: userId}, {user: 0, workoutRoutine: 0});
+        const plans = await WorkoutPlan.find({user: userId}, {user: 0});
         if (!plans.length) res.sendStatus(204);
         else {
             console.log(plans)
@@ -130,7 +130,7 @@ const addRoutine = async (req, res) => {
     try {
         const {_id: userId} = await User.findOne({login: req.user}, {_id: 1});
         const plan = await WorkoutPlan.findOne({user: userId, _id: id}, {workoutRoutine: 1});
-        if (!plan) res.sendStatus(204); // no workoutPlan
+        if (!plan) return res.sendStatus(204); // no workoutPlan
         const newRoutine = {
             name: String(name).trim(),
             days,

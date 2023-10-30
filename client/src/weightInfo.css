@@ -6,9 +6,9 @@
     flex-direction: column;
     align-items: center;
 }
-table *{
-    border: 1px solid black;
-}
+/*table *{*/
+/*    border: 1px solid black;*/
+/*}*/
 .entries {
     width: 90%;
     display: flex;

@@ -1,18 +1,25 @@
 import React, {useEffect, useState} from 'react';
-import {Link, Outlet, useOutletContext, useParams} from "react-router-dom";
+import {useOutletContext, useParams} from "react-router-dom";
 import useAxiosPrivate from "../hooks/useAxiosPrivate.js";
 import useAuth from "../hooks/useAuth.js";
-import EntryItem from "./EntryItem.jsx";
 import EntryComposer from "./EntryComposer.jsx";
+import CustomLineChart from "./CustomLineChart.jsx";
+import {Box, Card, Grid, Stack, Typography} from "@mui/material";
+import Button from "@mui/material/Button";
+import TableDialog from "./TableDialog.jsx";
+import {niceParam} from "../utils/formatters.js";
+import ChartReplacement from "./ChartReplacement.jsx";
 
 function BodyPart(props) {
     const setRefresh = useOutletContext();
     const {bodyPart} = useParams();
     const [change, setChange] = useState();
-    const [data,setData] = useState([]);
+    const [data, setData] = useState([]);
+    const [openDialog, setOpenDialog] = useState(false);
+
     const axiosPrivate = useAxiosPrivate();
     const {auth} = useAuth();
-
+    const currentSize = data?.[data?.length - 1]?.size;
 
     useEffect(() => {
         let ignore = false;
@@ -22,12 +29,10 @@ function BodyPart(props) {
                 const response = await axiosPrivate.get(`/body/${bodyPart}?user=${auth.user}`, {
                     signal: controller.signal
                 })
-                if(!ignore) {
-                    setData(response.data);
-                    console.log(response.data)
+                if (!ignore) {
+                    setData(response.data.data.reverse());
                 }
-            }
-            catch (e) {
+            } catch (e) {
                 console.log(e);
                 setData([]);
             }
@@ -39,31 +44,96 @@ function BodyPart(props) {
         }
     }, [bodyPart, change])
     return (
-        <div className='about-page' style={{backgroundColor: 'blanchedalmond'}}>
+        <Card sx={{
+            boxSizing: 'border-box',
+            borderRadius: 2,
+            p: 2.25,
+            width: '100%',
+            height: '100%',
+            boxShadow: "none",
+            backgroundColor: 'floralwhite',
+            display: 'flex',
+            flexDirection: 'column',
+            position: 'relative'
+            // overflowY: 'scroll',
+        }}
+        >
+            <Typography
+                sx={{
+                    position: 'absolute',
+                    right: 0,
+                    pr: 2.25,
+                    color: 'coral'
+                }}
+                variant='h4'
+                fontWeight='500'
+                textTransform='uppercase'
+                letterSpacing={3}
+            >
+                {niceParam(bodyPart || '')}
+            </Typography>
+            <Grid container direction='column' gap={3} justifyContent={'flex-start'} alignItems={'flex-start'}>
+                <Stack spacing={1}>
+                    <Typography variant="h6" color="textSecondary" textAlign={'left'} fontWeight='500'>
+                        Current size
+                    </Typography>
+                    <Grid container alignItems="center">
+                        <Grid item>
+                            <Typography variant="h6" color="inherit">
+                                {currentSize || 0} cm
+                            </Typography>
 
-            <h1>Part: {bodyPart}</h1>
-            <EntryComposer
-                setRefresh={setRefresh}
-                payloadParam='size'
-                apiPath={`/body/${bodyPart}`}
-                setChange={setChange}
-                label='New size (cm)'
-                buttonText='Set size'
-            />
-            <p style={{opacity: 0.5}}>History and chart about {bodyPart}</p>
-            {data.map(entry => (
-                <EntryItem
-                    key={entry._id}
-                    data={entry}
-                    setChange={setChange}
-                    label='Size:'
+                        </Grid>
+                    </Grid>
+
+                </Stack>
+                <EntryComposer
                     payloadParam='size'
                     apiPath={`/body/${bodyPart}`}
-                    dataValue={entry.size}
+                    setChange={setChange}
+                    data={currentSize}
+                    buttonText='weight'
+                    adornment='cm'
+                    setRefresh={setRefresh}
                 />
 
-            ))}
-        </div>
+            </Grid>
+            {data.length > 1 ? (<>
+                <Box sx={{
+                    width: '100%',
+                    height: '500px',
+                    position: 'relative',
+                    margin: '25px 0',
+                }}>
+                    <CustomLineChart data={data} dataKey='size' label='Size (cm)'/>
+                </Box>
+                <Button
+                    variant='text' sx={{
+                    backgroundColor: 'darkorange',
+                    color: 'white',
+                    "&:hover": {
+                        backgroundColor: 'orangered',
+                    }
+                }}
+                    onClick={() => setOpenDialog(true)}
+                >
+                    Show history
+                </Button>
+                {openDialog ? (
+                    <TableDialog
+                        setChange={setChange}
+                        payloadParam='size'
+                        apiPath={`/body/${bodyPart}`}
+                        open={openDialog}
+                        handleClose={() => setOpenDialog(false)}
+                        label='Size (cm)'
+                        setRefresh={setRefresh}
+                    />
+                ) : null}
+            </>) : <ChartReplacement />
+                }
+
+        </Card>
     );
 }
 

@@ -13,7 +13,7 @@ const router = express.Router();
 router.route("/")
     .get(getLatestAll);
 
-router.route("/:param")
+router.route("/:param/:limit?/:skip?")
     .get(getMeasurement)   // get all entries for param
     .post(addMeasurement) //add size
     .patch(changeMeasurement) //change size of previous entry

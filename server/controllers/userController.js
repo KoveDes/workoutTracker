@@ -3,11 +3,19 @@ const bcrypt = require('bcrypt');
 const verifyId = require("../middlewares/verifyID");
 const pagination = require("../utils/transformToPagination");
 
+const dateYearFormatter = (date) =>
+    new Date(date).toLocaleDateString('en-GB', {
+        month: '2-digit',
+        day: '2-digit',
+        year: '2-digit',
+    });
+
 //Weight
-const getSingleWeight = async (req, res) => {
+const getLatestWeight = async (req, res) => {
     try {
+
         const user = await User.findOne({login: req.user}, {weightHistory: 1});
-        const weightEntry = user.weightHistory.find(obj => obj._id.equals(req.body.id));
+        const weightEntry = user.weightHistory[user.weightHistory.length - 1];
         if (!weightEntry) return res.sendStatus(204) //no content
         res.json(weightEntry);
     } catch (e) {
@@ -79,7 +87,7 @@ const getAll = async (req, res) => {
     const {limit,skip} = req.params;
     try {
         const user = await User.findOne({login: req.query.user}, {weightHistory: 1});
-        res.json(pagination(user.weightHistory, limit, skip));
+        res.json({data: pagination(user.weightHistory.reverse(), limit, skip), count: user.weightHistory.length});
     } catch (e) {
         res.status(500).json({message: e.message});
     }
@@ -136,20 +144,34 @@ const updateInfo = async (req, res) => {
         user.gender = gender ? gender.trim() : user.gender;
         user.age = age ? age : user.age;
         user.height = height ? height : height;
+        //if weight added in the same day, delete rest dates from the same day
+        const currentDay = dateYearFormatter(new Date());
+        const differentDayEntries = user.weightHistory.filter(entry => {
+            return !(currentDay === dateYearFormatter(entry.date))
+
+        })
+
+
         if(weight) {
-            user.weightHistory = [...user.weightHistory, {weight}];
+            user.weightHistory = [...differentDayEntries, {weight}];
         } else {
             user.weightHistory = [...user.weightHistory];
         }
         const weightGoal = user.goals.find(obj => ((obj.category.includes('weight')) && !obj.finished));
+        console.log(weightGoal)
         if (weightGoal?.category === 'weightUp' && weightGoal) {
             if (weight >= weightGoal.endValue) weightGoal.finished = true;
-            weightGoal.currentValue = weight > weightGoal.currentValue ? weight : weightGoal.currentValue;
+            weightGoal.currentValue = weight;
+
+            // weightGoal.currentValue = weight > weightGoal.currentValue ? weight : weightGoal.currentValue;
         }
         if (weightGoal?.category === 'weightDown' && weightGoal) {
             if (weight <= weightGoal.endValue) weightGoal.finished = true;
-            weightGoal.currentValue = weight < weightGoal.currentValue ? weight : weightGoal.currentValue;
+            weightGoal.currentValue = weight;
+
+            // weightGoal.currentValue = weight < weightGoal.currentValue ? weight : weightGoal.currentValue;
         }
+        console.log(user.weightHistory)
         const result = await user.save();
         res.json(user);
     } catch (e) {
@@ -191,7 +213,7 @@ const changeAuth = async (req, res) => {
 
 
 module.exports = {
-    getSingleWeight: [verifyId, getSingleWeight],
+    getSingleWeight: getLatestWeight,
     updateWeight: [verifyId, updateWeight],
     removeWeight,
     // removeWeight: [verifyId, removeWeight],

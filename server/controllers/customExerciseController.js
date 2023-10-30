@@ -37,11 +37,11 @@ const create = async (req, res) => {
         return res.status(400).json({message: 'Required parameters are missing'});
     }
     //check if url is png,jpg, jpeg or gif file
-    if(!new RegExp(/.(png|jpe?g|gif)$/i).test(url)) {
-        return res.status(400).json({message: "URL should contain image in .png | .jpg | .jpeg | .gif format"})
-    }
+    // if(!new RegExp(/.(png|jpe?g|gif)$/i).test(url)) {
+    //     return res.status(400).json({message: "URL should contain image in .png | .jpg | .jpeg | .gif format"})
+    // }
 
-    if(!(activeMuscles instanceof Array)) return res.status(400).json({message: "'active' must be an array"})
+    if(!(activeMuscles instanceof Array)) return res.status(400).json({message: "'activeMuscles' must be an array"})
     try {
         const user = await User.findOne({login: req.user}, {customExercises: 1});
         //TODO sprawdzic czy znajduja się w liscie miesni (enum?)
@@ -102,7 +102,7 @@ const remove = async (req, res) => {
     try {
         const user = await User.findOne({login: req.user});
         const exercise = user.customExercises.find(obj => {
-            return  obj._id.equals(req.body.id);
+            return  obj._id.equals(req.query.id);
         });
         if (!exercise) {
             return res.sendStatus(204); //no content
@@ -115,4 +115,4 @@ const remove = async (req, res) => {
     }
 }
 
-module.exports = {getAll, getSingle: [verifyId,getSingle], create, update: [verifyId, update], remove: [verifyId, remove]};
+module.exports = {getAll, getSingle: [verifyId,getSingle], create, update: [verifyId, update], remove};

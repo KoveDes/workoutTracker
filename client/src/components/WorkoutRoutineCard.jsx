@@ -22,7 +22,6 @@ export const WorkoutRoutineCard = ({workoutRoutine}) => {
                     }}
                 >
                     <Avatar
-                       // {/*src={company.logo}*/}
                         src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Hand%20gestures/Flexed%20Biceps%20Light%20Skin%20Tone.png"
                         variant="square"
                     />

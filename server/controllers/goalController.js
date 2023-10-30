@@ -8,7 +8,7 @@ const params = Object.keys(bodyParamsSchema.obj);
 
 
 const getGoals = async (req, res) => {
-    const {current} = req.body;
+    const {current} = req.query;
     const {limit, skip} = req.params;
     try {
         const user = await User.findOne({login: req.user}, {goals: 1});
@@ -16,7 +16,7 @@ const getGoals = async (req, res) => {
         const result = pagination(user.goals, limit, skip)
         if (current === 1) return res.json(pagination(user.goals.filter(obj => !obj.finished),limit,skip ))
         if (current === 0) return res.json(pagination(user.goals.filter(obj => obj.finished),limit,skip ));
-        res.json({result});
+        res.json(result);
     } catch (e) {
         res.status(500).json({message: e.message});
     }
@@ -31,7 +31,7 @@ const getGoal = async (req, res) => {
         res.status(500).json({message: e.message});
     }
 };
-//max 3 goals
+//max 4 goals
 const createGoal = async (req, res) => {
     const {category, exercise, bodyParameter, currentValue, endValue} = req.body;
     if (!req?.body?.category || !req?.body?.endValue || currentValue === undefined) {
@@ -47,7 +47,7 @@ const createGoal = async (req, res) => {
     }
     if (category === 'weightDown' && endValue > currentValue)
         return res.status(400).json({message: "Goal values are invalid"});
-    if (category !== 'weightDown' && endValue < currentValue)
+    if (category === 'weighUp' && endValue < currentValue)
         return res.status(400).json({message: "Goal values are invalid"});
 
 
@@ -118,8 +118,8 @@ const updateGoal = async (req, res) => {
 };
 const removeGoal = async (req, res) => {
     try {
-        const user = await User.findOne({login: req.user}, {goals: 1});
-        const goal = user.goals.find(obj => obj._id.equals(req.body.id));
+        const user = await User.findOne({login: req.query.user}, {goals: 1});
+        const goal = user.goals.find(obj => obj._id.equals(req.query.id));
         if (!goal) return res.sendStatus(204) //no content
         user.goals = user.goals.filter(obj => !obj.equals(goal));
         await user.save();
@@ -136,5 +136,5 @@ module.exports = {
     getGoal: [verifyId, getGoal],
     createGoal,
     updateGoal: [verifyId, updateGoal],
-    removeGoal: [verifyId, removeGoal]
+    removeGoal,
 }

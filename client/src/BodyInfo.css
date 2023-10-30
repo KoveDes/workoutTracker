@@ -21,21 +21,25 @@
     font-size: 1rem;
 }
 .links a {
-    /*background-color: #555;*/
-    margin: 5px;
-    border: 1px solid #282828;
-    border-bottom-width: 5px;
-    border-left-width:3px;
+    /*background-color: #ff8c00;*/
+    margin: 5px 0;
+    font-weight: 500;
+    color: darkorange;
+    border: 2px dashed darkorange;
+    /*border: 2px solid #282828;*/
+    /*border-bottom-width: 5px;*/
+    /*border-left-width:3px;*/
     border-radius: 25px;
-    width: 90px;
+    /*width: 130px;*/
     text-align: center;
 }
  .links .link-active {
     padding-top: 0;
     padding-bottom: 0;
-     background-color: #e8ff0b;
+     border-color: orangered;
+     background-color: orangered;
      color: #282828;
-    
+
 }
  .bodyImage {
      width: 70%;

@@ -2,6 +2,14 @@ const User = require('../models/User');
 const {bodyParamsSchema} = require("../models/BodyParams");
 const mongoose = require("mongoose");
 const verifyId = require("../middlewares/verifyID");
+const pagination = require("../utils/transformToPagination");
+
+const dateYearFormatter = (date) =>
+    new Date(date).toLocaleDateString('en-GB', {
+        month: '2-digit',
+        day: '2-digit',
+        year: '2-digit',
+    });
 
 
 const getLatestAll = async (req, res) => {
@@ -50,13 +58,16 @@ const paramExists = (req, res, next) => {
 
 
 const getMeasurement = async (req, res) => {
-    const {param} = req.params;
+    const {param, limit, skip} = req.params;
     try {
         const user = await User.findOne({login: req.query.user},
-            {[`bodyParameters.${param}`]: 1, _id: 0,}
+            {[`bodyParameters.${param}`]: 1,}
         );
 
-        res.json(user.bodyParameters[param]);
+        res.json({
+            data: pagination(user.bodyParameters[param].reverse()),
+            count: user.bodyParameters[param]?.length
+        });
     } catch (e) {
         res.status(500).json({message: e.message});
     }
@@ -71,9 +82,18 @@ const addMeasurement = async (req, res) => {
     try {
         let goalMessage;
         const user = await User.findOne({login: req.user});
-        console.log(user.bodyParameters);
-        user.bodyParameters[param] = [...user.bodyParameters[param], {size}];
+        console.log(user.bodyParameters[param]);
         //if user edited only the last
+
+        //delete entries from the same day
+        const currentDay = dateYearFormatter(new Date());
+        const differentDayEntries = user.bodyParameters[param].filter(entry => {
+            return !(currentDay === dateYearFormatter(entry.date));
+
+        })
+        user.bodyParameters[param] = [...differentDayEntries, {size}];
+
+
         const measurementGoal = user.goals.find(obj => (obj.bodyParameter === String(param) && !obj.finished));
         if (measurementGoal) {
             if (size >= measurementGoal.currentValue) measurementGoal.currentValue = size;
