@@ -52,9 +52,10 @@ function BodyPart(props) {
             height: '100%',
             boxShadow: "none",
             backgroundColor: 'floralwhite',
-            display: 'flex',
-            flexDirection: 'column',
-            position: 'relative'
+            // display: 'flex',
+            // flexDirection: 'column',
+            position: 'relative',
+
             // overflowY: 'scroll',
         }}
         >
@@ -92,7 +93,7 @@ function BodyPart(props) {
                     apiPath={`/body/${bodyPart}`}
                     setChange={setChange}
                     data={currentSize}
-                    buttonText='weight'
+                    buttonText='size'
                     adornment='cm'
                     setRefresh={setRefresh}
                 />
@@ -113,7 +114,8 @@ function BodyPart(props) {
                     color: 'white',
                     "&:hover": {
                         backgroundColor: 'orangered',
-                    }
+                    },
+
                 }}
                     onClick={() => setOpenDialog(true)}
                 >

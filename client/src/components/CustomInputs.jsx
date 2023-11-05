@@ -8,15 +8,17 @@ import {
     InputAdornment,
     Radio,
     RadioGroup,
-    Slider, Switch,
-    TextField, Typography
+    Slider,
+    Switch,
+    TextField,
+    Typography
 } from "@mui/material";
 import {Visibility, VisibilityOff} from "@mui/icons-material";
 import Stack from "@mui/material/Stack";
 import Checkbox from "@mui/material/Checkbox";
-import {formatSeconds} from "../utils/formatters.js";
 
-export  function CustomSwitch({label, ...props}) {
+
+export function CustomSwitch({label, ...props}) {
     const [field, meta, helpers] = useField(props);
     const id = props.name;
     return (
@@ -31,29 +33,38 @@ export  function CustomSwitch({label, ...props}) {
 }
 
 
-export function CustomSlider({label,formater,displayLabel='on', min=15, max=300,step=15, ...props}) {
+export function CustomSlider({
+                                 label,
+                                 formater,
+                                 position = 'center',
+                                 displayLabel = 'on',
+                                 min = 15,
+                                 max = 300,
+                                 step = 15,
+                                 ...props
+                             }) {
     const [field, meta, helpers] = useField(props);
     const id = props.name;
     return (
-        <Grid container direction='column' alignItems='center'>
+        <Grid container direction='column' alignItems={position}>
             <label style={{textAlign: 'center'}} htmlFor={field.name}>{label}
                 <Typography component='p'
-                    sx={{
-                        textAlign: 'center'
-                        // backgroundColor: 'forestgreen',
-                        // color: 'white',
-                        // width: 'max-content',
-                        // p: ' 2px 15px',
-                        // borderRadius: '15px',
-                        // m: '10px 0'
-                    }}
-                    fontWeight='bold'>{formater(field?.value || 0)}</Typography></label>
+                            sx={{
+                                textAlign: position,
+                                // backgroundColor: 'forestgreen',
+                                // color: 'white',
+                                // p: ' 2px 15px',
+                                // borderRadius: '15px',
+                                // m: '10px 0'
+                            }}
+                            fontWeight='bold'>{formater(field?.value || 0)}</Typography></label>
             <Slider
                 sx={{
-                    '.MuiSlider-valueLabel.MuiSlider-valueLabelOpen' : {
+                    width: '75%',
+                    '.MuiSlider-valueLabel.MuiSlider-valueLabelOpen': {
                         borderRadius: '15px',
                     },
-                    ".MuiSlider-valueLabel:before" : {
+                    ".MuiSlider-valueLabel:before": {
                         width: 0,
                     }
                 }}
@@ -73,20 +84,20 @@ export function CustomSlider({label,formater,displayLabel='on', min=15, max=300,
     );
 }
 
-export default function CustomInput({label, adornment, ...props}) {
+export default function CustomInput({width, label, adornment, ...props}) {
     const [field, meta, helpers] = useField(props);
     const id = props.name;
 
     return (
         <>
-            <label htmlFor={id}>{label}</label>
+            {label ? <label htmlFor={id}>{label}</label> : null}
             <TextField
                 size='small' fullWidth
                 error={!!(meta.touched && meta.error)}
                 InputProps={{
                     endAdornment: adornment ? <InputAdornment position="start">{adornment}</InputAdornment> : null,
                 }}
-
+                sx={{width: width || '100%'}}
                 {...field} {...props} id={id} type={props.type || "text"}
                 // className={meta.touched && meta.error ? 'input-error' : ''} //style MUI classes instead
             />
@@ -104,6 +115,7 @@ export function CustomInput2({label, adornment = '', ...props}) {
     return (
         <Box height='40px'>
             <TextField
+
                 size='small' fullWidth
                 error={!!(meta.touched && meta.error)}
                 InputProps={{
@@ -147,19 +159,20 @@ export function CustomRadioList({label, exerciseValue, handleCheckboxChange, ite
             maxHeight: '25vh',
             overflowY: 'scroll',
             borderRadius: '20px',
-            boxShadow: "rgba(0, 0, 0, 0.08) 0px 5px 22px, rgba(0, 0, 0, 0.03) 0px 0px 0px 0.5px",
+            border: '2px solid #dfe7ff',
+            // boxShadow: "rgba(0, 0, 0, 0.08) 0px 5px 22px, rgba(0, 0, 0, 0.03) 0px 0px 0px 0.5px",
             '::-webkit-scrollbar': {
-                backgroundColor: '#e3e3e3',
+                // backgroundColor: '#e3e3e3',
                 borderRadius: '0  20px 20px 0',
             },
             '::-webkit-scrollbar-thumb': {
-                backgroundColor: '#3078a3',
+                backgroundColor: '#dfe7ff',
                 width: '50%',
                 borderRadius: '20px',
             }
         }}>
             <RadioGroup
-                sx={{backgroundColor: '#e3e3e3'}}
+                sx={{backgroundColor: 'transparent'}}
 
 
             >
@@ -179,46 +192,38 @@ export function CustomRadioList({label, exerciseValue, handleCheckboxChange, ite
     </>)
 }
 
-export function CustomCheckboxList({label, exerciseValue, handleCheckboxChange, itemArray, param, ...props}) {
+export function CustomCheckboxList(
+    {
+        label,
+        exerciseValue,
+        wrap = true,
+        handleCheckboxChange,
+        itemArray,
+        param,
+        ...props
+    }) {
     const [field, meta] = useField(props);
     const id = props.name;
     return (<>
         <label htmlFor={id}>{label}</label>
-        {/*<Stack spacing={1} sx={{*/}
-        {/*    maxHeight: '25vh',*/}
-        {/*    overflowY: 'scroll',*/}
-        {/*    borderRadius: '20px',*/}
-        {/*    boxShadow: "rgba(0, 0, 0, 0.08) 0px 5px 22px, rgba(0, 0, 0, 0.03) 0px 0px 0px 0.5px",*/}
-        {/*    '::-webkit-scrollbar': {*/}
-        {/*        backgroundColor: '#e3e3e3',*/}
-        {/*        borderRadius: '0  20px 20px 0',*/}
-        {/*    },*/}
-        {/*    '::-webkit-scrollbar-thumb': {*/}
-        {/*        backgroundColor: '#3078a3',*/}
-        {/*        width: '50%',*/}
-        {/*        borderRadius: '20px',*/}
-        {/*    }*/}
-        {/*}}>*/}
-        {/*<List*/}
 
-        {/*    sx={{*/}
-        {/*        backgroundColor: '#a3e3e3',*/}
-        {/*        overflowY: 'scroll',*/}
-        {/*        width: '50%',*/}
-        {/*        p: 0,*/}
-        {/*        m: 0,*/}
-        {/*    }}*/}
-        {/*>*/}
-        <Grid container wrap='nowrap' sx={{
-            width: '100%',
-            overflowX: 'scroll',
+        <Grid container wrap={wrap ? 'wrap' : 'nowrap'} sx={{
+            width: wrap ? 'auto' : '100%',
+            overflowX: wrap ? 'none' : 'scroll',
+            // direction:'column',
+            maxHeight: wrap ? '25vh' : 'auto',
+            overflowY: wrap ? 'scroll' : 'none',
             gap: '15px',
+            borderRadius: '20px',
+            border: '2px solid #dfe7ff',
+            // boxShadow: "rgba(0, 0, 0, 0.08) 0px 5px 22px, rgba(0, 0, 0, 0.03) 0px 0px 0px 0.5px",
             '::-webkit-scrollbar': {
-                backgroundColor: '#e9e9e9',
-                borderRadius: '20px'
+                // backgroundColor: '#e3e3e3',
+                borderRadius: '0  20px 20px 0',
             },
             '::-webkit-scrollbar-thumb': {
-                backgroundColor: '#8eaac5',
+                backgroundColor: '#dfe7ff',
+                width: '50%',
                 borderRadius: '20px',
             }
 
@@ -248,7 +253,7 @@ export function CustomCheckbox({label, showError = false, isChecked, ...props}) 
     const id = props.value;
     return (
         <>
-            <Grid container wrap='nowrap' alignItems='center' justifyContent='center'>
+            <Grid container wrap='nowrap' alignItems='center' justifyContent='flex-start'>
 
                 <Checkbox
                     checked={field.checked}

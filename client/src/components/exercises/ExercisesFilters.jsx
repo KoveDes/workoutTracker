@@ -131,6 +131,7 @@ export default memo(function ExercisesFilters({setExercisesFilters}) {
                                 {/*/>*/}
                             </InputAdornment>
                         }
+                        sx={{backgroundColor: '#dfe7ff'}}
                     />
                     <RenderRadioInputList label={'Targeted muscles'} handleCheckboxChange={handleCheckboxChange} itemArray={TARGET_MUSCLES} param='target' s={s} />
                     <RenderRadioInputList label={'Equipment'} handleCheckboxChange={handleCheckboxChange} itemArray={EQUIPMENT_OPTIONS} param='equipment' s={s}/>
@@ -144,11 +145,23 @@ export default memo(function ExercisesFilters({setExercisesFilters}) {
 export function RenderRadioInputList({label, handleCheckboxChange, itemArray, param, s}) {
    return( <>
         <Typography variant="subtitle2">{label}</Typography>
-        <Stack spacing={1} sx={{
-            maxHeight: '25vh',
-            overflowY: 'scroll',
-        }}>
-            <RadioGroup sx={{backgroundColor: '#e3e3e3'}}
+       <Stack spacing={1} sx={{
+           maxHeight: '25vh',
+           overflowY: 'scroll',
+           borderRadius: '20px',
+           border: '2px solid #dfe7ff',
+           // boxShadow: "rgba(0, 0, 0, 0.08) 0px 5px 22px, rgba(0, 0, 0, 0.03) 0px 0px 0px 0.5px",
+           '::-webkit-scrollbar': {
+               // backgroundColor: '#e3e3e3',
+               borderRadius: '0  20px 20px 0',
+           },
+           '::-webkit-scrollbar-thumb': {
+               backgroundColor: '#dfe7ff',
+               width: '50%',
+               borderRadius: '20px',
+           }
+       }}>
+            <RadioGroup sx={{backgroundColor: 'transparent'}}
             value={s[param]}
             >
                 {itemArray.map((item) => (

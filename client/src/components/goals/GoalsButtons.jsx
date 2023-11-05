@@ -15,20 +15,24 @@ function GoalsButtons({currentGoals, setChange}) {
     return (
         <Box>
             <CustomDialog
+                showButtons={true}
                 width='xs'
                 open={weightOpen} handleClose={() => setWeightOpen(false)} label={'Add goal'} formId={'weightGoalForm'}>
                 <WeightGoalForm setChange={setChange}/>
             </CustomDialog>
             <CustomDialog
+                showButtons={true}
                 width='xs'
                 open={loadOpen} handleClose={() => setLoadOpen(false)} label={'Add goal'} formId={'loadGoalForm'}>
                 <LoadGoalForm setChange={setChange}/>
             </CustomDialog>
             <CustomDialog
+                showButtons={true}
                 open={countOpen} handleClose={() => setCountOpen(false)} label={'Add goal'} formId={'countGoalForm'}>
                 <CountGoalForm setChange={setChange}/>
             </CustomDialog>
             <CustomDialog
+                showButtons={true}
                 width='xs'
                 open={measurementOpen} handleClose={() => setMeasurementOpen(false)} label={'Add goal'}
                 formId={'measurementGoalForm'}>

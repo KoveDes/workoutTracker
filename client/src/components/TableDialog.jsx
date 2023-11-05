@@ -6,18 +6,21 @@ import DialogContent from "@mui/material/DialogContent";
 import useAxiosPrivate from "../hooks/useAxiosPrivate.js";
 import useAuth from "../hooks/useAuth.js";
 import EntryItem from "./EntryItem.jsx";
+import GoalFinished from "./GoalFinished.jsx";
 
 function TableDialog({open, handleClose, label, apiPath, payloadParam, setChange, setRefresh}) {
     const [data, setData] = useState([]);
     const [total, setTotal] = useState(1);
     const [reload, setReload] = useState(false);
-    const [page, setPage] = React.useState(1);
+    const [page, setPage] = useState(1);
+    const [showGoal, setShowGoal] = useState(null);
+
     const axiosPrivate = useAxiosPrivate();
     const {auth} = useAuth();
     useEffect(() => {
         let ignore = false;
         const controller = new AbortController();
-        const getWeightHistory = async () => {
+        const getData = async () => {
             try {
                 const response = await axiosPrivate.get(`${apiPath}/5/${5 * page - 5}?user=${auth.user}`, {
                     signal: controller.signal
@@ -30,7 +33,7 @@ function TableDialog({open, handleClose, label, apiPath, payloadParam, setChange
                 console.log(e);
             }
         }
-        getWeightHistory();
+        getData();
         return () => {
             ignore = true;
             controller.abort('useEffect');
@@ -61,10 +64,11 @@ function TableDialog({open, handleClose, label, apiPath, payloadParam, setChange
                                     data={row}
                                     setChange={setChange}
                                     payloadParam={payloadParam}
-                                    apiPath={apiPath}
+                                    apiPath={payloadParam === 'weight' ? '/user' : apiPath}
                                     dataValue={row[payloadParam]}
                                     setReload={setReload}
                                     setRefresh={setRefresh}
+                                    setShowGoal={setShowGoal}
                                 />
                             ))}
                         </TableBody>
@@ -79,6 +83,12 @@ function TableDialog({open, handleClose, label, apiPath, payloadParam, setChange
                     page={page}
                     count={total}
                 />
+                    {showGoal && (
+                        <GoalFinished
+                            message={showGoal?.message}
+                            goal={showGoal.goal}
+                        />
+                    )}
                 </Grid>
             </DialogContent>
 

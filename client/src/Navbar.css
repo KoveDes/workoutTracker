@@ -23,12 +23,14 @@ nav div {
     /*display: block;*/
     height: 100%;
 }
-
+nav a {
+    margin-left: 10px;
+}
 a {
     text-decoration: inherit;
     color: #383838;
     font-weight: lighter;
-    margin-left: 10px;
+    /*margin-left: 10px;*/
     padding: 0 15px;
     position: relative;
     /*background-color: red;*/

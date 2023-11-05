@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {WorkoutRoutineCard} from "./WorkoutRoutineCard";
 import {Box, Container, Grid, Stack, Typography} from "@mui/material";
 import Button from "@mui/material/Button";
@@ -7,16 +7,13 @@ import useDropdownMenu from "../hooks/useDropdownMenu.js";
 import WorkoutPlanSettingsPopover from "./WorkoutPlanSettingsPopover.jsx";
 import CustomDialog from "./CustomDialog.jsx";
 import WorkoutRoutineForm from "../forms/WorkoutRoutineForm.jsx";
+import useAxiosPrivate from "../hooks/useAxiosPrivate.js";
+import useAuth from "../hooks/useAuth.js";
+import {Link} from "react-router-dom";
 
 function WorkoutPlanItem({workoutPlan, style,setChange}) {
     const [reload, setReload] = useState(false);
-    const workoutRoutines = [
-        {name: 'Push', note: 'elo', performed: 120},
-        {name: 'Push', note: 'elo', performed: 120},
-        {name: 'Push', note: 'elo', performed: 120},
-        {name: 'Push', note: 'elo', performed: 120},
 
-    ];
     const dropdownMenu = useDropdownMenu();
     const newRoutineMenu = useDropdownMenu();
     return (
@@ -30,8 +27,6 @@ function WorkoutPlanItem({workoutPlan, style,setChange}) {
              }}
         >
             <Container maxWidth="xl">
-                {JSON.stringify(dropdownMenu.open)}
-                {JSON.stringify(newRoutineMenu.open)}
                 <Stack>
                     <Stack
                         direction="row"
@@ -71,14 +66,14 @@ function WorkoutPlanItem({workoutPlan, style,setChange}) {
                                     Add Routine
                                 </Button>
                                 <CustomDialog
-                                    width='lg'
+                                    width='auto'
                                     open={newRoutineMenu.open}
                                     handleClose={newRoutineMenu.handleClose}
                                     label={'Workout routine'}
                                     formId='workoutRoutineForm'
                                     showButtons={false}
                                 >
-                                    <WorkoutRoutineForm setChange={setReload}/>
+                                    <WorkoutRoutineForm setChange={setChange} planId={workoutPlan._id}/>
                                 </CustomDialog>
                             </Stack>
                         </Stack>
@@ -111,7 +106,7 @@ function WorkoutPlanItem({workoutPlan, style,setChange}) {
                         justifyContent='center'
                         spacing={3}
                     >
-                        {workoutRoutines.length ? workoutRoutines.map((workoutRoutine, index) => (
+                        {workoutPlan?.workoutRoutine.length > 0 ? workoutPlan?.workoutRoutine.map((workoutRoutine, index) => (
                             <Grid
                                 xs={12}
                                 md={6}
@@ -119,7 +114,7 @@ function WorkoutPlanItem({workoutPlan, style,setChange}) {
                                 key={workoutRoutine._id ? workoutRoutine._id : index}
                                 item
                             >
-                                <WorkoutRoutineCard workoutRoutine={workoutRoutine}/>
+                                <WorkoutRoutineCard planId={workoutPlan?._id} setChange={setChange} workoutRoutine={workoutRoutine}/>
                             </Grid>
                         )) : (
                             <Grid

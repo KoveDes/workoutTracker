@@ -39,11 +39,7 @@ function WorkoutPlanSettingsPopover({anchorEl, open, onClose, setChange, id={id}
                 <MenuList
                     disablePadding
                     dense
-                    sx={{
-                        p: '8px',
-                    //
-                    }}
-                >
+                    sx={{p: '8px'}}>
                     {/*<MenuItem onClick={handleEdit}>*/}
                     {/*    Set as Main*/}
                     {/*</MenuItem>*/}

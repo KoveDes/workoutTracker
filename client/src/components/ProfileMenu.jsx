@@ -5,7 +5,6 @@ import {useNavigate} from "react-router-dom";
 import useDropdownMenu from "../hooks/useDropdownMenu.js";
 
 function ProfileMenu({anchorEl, open, onClose}) {
-    const dropdownMenu = useDropdownMenu();
     const logout = useLogout();
     const navigate = useNavigate();
     const handleSignOut = async () => {
@@ -28,26 +27,6 @@ function ProfileMenu({anchorEl, open, onClose}) {
                 open={open}
                 PaperProps={{sx: {width: 200, boxShadow: "rgba(0, 0, 0, 0.08) 0px 3px 14px", mt: '0'}}}
             >
-                {/*<Box*/}
-                {/*    justifyContent='center'*/}
-                {/*    alignItems='center'*/}
-                {/*    sx={{*/}
-                {/*        py: 1.5,*/}
-                {/*        px: 2,*/}
-                {/*    }}*/}
-                {/*>*/}
-                {/*    <Typography variant="overline" fontFamily='inherit'>*/}
-
-                {/*        Profile*/}
-                {/*    </Typography>*/}
-                {/*    <Typography*/}
-                {/*        color="text.secondary"*/}
-                {/*        variant="body2"*/}
-                {/*    >*/}
-                {/*        {user?.username || user?.login}*/}
-                {/*    </Typography>*/}
-                {/*</Box>*/}
-                {/*<Divider />*/}
                 <MenuList
                     disablePadding
                     dense

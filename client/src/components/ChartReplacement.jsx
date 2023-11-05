@@ -1,7 +1,7 @@
 import React from 'react';
 import {Grid, Typography} from "@mui/material";
 
-function ChartReplacement(props) {
+function ChartReplacement({text='Add more data'}) {
     return (
         <Grid container justifyContent='center' alignItems='center'
               direction='column' sx={{
@@ -13,7 +13,7 @@ function ChartReplacement(props) {
             <img
                 src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Bar%20Chart.png"
                 alt="Bar Chart" width="20%"/>
-            <Typography color='burlywood' fontWeight='500' variant='h5'>Add more data </Typography>
+            <Typography color='burlywood' fontWeight='500' variant='h5'>{text}</Typography>
         </Grid>
     );
 }

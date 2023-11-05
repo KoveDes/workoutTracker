@@ -18,6 +18,9 @@ import PersistLogin from "./components/PersistLogin.jsx";
 import Profile from "./pages/Profile.jsx";
 import WorkoutPlans from "./pages/WorkoutPlans.jsx";
 import Goals from "./pages/Goals.jsx";
+import AddWorkoutRoutine from "./pages/AddWorkoutRoutine.jsx";
+import Workout from "./components/workout/Workout.jsx";
+import WorkoutDetails from "./pages/WorkoutDetails.jsx";
 
 const router = createBrowserRouter(
     createRoutesFromElements(
@@ -36,9 +39,11 @@ const router = createBrowserRouter(
                         <Route path=':bodyPart' element={<BodyPart/>}/>
                     </Route>
                     <Route path='settings' element={<Settings/>}/>
-                    {/*<Route path='exercises' element={<Exercises/>}/>*/}
+                    <Route path='addRoutine' element={<AddWorkoutRoutine/>}/>
                     <Route path='profile' element={<Profile/>}/>
                     <Route path='workoutPlans' element={<WorkoutPlans />} />
+                    <Route path='workout' element={<Workout />} />
+                    <Route path='workout/details' element={<WorkoutDetails />} />
                 </Route>
             </Route>
             <Route path='*' element={<Missing/>}/>

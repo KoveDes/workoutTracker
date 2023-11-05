@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {Box, Container} from "@mui/material";
 import ExercisesFilters from "../components/exercises/ExercisesFilters.jsx";
 import {FiltersProvider} from "../context/filtersProvider.jsx";
@@ -12,18 +12,20 @@ import CustomExerciseForm from "../forms/CustomExerciseForm";
 
 function Exercises({}) {
     const {open, handleClose, handleOpen} = useDropdownMenu();
+    const [change, setChange] = useState(false);
     const {auth} = useAuth();
     return (
         <FiltersProvider>
             <Container sx={{display: 'flex', my: '40px', justifyContent: 'center', alignItems: 'flex-start'}}
                        maxWidth={"xl"}>
                 <Box sx={{
-                    backgroundColor: '#eee',
+                    backgroundColor: 'transparent',
                     width: '25%',
                     mr: '30px',
                     display: 'flex',
                     flexDirection: 'column',
-                    alignItems: 'center'
+                    alignItems: 'center',
+                    border: '2px solid #dfe7ff'
                 }}>
                     <ExercisesFilters/>
                     <CustomDialog
@@ -32,8 +34,11 @@ function Exercises({}) {
                         label={'Add your exercise'}
                         width='lg'
                         formId='customExerciseForm'
+                        showButtons={true}
+
+
                     >
-                        <CustomExerciseForm />
+                        <CustomExerciseForm setChange={setChange} />
                     </CustomDialog>
 
                     {auth?.user ? (<Button
@@ -44,7 +49,7 @@ function Exercises({}) {
                     }}>Add Your Exercise</Button>) : null}
 
                 </Box>
-                <ExercisesList/>
+                <ExercisesList reload={change}/>
             </Container>
         </FiltersProvider>
     );

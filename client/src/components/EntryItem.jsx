@@ -7,8 +7,9 @@ import EditIcon from "@mui/icons-material/Edit.js";
 import DeleteIcon from "@mui/icons-material/Delete.js";
 import ClearIcon from '@mui/icons-material/Clear';
 import DoneIcon from '@mui/icons-material/Done';
+import GoalFinished from "./GoalFinished.jsx";
 
-function EntryItem({data, setChange, setReload, label, payloadParam, setRefresh,apiPath, dataValue}) {
+function EntryItem({data, setChange, setReload, setShowGoal, payloadParam, setRefresh,apiPath, dataValue}) {
     const [editing, setEditing] = useState(false);
     const [inputValue, setInputValue] = useState(dataValue);
     const {auth} = useAuth();
@@ -20,12 +21,17 @@ function EntryItem({data, setChange, setReload, label, payloadParam, setRefresh,
         let ignore = false;
         const controller = new AbortController();
         try {
-            const response = await axiosPrivate.delete(`${apiPath}?id=${data._id}&user=${auth.user}`,
+            const response = await axiosPrivate.delete(`${payloadParam === 'weight' ? '/user/weight' : apiPath}?id=${data._id}&user=${auth.user}`,
                 {signal: controller.signal})
             if (!ignore && response.statusText === 'OK') {
                 setChange(c => !c);
                 setReload(v => !v);
-                setRefresh(c => !c);
+                setRefresh && setRefresh(c => !c);
+            }
+            console.log(response.data)
+            if(response?.data?.goalMessage){
+                console.log('Goal')
+                setShowGoal(response?.data?.goalMessage)
             }
 
         } catch (e) {
@@ -40,18 +46,22 @@ function EntryItem({data, setChange, setReload, label, payloadParam, setRefresh,
         let ignore = false;
         const controller = new AbortController();
         try {
-            const response = await axiosPrivate.patch(apiPath,
+            const response = await axiosPrivate.patch(payloadParam === 'weight' ? '/user/weight' : apiPath,
                 JSON.stringify({
                     user: auth.user,
                     id: data._id,
                     [payloadParam]: Number.parseInt(inputValue),
                 }),
                 {signal: controller.signal})
+            if(response?.data?.goalMessage){
+                console.log('Goal')
+                setShowGoal(response?.data?.goalMessage)
+            }
             if (!ignore) {
                 setEditing(false);
                 setChange(c => !c);
                 setReload(c => !c);
-                setRefresh(c => !c);
+                setRefresh && setRefresh(c => !c);
                 console.log(response.data)
             }
 
@@ -116,6 +126,7 @@ function EntryItem({data, setChange, setReload, label, payloadParam, setRefresh,
                     )}
             </TableCell>
         </TableRow>
+
     );
 }
 

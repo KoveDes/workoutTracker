@@ -1,329 +1,227 @@
-import React from 'react';
+import React, {useState} from 'react';
 import useAxiosPrivate from "../hooks/useAxiosPrivate.js";
 import {FieldArray} from "formik";
 import {FormikStep, FormikStepper, FormikStepWithValues} from "../pages/Register";
-import {Accordion, AccordionDetails, AccordionSummary, Box, Grid, IconButton, Typography} from "@mui/material";
-import CustomInput, {CustomCheckboxList, CustomSlider, CustomSwitch} from "../components/CustomInputs.jsx";
+import {Alert, Box, Grid, Snackbar} from "@mui/material";
 import routinePlanSchema from "../schemas/routinePlanSchema.js";
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import {formatSeconds} from "../utils/formatters";
+import useDropdownMenu from "../hooks/useDropdownMenu.js";
+import useAuth from "../hooks/useAuth.js";
+import DroppableBox from "../components/dnd/DroppableBox.jsx";
+import ExercisesList from "../components/exercises/ExercisesList.jsx";
+import {FiltersProvider} from "../context/filtersProvider.jsx";
+import {DndContext} from "@dnd-kit/core";
+import DetailsForm from "./workoutRoutine/detailsForm.jsx";
+import ExerciseDetails from "./workoutRoutine/exerciseDetails.jsx";
+import ExercisesFilters from "../components/exercises/ExercisesFilters.jsx";
+import CustomDialog from "../components/CustomDialog.jsx";
 import Button from "@mui/material/Button";
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import exercisesSchema from "../schemas/exercisesSchema.js";
+import exercisesDetailsSchema from "../schemas/exercisesDetailsSchema.js";
 
-const exercises = [
-    {
+const dayNameToIndex = {
+    'Sunday': 0,
+    'Monday': 1,
+    'Tuesday': 2,
+    'Wednesday': 3,
+    'Thursday': 4,
+    'Friday': 5,
+    'Saturday': 6
+};
 
-        bodyPart: "lower legs",
-        equipment: "body weight",
-        gifUrl: "data\\images\\fOuATSOLSn01mL.gif",
-        id: "1368",
-        name: "ankle circles",
-        target: "calves",
-        secondaryMuscles: ["ankle stabilizers"],
-
-    },
-    {
-
-        bodyPart: "back",
-        equipment: "body weight",
-        gifUrl: "data\\images\\UA8KVthSeQwBug.gif",
-        id: "3293",
-        name: "archer pull up",
-        target: "lats",
-        secondaryMuscles: ["biceps", "forearms"],
-
-
-    },
-    {
-        bodyPart: "chest",
-        equipment: "body weight",
-        gifUrl: "data\\images\\TeG6xgglLFWqt9.gif",
-        id: "3294",
-        name: "archer push up",
-        target: "pectorals",
-        secondaryMuscles: ["triceps", "shoulders", "core"],
-
-    }
-];
-
-const testExercises = [{
-    exercise: {name: 'Pull up'},
-    name: "Pull up",
-    restTime: 70,
-    sets: [{
-        reps: 10,
-        duration: 0,
-        showDuration: false,
-    },]
-
-},
-    {
-        exercise: {name: 'Pull Down'},
-        name: "Pull Down",
-        restTime: 0,
-        sets: [{
-            reps: 20,
-            duration: 20,
-            showDuration: false,
-        }]
-
-    }
-]
-
-function WorkoutRoutineForm({setError, setSubmitting, success, setSuccess, setChange, routine}) {
+function WorkoutRoutineForm({setError,planId, setIsSubmitting, success, setSuccess, setChange, routine}) {
     const axiosPrivate = useAxiosPrivate();
-    // const handleSubmit = async (values, actions) => {
-    //     setError('');
-    //     setSuccess(false);
-    //     setSubmitting(true);
-    //     let message = '';
-    //     try {
-    //         if (workoutPlan?.name) {
-    //             const response = await axiosPrivate.patch('/workoutPlan', {
-    //                 name: values.name,
-    //                 description: values.description,
-    {/*                main: values.main,*/
-    }
-    {/*                id: workoutPlan._id*/
-    }
-    //             })
-    //             message = 'Workout Plan updated';
-    //         } else {
-    //             const response = await axiosPrivate.post('/workoutPlan', {
-    //                 name: values.name,
-    //                 description: values.description,
-    //                 main: values.main,
-    //             })
-    //             message = 'New workout Plan created!';
-    //         }
-    {/*        setSuccess(true);*/
-    }
-    {/*        setChange(v => !v);*/
-    }
-    //         setSuccess(message);
-    //
-    //     } catch (e) {
-    //         setError(e.message);
-    //         console.log(e)
-    //     } finally {
-    //         setSubmitting(false);
-    //
-    //     }
-    // }
-    const onSubmit = async (values) => alert(JSON.stringify(values))
+    const {open, handleClose, handleOpen} = useDropdownMenu();
+    const {auth} = useAuth();
+    const onSubmit = async (values, actions) => {
+        setError('');
+        setSuccess(false);
+        setIsSubmitting(true);
+        let message = '';
+        const changedDays = values.days ? values.days.map(day => {
+            return dayNameToIndex[day];
+        }) : null
+        try {
+            if (routine?.name) {
+                const response = await axiosPrivate.patch('/workoutPlan/routine', {
+                    name: values.name,
+                    note: values.note,
+                    icon: values.icon,
+                    days: values.days.length > 0 ? changedDays : null,
+                    exercises: values.exercises,
+                    performed: 0,
+                    id: planId,
+                    routineId: routine._id,
+                })
+                console.log('Edytujemy!')
+                message = 'Workout Plan updated';
+            } else {
+                const response = await axiosPrivate.post('/workoutPlan/routine', {
+                    name: values.name,
+                    note: values.note,
+                    icon: values.icon,
+                    days: values.days.length > 0 ? changedDays : null,
+                    exercises: values.exercises,
+                    performed: 0,
+                    id: planId
+                })
+                message = 'New workout Plan created!';
+            }
+            setSuccess(true);
+            setChange(v => !v);
+            setSuccess(message);
 
+        } catch (e) {
+            setError(e.response.data.message);
+            console.log(e)
+        } finally {
+            setIsSubmitting(false);
+
+        }
+    }
+    // const onSubmit = async (values) => alert(JSON.stringify(values))
+    const [selected, setSelected] = useState([]);
+    const [message, setMessage] = useState('');
+    const filters = useDropdownMenu();
+
+    function handleDragEvent(event, push) {
+        const droppedData = event.active.data.current;
+        const collided = event.over.id === 'selectedExercises';
+        if (selected.find(ex => ex.name === droppedData.name)) return setMessage('You have selected this exercise already')
+        if (selected.length >= 12) return setMessage('Max 12 exercises can be selected')
+        if (event.over && !selected.find(ex => ex.name === droppedData.name) && collided) {
+            setSelected(v => [...v, event.active.data.current]);
+            const {instructions, ...changedExercise} = event.active.data.current;
+            push({
+                exercise: changedExercise,
+                restTime: 0,
+                sets: [{
+                    reps: 0,
+                    duration: 0,
+                    showDuration: false,
+                }]
+            })
+
+        }
+    }
+
+    const formattedDays = routine?.days && routine?.days.map(day => {
+        return ['Sunday', "Monday",'Tuesday', "Wednesday", 'Thursday', 'Friday', 'Saturday'][day];
+    })
 
     return (
-        <FormikStepper
-            exercises={true}
-            onSubmit={onSubmit}
-            submitText='Create'
-            submittingText='Creating routine...'
-            enableReinitialize={true}
-            initialValues={{
-                name: routine?.name || '',
-                note: routine?.note || '',
-                icon: routine?.icon || '',
-                days: routine?.days || [],
-                exercises: testExercises || [{
-                    exercise: {},
-                    restTime: 0,
-                    sets: [{
-                        reps: 0,
-                        duration: 0,
-                        showDuration: false,
-                    }]
-                }
-                ],
-            }}
-            // validationSchema={routinePlanSchema}
-        >
-            <FormikStep
-                label='General'
-                validationSchema={routinePlanSchema}
+        <>
+            {message ? (<Snackbar
+                    open={!!message}
+                    severity='true'
+                    autoHideDuration={2000}
+                    anchorOrigin={{vertical: 'top', horizontal: 'center'}}
+                    onClose={() => setMessage('')}
+                >
+                    <Alert severity="error" sx={{width: '100%'}}>
+                        {message}
+                    </Alert>
+                </Snackbar>
+            ) : null}
+            {/*{JSON.stringify(routine, null, 2)}*/}
+            <FormikStepper
+                exercises={true}
+                onSubmit={onSubmit}
+                submitText={routine?.name ?  'Edit': 'Create'}
+                submittingText={routine?.name ? 'Editing routine...' : 'Creating routine...'}
+                enableReinitialize={true}
+                initialValues={{
+                    name: routine?.name || '',
+                    note: routine?.note || '',
+                    icon: routine?.icon || '',
+                    days: routine?.days ? formattedDays : [],
+                    exercises: routine?.exercises || [],
+                    // exercises: [{
+                    //     exercise: {},
+                    //     restTime: 0,
+                    //     sets: [{
+                    //         reps: 0,
+                    //         duration: 0,
+                    //         showDuration: false,
+                    //     }]
+                    // }
+                    // ],
+                }}
+                // validationSchema={routinePlanSchema}
             >
-                <Box>
-                    <CustomInput
-                        label='Name'
-                        name='name'
-                        placeholder='name'
-                        color={success ? 'success' : null}
-                    />
-                </Box>
-                <Box>
-                    <CustomInput
-                        label='Description'
-                        name='note'
-                        multiline
-                        placeholder='Description...'
-                        color={success ? 'success' : null}
-                    />
-                </Box>
-                <Box>
-                    <CustomInput
-                        label='Icon URL'
-                        name='icon'
-                        placeholder='https://....'
-                        color={success ? 'success' : null}
-                    />
-                </Box>
-                <Box>
-                    <CustomCheckboxList
-                        label='Days'
-                        name='days'
-                        itemArray={['Monday', 'Tuesday', 'Wednesday',
-                            'Thursday', 'Friday', 'Saturday', 'Sunday']}
+                <FormikStep
+                    label='General'
+                    validationSchema={routinePlanSchema}
+                >
+                    <Box sx={{maxWidth: '500px'}}>
+                        <DetailsForm success={success}/>
+                    </Box>
+                </FormikStep>
+                <FormikStepWithValues
+                    validationSchema={exercisesSchema}
+                    label='Exercises'
+                >
+                    {({formValues}) => (
+                        <FieldArray name={'exercises'}>
+                            {(helpers) => (
+                                <DndContext onDragEnd={(e) => {
+                                    handleDragEvent(e, helpers.push)
 
+                                }}>
+                                    <FiltersProvider>
 
-                    />
-                </Box>
-            </FormikStep>
-            <FormikStep
-                label='Exercises'
-            >
-                <Typography>E</Typography>
-            </FormikStep>
+                                        <Grid container spacing={6} wrap='nowrap'>
+                                            <Grid item xs={8}>
+                                                <Box
+                                                    sx={{
+                                                        minHeight: '500px',
+                                                    }}
+                                                >
 
-            <FormikStepWithValues label='Details'>
-                {({formValues}) => (
-                    <FieldArray name={'exercises'}>
-                        {({insert, remove, push}) => (
-                            <Grid container direction='column' gap='30px' mt='30px'>
-                                {formValues.exercises.length > 0 &&
-                                    formValues.exercises.map((exercise, index) => (
-                                        <Accordion key={index} sx={{
-                                            // border: '2px dashed cornflowerblue',
-                                            boxShadow: "rgba(0, 0, 0, 0.04) 0px 5px 22px, rgba(0, 0, 0, 0.03) 0px 0px 0px 0.5px",
-                                            border: '2px solid #45a0fd8c'
-                                        }}>
-                                            <AccordionSummary expandIcon={<ExpandMoreIcon/>}>
-                                                <Grid container alignItems='center' gap='20px'>
-                                                    <Box sx={{height: '60px', width: '60px',}}>
-                                                        <Box component='img'
-                                                             src={exercises.exercise?.gifUrl || 'Img'}
-                                                             sx={{objectFit: 'cover', width: '100%'}}></Box>
-                                                    </Box>
-                                                    <Typography
-                                                        fontWeight='500'>{exercise.exercise?.name}</Typography>
-
-                                                </Grid>
-                                            </AccordionSummary>
-                                            <AccordionDetails>
-                                                {/*<CustomInput*/}
-                                                {/*    label='Rest time'*/}
-                                                {/*    name={`exercises.${index}.restTime`}*/}
-                                                {/*    type='number'*/}
-                                                {/*    color={success ? 'success' : null}*/}
-                                                {/*/>*/}
-                                                <Box>
-                                                    <CustomSlider
-                                                        formater={formatSeconds}
-                                                        displayLabel='off'
-                                                        label='Rest time'
-                                                        name={`exercises.${index}.restTime`}
-                                                    />
+                                                    <ExercisesList/>
 
                                                 </Box>
-                                                {/*<Typography variant='h5'>Sets</Typography>*/}
-                                                {/*<Divider/>*/}
-                                                <FieldArray name={`exercises.${index}.sets`}>
-                                                    {({insert, remove, push}) => (
-                                                        <Box mt={'15px'}>
-                                                            <Button
-                                                                variant='outlined'
-                                                                sx={{width: '100%', mb: '15px'}}
-                                                                onClick={() => push({reps: 0, duration: 0})}
-                                                            >
-                                                                Add Set
-                                                            </Button>
+                                            </Grid>
+                                            <Grid item xs={4} sx={{minWidth: '400px'}}>
+                                                <DroppableBox selected={formValues.exercises} setSelected={setSelected}
+                                                              formik={helpers}/>
+                                                <Button onClick={filters.handleOpen}>Filters</Button>
+                                                <CustomDialog
+                                                    width='sm'
+                                                    open={filters.open}
+                                                    handleClose={filters.handleClose}
+                                                    label={''}
+                                                    formId='workoutRoutineForm'
+                                                    showButtons={false}
+                                                >
+                                                    <ExercisesFilters/>
 
-                                                            <Grid container direction='column' gap={3}>
-                                                                {formValues.exercises[index].sets?.length > 0 &&
-                                                                    formValues.exercises[index].sets.map((set, setIndex) => (
+                                                </CustomDialog>
 
+                                            </Grid>
+                                        </Grid>
+                                    </FiltersProvider>
 
-                                                                        <Accordion
-                                                                            key={setIndex}
-                                                                            sx={{
-                                                                                p: '0 20px',
-                                                                                border: '2px dashed cornflowerblue',
-                                                                                boxShadow: "rgba(0, 0, 0, 0.04) 0px 5px 22px, rgba(0, 0, 0, 0.03) 0px 0px 0px 0.5px",
+                                </DndContext>
+                            )}
 
-                                                                            }}>
-                                                                            <AccordionSummary sx={{
-                                                                            }}
-                                                                                expandIcon={<ExpandMoreIcon/>}>
-                                                                                <Grid container alignItems='center' >
-                                                                                   <IconButton
-                                                                                        onClick={() => {
-                                                                                            remove(setIndex)
-                                                                                        }}
-                                                                                    >
-                                                                                        <DeleteForeverIcon sx={{
-                                                                                            color: 'rgba(0, 0, 0, 0.87)',
-                                                                                            p: '5px',
-                                                                                            m: 0,
-                                                                                            borderRadius: '50%'
-                                                                                        }}/>
-                                                                                    </IconButton>
-                                                                                    <Typography variant='body1'
-                                                                                                fontWeight='bold'
-                                                                                                sx={{color: '#444'}}>Set {setIndex + 1}</Typography>
+                        </FieldArray>
+                    )}
 
-                                                                                </Grid>
-                                                                            </AccordionSummary>
-                                                                            <AccordionDetails>
-                                                                                <Box>
-                                                                                    <CustomSlider
-                                                                                        formater={(v) => `${v} reps`}
-                                                                                        label='Reps'
-                                                                                        min={1}
-                                                                                        max={50}
-                                                                                        step={1}
-                                                                                        displayLabel='off'
-                                                                                        name={`exercises.${index}.sets.${setIndex}.reps`}
-                                                                                    />
-                                                                                </Box>
-                                                                                {exercise.sets[setIndex]?.duration > 0 ? null : (
-                                                                                <Box>
-                                                                                    <CustomSwitch
-                                                                                        label='Duration exercise'
-                                                                                        name={`exercises.${index}.sets.${setIndex}.showDuration`}
-                                                                                    />
-                                                                                </Box>
-                                                                                ) }
-                                                                                {(exercise.sets[setIndex]?.duration > 0 || exercise.sets[setIndex]?.showDuration )  ? (
-                                                                                <Box>
-                                                                                    <CustomSlider
-                                                                                        formater={formatSeconds}
-                                                                                        displayLabel='off'
-                                                                                        label='Duration'
-                                                                                        name={`exercises.${index}.sets.${setIndex}.duration`}
-                                                                                    />
-                                                                                </Box>
-                                                                                ) : null}
+                </FormikStepWithValues>
 
-                                                                            </AccordionDetails>
-                                                                        </Accordion>
-                                                                    ))}
+                <FormikStepWithValues label='Details' validationSchema={exercisesDetailsSchema}>
+                    {({formValues}) => (
+                        <Grid container justifyContent='center'>
+                            <Box sx={{width: '700px'}}>
+                                <ExerciseDetails formValues={formValues}/>
+                            </Box>
+                        </Grid>
+                    )}
+                </FormikStepWithValues>
 
-                                                            </Grid>
-                                                        </Box>
+            </FormikStepper>
+        </>
 
-                                                    )}
-                                                </FieldArray>
-                                            </AccordionDetails>
-                                        </Accordion>
-                                    ))}
-                            </Grid>
-
-                        )}
-
-                    </FieldArray>
-                )}
-            </FormikStepWithValues>
-
-        </FormikStepper>
     )
 
 }

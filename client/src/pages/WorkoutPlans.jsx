@@ -2,15 +2,13 @@ import React, {useEffect, useState} from 'react';
 import {Box, Container, Divider, Grid, Typography} from "@mui/material";
 import WorkoutPlanItem from "../components/WorkoutPlanItem.jsx";
 import WorkoutPlanControls from "../components/WorkoutPlanControls.jsx";
-import Button from "@mui/material/Button";
 import useAxiosPrivate from "../hooks/useAxiosPrivate.js";
 import useAuth from "../hooks/useAuth.js";
-import {useField} from "formik";
 
 
 function WorkoutPlans(props) {
-    const [change,setChange] = useState(false);
-    const [workoutPlans,setWorkoutPlans] = useState([]);
+    const [change, setChange] = useState(false);
+    const [workoutPlans, setWorkoutPlans] = useState([]);
     const mainWorkoutPlan = workoutPlans ? workoutPlans?.find(plan => {
         return plan.main === true;
     }) : null;
@@ -25,11 +23,11 @@ function WorkoutPlans(props) {
                 const response = await axiosPrivate.get(`workoutPlan/all?user=${auth.user}`, {
                     signal: controller.signal
                 })
-                if(!ignore) {
+                if (!ignore) {
+                    // console.log(response.data)
                     setWorkoutPlans(response.data);
                 }
-            }
-            catch (e) {
+            } catch (e) {
                 console.log(e);
                 setWorkoutPlans([]);
             }
@@ -39,13 +37,15 @@ function WorkoutPlans(props) {
             ignore = true;
             controller.abort('useEffect');
         }
-    },[change])
+    }, [change])
     return (
 
 
         <Container maxWidth='xl'>
             <Grid container direction='column' my={4} gap={3}>
-                <WorkoutPlanControls setChange={setChange}/>
+                <Grid container justifyContent='center'>
+                    <WorkoutPlanControls setChange={setChange}/>
+                </Grid>
                 <Box
                 >
                     <Divider/>
@@ -73,11 +73,13 @@ function WorkoutPlans(props) {
                             borderRadius: '20px',
                             padding: 10
                         }}>
-                            <img width='150' src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Smilies/Face%20in%20Clouds.png" alt="Face in Clouds" />
+                            <img width='150'
+                                 src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Smilies/Face%20in%20Clouds.png"
+                                 alt="Face in Clouds"/>
                             <Typography
-                            color='lightsteelblue'
+                                color='lightsteelblue'
                                 fontFamily='inherit'
-                            variant={'h5'}
+                                variant={'h5'}
                             >Select Main Workout Plan</Typography>
                         </Grid>)}
                 </Box>
@@ -91,7 +93,7 @@ function WorkoutPlans(props) {
                     }}
                 >Other plans</Typography>
                 {otherWorkoutPlans.length ? otherWorkoutPlans.map((plan, index) => (
-                    <WorkoutPlanItem  key={plan._id} setChange={setChange} workoutPlan={plan} style={{
+                    <WorkoutPlanItem key={plan._id} setChange={setChange} workoutPlan={plan} style={{
                         backgroundColor: 'lavender',
                         borderRadius: '20px',
                         // border: '2px solid grey',
@@ -106,7 +108,9 @@ function WorkoutPlans(props) {
                         padding: 10,
                         border: '4px dashed lavender'
                     }}>
-                        <img width='150' src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Smilies/Confused%20Face.png" alt="Confused Face"  />
+                        <img width='150'
+                             src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Smilies/Confused%20Face.png"
+                             alt="Confused Face"/>
 
                         <Typography
                             color='lightsteelblue'

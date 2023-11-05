@@ -169,7 +169,11 @@ export function Register(props) {
 
 export function FormikStepWithValues({children, formValues, ...props}) {
 
-    return <FieldArray>{children({formValues})}</FieldArray>;
+    return (
+    <>
+        {children({formValues})}
+    </>
+    )
     // return <>
     //     {children}
     //
@@ -178,7 +182,9 @@ export function FormikStepWithValues({children, formValues, ...props}) {
 
 export function FormikStep({children, formValues, ...props}) {
 
-    return <>{children}</>;
+    return <Grid container justifyContent='center'>
+        {children}
+    </Grid>;
     // return <>
     //     {children}
     //
@@ -197,8 +203,7 @@ export function FormikStepper({children, submittingText, submitText, exercises, 
 
 
     return (<Formik {...props}
-
-                    validationSchema={currentChild.props.validationSchema}
+                    validationSchema={currentChild.props?.validationSchema}
                     onSubmit={async (values, actions) => {
                         if (isLastStep) {
                             await props.onSubmit(values, actions);
@@ -210,12 +215,12 @@ export function FormikStepper({children, submittingText, submitText, exercises, 
                         }
                     }}
     >
-        {(props) => (<Form>
-            <pre>{JSON.stringify(props.values, undefined, 1)}</pre>
+        {(props) => (<Form style={{maxWidth: 'initial'}}>
+            {/*<pre>{JSON.stringify(props.values, undefined, 1)}</pre>*/}
             <Stepper alternativeLabel activeStep={step}>
                 {childrenArr.map((child, index) => (
-                    <Step key={child.props.label} completed={step > index || completed}>
-                        <StepLabel>{child.props.label}</StepLabel>
+                    <Step key={child?.props.label} completed={step > index || completed}>
+                        <StepLabel>{child?.props.label}</StepLabel>
                     </Step>
                 ))}
             </Stepper>
@@ -227,6 +232,8 @@ export function FormikStepper({children, submittingText, submitText, exercises, 
                         disabled={props.isSubmitting}
                         onClick={() => setStep(s => s - 1)}>Back</Button>
                 </Grid> : null}
+                {JSON.stringify(props.errors)}
+
                 <Grid item>
                     <Button
                         startIcon={props.isSubmitting ? <CircularProgress size='1rem'/> : null}

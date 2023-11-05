@@ -62,7 +62,7 @@ function WeightInfo({refresh}) {
     return (
         <Card sx={{
             boxSizing: 'border-box',
-            borderRadius: 2,
+            borderRadius: '22px',
             p: 2.25,
             width: '100%',
             height: '100%',

@@ -1,7 +1,9 @@
 const verifyId = require("../middlewares/verifyID");
 const User = require('../models/User');
+const WorkoutPlan = require('../models/WorkoutPlan')
 const Workout = require('../models/Workout');
 const pagination = require("../utils/transformToPagination");
+const mongoose = require("mongoose");
 
 const getWorkouts = async (req, res) => {
     const {limit, skip} = req.params;
@@ -27,7 +29,10 @@ const getWorkout = async (req, res) => {
     }
 }
 const saveWorkout = async (req, res) => {
-    const {note, exercises, duration, bodyPartsUsed} = req.body;
+    const {name,icon,note, exercises, routineId: routine, planId: plan} = req.body;
+    const planId = new mongoose.Types.ObjectId(plan);
+    const routineId = new mongoose.Types.ObjectId(routine);
+    console.log({planId, routineId})
     if (!req?.body?.exercises || !(exercises instanceof Array)) {
         return res.status(400).json({message: 'Exercises are missing or are not an Array'});
     }
@@ -65,13 +70,27 @@ const saveWorkout = async (req, res) => {
                 }
             }
         }
+        // Change performed in routine
+        //get user's workoutPlan and find routine
+        const workoutPlan = await  WorkoutPlan.findById(planId, {workoutRoutine: 1});
+        const routine = workoutPlan.workoutRoutine.find(routine => {
+           return  routine._id.equals(routineId)
+        })
+        routine.performed += 1;
+        await workoutPlan.save()
+
+        //////
         await user.save();
         const workout = await Workout.create({
             user: user._id,
-            note : note ? String(note) : undefined,
+            name: name,
+            icon: icon || '',
+            note : note ? String(note) : '',
             exercises,
-            duration,
-            bodyPartsUsed,
+            routineId,
+            planId,
+            // duration,
+            // bodyPartsUsed,
         })
         res.json({workout, goalMessage})
 

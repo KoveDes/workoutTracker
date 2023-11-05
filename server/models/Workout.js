@@ -6,6 +6,8 @@ const workoutSchema = new mongoose.Schema({
         ref: "User",
         required: true,
     },
+    routineId: mongoose.Schema.Types.ObjectId,
+    planId: mongoose.Schema.Types.ObjectId,
     finishedAt: {
         type: Date,
         immutable: true,
@@ -13,16 +15,19 @@ const workoutSchema = new mongoose.Schema({
             return Date.now()
         }
     },
-    duration: Number,
+    // duration: Number,
+    name: String,
+    icon: String,
     note: String,
     exercises: [{
         name: {type: String, required: true},
+        restTime: Number, //implement
         sets: {
             type: [{
-                restTime: Number,
+                // restTime: Number,
                 reps: Number,
                 load: Number,
-                duration: Number,
+                // duration: Number,
                 rpe: Number,
             }],
             required: true,
@@ -31,10 +36,10 @@ const workoutSchema = new mongoose.Schema({
 
     //Implementation for musclesUsed in Stats
     //for each exercise in exercises[] add exercise.bodyPart
-    bodyPartsUsed: [{
-        bodyPart: String,
-        count: Number
-    }]
+    // bodyPartsUsed: [{
+    //     bodyPart: String,
+    //     count: Number
+    // }]
 });
 // collection: workouts
 module.exports = mongoose.model('Workout', workoutSchema);

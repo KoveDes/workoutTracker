@@ -9,10 +9,14 @@ import weightSchema from "../schemas/entryAddSchema.js";
 import Button from "@mui/material/Button";
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import heightSchema from "../schemas/heightSchema.js";
+import GoalFinished from "./GoalFinished.jsx";
+import useDropdownMenu from "../hooks/useDropdownMenu.js";
 
 function EntryComposer({setRefresh,data, apiPath, payloadParam, setChange, adornment, buttonText, method='post'}) {
     const axiosPrivate = useAxiosPrivate();
+    const openGoal = useDropdownMenu();
 
+    const [showGoal, setShowGoal] = useState(null);
     const handleSubmit = async (values, helpers) => {
         let ignore = false;
         const controller = new AbortController();
@@ -22,7 +26,10 @@ function EntryComposer({setRefresh,data, apiPath, payloadParam, setChange, adorn
                     [payloadParam]:values[payloadParam],
                 }),
                 {signal: controller.signal})
-
+            if(response?.data?.goalMessage){
+                setShowGoal(response?.data?.goalMessage)
+            }
+            console.log(response?.data)
         } catch (e) {
             console.log(e);
         }
@@ -31,7 +38,7 @@ function EntryComposer({setRefresh,data, apiPath, payloadParam, setChange, adorn
 
     }
 
-    return (
+    return (<>
         <Formik
             enableReinitialize={true}
             initialValues={{
@@ -55,14 +62,21 @@ function EntryComposer({setRefresh,data, apiPath, payloadParam, setChange, adorn
                             <Button
 
                                 size='small' type='submit' variant='outlined' disabled={props.isSubmitting}>
-                                {`Set ${buttonText}`}
-                                {/*{props.isSubmitting ? `Setting new ${buttonText}...` : `Set ${buttonText}`}*/}
+                                {/*{`Set ${buttonText}`}*/}
+                                {props.isSubmitting ? `Setting new ${buttonText}...` : `Set ${buttonText}`}
                             </Button>
                         </Grid>
 
                 </Form>
             )}
         </Formik>
+            {showGoal && (
+                <GoalFinished
+                    message={showGoal?.message}
+                    goal={showGoal.goal}
+                />
+            )}
+        </>
     );
 }
 

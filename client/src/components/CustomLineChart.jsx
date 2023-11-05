@@ -3,6 +3,7 @@ import {DEFAULT_Y_AXIS_KEY, LineChart} from "@mui/x-charts";
 import {Box, Stack} from "@mui/material";
 import Button from "@mui/material/Button";
 import dateMonthFormatter, {dateYearFormatter, dateYearsFormatter} from "../utils/formatters.js";
+import ChartReplacement from "./ChartReplacement.jsx";
 
 
 function TimespanButton({timespan, setTimespan, label, value}) {
@@ -35,8 +36,8 @@ function CustomLineChart({data = [], dataKey, label}) {
         const entryDate = timespan === 'month' ? new Date(entry.date).getMonth() : new Date(entry.date).getFullYear();
         return timespan === 'all' || entryDate === currentDate;
     }) : [];
-    const charData = data.length > 0 ? Object.values(filteredData) : [];
-    const charDateData = data.length ? charData.map(weightEntry => new Date(weightEntry.date)) : [];
+    const charData = filteredData.length > 0 ? Object.values(filteredData) : [];
+    const charDateData = charData.length > 0 ? charData.map(weightEntry => new Date(weightEntry.date)) : [];
 
     return (<Box sx={{
             height: '100%',
@@ -48,6 +49,7 @@ function CustomLineChart({data = [], dataKey, label}) {
                 <TimespanButton label='Year' timespan={timespan} setTimespan={changeTimespan} value='year'/>
                 <TimespanButton label='All' timespan={timespan} setTimespan={changeTimespan} value='all'/>
             </Stack>
+            {filteredData.length > 1 ? (
             <LineChart
                 xAxis={[{
                     data: charDateData,
@@ -112,6 +114,11 @@ function CustomLineChart({data = [], dataKey, label}) {
                     bottom: 70,
                 }}
             />
+            ) : (
+               <ChartReplacement text={`Not enough data ${timespan !== 'all' ? `for this ${timespan}` : ''} (minimum 2 entries)`}/>
+            )
+
+            }
         </Box>
 
     );

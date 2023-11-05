@@ -20,25 +20,30 @@ import WeightGoalForm from "../../forms/WeightGoalForm.jsx";
 import MeasurementGoalForm from "../../forms/MeasurementGoalForm.jsx";
 import LoadGoalForm from "../../forms/LoadGoalForm.jsx";
 import CountGoalForm from "../../forms/CountGoalForm.jsx";
+import {dateYearFormatter, niceParam} from "../../utils/formatters";
+import OptionsMenu from "../OptionsMenu.jsx";
+
+const bodyParts = ['leftCalf', 'rightCalf', 'leftThigh', 'rightThigh', 'hips', 'waist', 'chest', 'neck', 'shoulders', 'leftForearm', 'rightForearm', 'leftArm', 'rightArm'];
+
 
 function GoalItem({goal, setChange}) {
     const adornment = (goal.category.includes('weight') || goal.category === 'load') ? 'kg' : goal.category === 'workoutCount' ? 'workouts' : 'cm'
     const name = goal?.category === 'weightUp' ? 'Gain Weight' : goal.category === 'weightDown' ? 'Lose weight' :
-        goal.category === 'workoutCount' ? 'Perform workouts' : goal.category === 'measurement' ? `Set new ${goal?.bodyParameter} size` : `Set new record in ${goal?.exercise}`
+        goal.category === 'workoutCount' ? 'Perform workouts' : goal.category === 'measurement' ? `Set new ${niceParam(goal?.bodyParameter)} size` : `Set new record in ${goal?.exercise}`
 
-    const axiosPrivate = useAxiosPrivate();
-    const {auth} = useAuth();
+    // const axiosPrivate = useAxiosPrivate();
+    // const {auth} = useAuth();
     const [open, setOpen] = useState(false);
-
-
-    const handleDelete = async () => {
-        try {
-            const response = await axiosPrivate.delete(`/goal?id=${goal._id}&user=${auth.user}`)
-            setChange(v => !v);
-        } catch (e) {
-            alert('Error');
-        }
-    }
+    //
+    //
+    // const handleDelete = async () => {
+    //     try {
+    //         const response = await axiosPrivate.delete(`/goal?id=${goal._id}&user=${auth.user}`)
+    //         setChange(v => !v);
+    //     } catch (e) {
+    //         alert('Error');
+    //     }
+    // }
     return (
         <Card
             sx={{
@@ -51,33 +56,45 @@ function GoalItem({goal, setChange}) {
             }}
         >
             <CardContent>
-                <Box sx={{
-                    position: 'absolute',
-                    right: '0',
-                }}>
-                    {goal?.finished ? null : (
-                        <IconButton onClick={() => setOpen(true)}>
-                            <EditIcon/>
-                        </IconButton>
-                    )}
-                    <IconButton onClick={handleDelete}>
-                        <DeleteIcon/>
-                    </IconButton>
-                </Box>
-                <CustomDialog data={goal}
-                              width='xs'
-                              open={open} handleClose={() => setOpen(false)}
-                              label={`Edit Goal | Current Value: ${goal?.currentValue}`}
-                              formId={goal?.category.includes('weight') ? (
-                                  'weightGoalForm'
-                              ) : goal?.category === 'measurement' ?
-                                  'measurementGoalForm' :
-                                  goal?.category === 'load' ? (
-                                      'loadGoalForm'
-                                  ) : (
-                                      'countGoalForm'
-                                  )
-                              }>
+                {/*<Box sx={{*/}
+                {/*    position: 'absolute',*/}
+                {/*    right: '0',*/}
+                {/*}}>*/}
+                {/*    {goal?.finished ? null : (*/}
+                {/*        <IconButton onClick={() => setOpen(true)}>*/}
+                {/*            <EditIcon/>*/}
+                {/*        </IconButton>*/}
+                {/*    )}*/}
+                {/*    <IconButton onClick={handleDelete}>*/}
+                {/*        <DeleteIcon/>*/}
+                {/*    </IconButton>*/}
+                {/*</Box>*/}
+
+                <OptionsMenu
+                    data={goal}
+                    setChange={setChange}
+                    apiPath='/goal'
+                    showEdit={!goal?.finished}
+                    handleEdit={() => setOpen(true)}
+                />
+
+
+                <CustomDialog
+                    data={goal}
+                    showButtons={true}
+                    width='xs'
+                    open={open} handleClose={() => setOpen(false)}
+                    label={`Edit Goal | Current Value: ${goal?.currentValue}`}
+                    formId={goal?.category.includes('weight') ? (
+                        'weightGoalForm'
+                    ) : goal?.category === 'measurement' ?
+                        'measurementGoalForm' :
+                        goal?.category === 'load' ? (
+                            'loadGoalForm'
+                        ) : (
+                            'countGoalForm'
+                        )
+                    }>
 
 
                     {goal?.category.includes('weight') ? (
@@ -110,6 +127,7 @@ function GoalItem({goal, setChange}) {
                     gutterBottom
                     variant="h5"
                     fontWeight={'bold'}
+                    sx={{color: 'royalblue'}}
                 >
                     {name}
                 </Typography>
@@ -156,7 +174,7 @@ function GoalItem({goal, setChange}) {
                         variant="body2"
                     >
                         {/*{workoutRoutine.days}*/}
-                        Start Date: {goal.startedAt}
+                        Start Date: {dateYearFormatter(goal.startedAt)}
                     </Typography>
                 </Stack>
                 {goal?.finished ? (
@@ -170,7 +188,7 @@ function GoalItem({goal, setChange}) {
                             display="inline"
                             variant="body2"
                         >
-                            Finish date: {goal?.startedAt}
+                            Finish date: {dateYearFormatter(goal?.startedAt)}
                             {/*{company.downloads} Finished*/}
                         </Typography>
                     </Stack>

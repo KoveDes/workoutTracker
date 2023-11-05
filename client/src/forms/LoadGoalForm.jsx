@@ -24,9 +24,10 @@ function LoadGoalForm({setError, setIsSubmitting, success, setSuccess, data, set
                     const data = response.data
                     const workoutRoutines = data.reduce((accumulator, workoutPlan) =>
                             [...accumulator, ...workoutPlan.workoutRoutine.reduce((acc, routine) => (
-                                [...acc, ...routine.exercises.map(e => e.name)]
+                                [...acc, ...routine.exercises.map(e => e?.exercise?.name)]
                             ), [])]
                         , []);
+                    console.log(workoutRoutines)
                     setUserExercises(workoutRoutines);
                 }
             } catch (e) {
@@ -61,6 +62,10 @@ function LoadGoalForm({setError, setIsSubmitting, success, setSuccess, data, set
                 // if(values.endValue === currentSize) {
                 //     throw Error('You cant set your current size');
                 // }
+
+
+
+                // if load is below record load throw error
                 const response = await axiosPrivate.post('/goal', {
                     category: 'load',
                     exercise: values.exercise,

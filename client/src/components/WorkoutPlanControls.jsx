@@ -115,7 +115,13 @@ function WorkoutPlanControls({setChange, workoutPlan}) {
         <Button onClick={handleOpen}
                 variant='outlined'
                 sx={{
-                    width: '100%'
+                    border: 'none',
+                    color: 'white',
+                    backgroundColor: 'royalblue',
+                    "&:hover" : {
+                            backgroundColor: '#3b4973',
+                        border: 'none',
+                    }
                 }}>{"Add new Routine"}</Button>
         )}
         <Dialog

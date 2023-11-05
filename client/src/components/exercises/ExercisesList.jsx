@@ -4,8 +4,9 @@ import ExerciseItem from "./ExerciseItem.jsx";
 import {useFilters} from "../../hooks/useFilters.js";
 import Button from "@mui/material/Button";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate.js";
+import DraggableExercise from "../dnd/DraggableExercise";
 
-function ExercisesList(props) {
+function ExercisesList({reload}) {
     const [exercises, setExercises] = useState([]);
     const [change, setChange] = useState(false);
     const [showUserExercisesOnly, setShowUserExercisesOnly] = useState(false)
@@ -28,7 +29,7 @@ function ExercisesList(props) {
                     signal: controller.signal
                 });
                 const exercises = await exercisesResponse.json();
-                const data = [...exercises, ...renamedUserExercises];
+                const data = [...exercises.filter(exercise => !exercise.name.includes('stretch')), ...renamedUserExercises];
 
                 const filteredData = (showUserExercisesOnly ? renamedUserExercises : data)
                     .filter(exercise => {
@@ -57,16 +58,20 @@ function ExercisesList(props) {
             ignore = true;
             controller.abort('useEffect');
         }
-    }, [filters, page, showUserExercisesOnly, change])
+    }, [filters, page, showUserExercisesOnly, change, reload])
 
     return (
-        <Container>
-            <Grid container spacing={3} alignItems={'flex-start'} height='850px' sx={{
-                overflowY: 'scroll', pb: '20px', pr: '20px'
+        <Container >
+            <Grid container spacing={3}  alignItems={'flex-start'}
+                  // height='850px'
+                  sx={{
+                 p: '20px', pr: '20px',
+                // overflowY: 'scroll',
             }}>
                 {exercises.map((exercise) => (
-                    <Grid item key={exercise.id ? exercise.id : exercise._id} xs={12} sm={6} md={3}>
-                        <ExerciseItem exercise={exercise} custom={!!exercise._id} setChange={setChange}/>
+                    <Grid item key={exercise.id ? exercise.id : exercise._id} xs={12} sm={12} md={6} lg={4} xl={3}>
+                        <DraggableExercise exercise={exercise} custom={!!exercise._id} setChange={setChange} />
+                        {/*<ExerciseItem exercise={exercise} custom={!!exercise._id} setChange={setChange}/>*/}
                     </Grid>
                 ))}
 

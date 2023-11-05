@@ -130,13 +130,19 @@ const changeMeasurement = async (req, res) => {
             return res.sendStatus(204); //no content
         }
         record.size = size;
+        let goalMessage;
         const lastResult = user.bodyParameters[param][user.bodyParameters[param].length - 1];
         const measurementGoal = user.goals.find(obj => (obj.bodyParameter === String(param) && !obj.finished));
         if (measurementGoal && lastResult._id.equals(id) && record.size >= measurementGoal.currentValue) {
             measurementGoal.currentValue = lastResult.size;
+            measurementGoal.finished = true;
+            goalMessage = {
+                message: "Goal has been achieved!",
+                goal: measurementGoal
+            }
         }
         await user.save();
-        res.json({record});
+        res.json({record, goalMessage});
     } catch (e) {
         res.status(500).json({message: e.message});
     }
@@ -154,16 +160,24 @@ const deleteMeasurement = async (req, res) => {
         if (!record) {
             return res.sendStatus(204); //no content
         }
+        let goalMessage;
         const measurementGoal = user.goals.find(obj => (obj.bodyParameter === String(param) && !obj.finished));
         if (measurementGoal && record.size === measurementGoal.currentValue) {
             //set currentValue as last result
             const lastResult = user.bodyParameters[param][user.bodyParameters[param].length - 1];
             measurementGoal.currentValue = lastResult.size;
+            if(measurementGoal.currentValue > measurementGoal.endValue) {
+                measurementGoal.finished = true;
+                goalMessage = {
+                    message: "Goal has been achieved!",
+                    goal: measurementGoal
+                }
+            }
 
         }
         user.bodyParameters[param] = user.bodyParameters[param].filter(obj => !obj.equals(record));
         const result = await user.save();
-        res.json({message: "Entry has been deleted!"});
+        res.json({message: "Entry has been deleted!", goalMessage});
 
     } catch (e) {
         res.status(500).json({message: e.message});

@@ -17,6 +17,10 @@ const dateYearsFormatter = (date) =>
 
 const niceParam = input => input.replace(/([a-z])([A-Z])/g, '$1 $2');
 
+const toDaysNamesFormatter = array => {
+    return array.map(v => ["Sun", "Mon", "Tue", "Wed", "Thu", "Friday", "Sat"][v]);
+}
+
 const formatSeconds = seconds => {
     const minutes = Math.floor(seconds / 60);
     const remaining = seconds % 60;
@@ -29,6 +33,11 @@ const formatSeconds = seconds => {
     }
     return output
 }
+const formatTime = (seconds) => {
+    const minutes = Math.floor(seconds / 60)
+    const remainingSeconds = seconds % 60
+    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`
+}
 
 
 export default  dateMonthFormatter;
@@ -36,6 +45,8 @@ export {
     dateYearFormatter,
     dateYearsFormatter,
     niceParam,
-    formatSeconds
+    formatSeconds,
+    toDaysNamesFormatter,
+    formatTime
 }
 

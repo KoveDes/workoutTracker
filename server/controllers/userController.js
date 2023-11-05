@@ -28,6 +28,7 @@ const updateWeight = async (req, res) => {
             return res.status(400).json({message: "Invalid weight",});
         }
         try {
+            let goalMessage;
             const user = await User.findOne({login: req.body.user}, {weightHistory: 1, goals: 1});
             const weightEntry = user.weightHistory.find(obj => obj._id.equals(req.body.id));
             if (!weightEntry) return res.sendStatus(204) //no content
@@ -38,9 +39,17 @@ const updateWeight = async (req, res) => {
             if (weightGoal && weightEntry.weight === weightGoal.currentValue) {
                 if (weightGoal.category === 'weightDown' && weight <= weightGoal.endValue) {
                     weightGoal.finished = true;
+                    goalMessage = {
+                        message: 'Goal has been achieved!',
+                        goal: weightGoal,
+                    }
                 }
                 if (weightGoal.category === 'weightUp' && weight >= weightGoal.endValue) {
                     weightGoal.finished = true;
+                    goalMessage = {
+                        message: 'Goal has been achieved!',
+                        goal: weightGoal,
+                    }
                 }
             }
             if(weightGoal) weightGoal.currentValue = weight;
@@ -48,7 +57,8 @@ const updateWeight = async (req, res) => {
             const result = await user.save();
             res.json({
                 message: "Weight in entry updated",
-                id: weightEntry._id
+                id: weightEntry._id,
+                goalMessage,
             });
         } catch
             (e) {
@@ -63,19 +73,28 @@ const removeWeight = async (req, res) => {
         if (!weightEntry) return res.sendStatus(204) //no content
         user.weightHistory = user.weightHistory.filter(obj => !obj.equals(weightEntry));
         const weightGoal = user.goals.find(obj => ((obj.category.includes('weight')) && !obj.finished));
+        let goalMessage;
         if (weightGoal && weightEntry.weight === weightGoal.currentValue) {
-            const maxWeight = user.weightHistory.reduce((prev, curr) => new Date(curr.date) > new Date(prev.date) ? curr : prev);
-            weightGoal.currentValue = maxWeight.weight;
-            if (weightGoal.category === 'weightDown' && maxWeight.weight <= weightGoal.endValue) {
+            const lastWeight = user.weightHistory[user.weightHistory.length - 1].weight;
+            console.log(lastWeight)
+            weightGoal.currentValue = lastWeight;
+            if (weightGoal.category === 'weightDown' && lastWeight <= weightGoal.endValue) {
                 weightGoal.finished = true;
+                goalMessage = {
+                    message: 'Goal has been achieved!',
+                    goal: weightGoal,
+                }
             }
-            if (weightGoal.category === 'weightUp' && maxWeight.weight >= weightGoal.endValue) {
+            if (weightGoal.category === 'weightUp' && lastWeight >= weightGoal.endValue) {
                 weightGoal.finished = true;
+                goalMessage = {
+                    message: 'Goal has been achieved!',
+                    goal: weightGoal,
+                }
             }
         }
-
         await user.save();
-        res.json({message: "Entry deleted"});
+        res.json({message: "Entry deleted", goalMessage});
 
     } catch (e) {
         res.status(500).json({message: e.message});
@@ -130,6 +149,7 @@ const updateInfo = async (req, res) => {
         return res.status(400).json({message: "Invalid weight",});
     }
     try {
+        let goalMessage;
         const user = await User.findOne({login: req.user}, {
             email: 1,
             username: 1,
@@ -158,22 +178,35 @@ const updateInfo = async (req, res) => {
             user.weightHistory = [...user.weightHistory];
         }
         const weightGoal = user.goals.find(obj => ((obj.category.includes('weight')) && !obj.finished));
-        console.log(weightGoal)
+        // console.log(weightGoal)
         if (weightGoal?.category === 'weightUp' && weightGoal) {
-            if (weight >= weightGoal.endValue) weightGoal.finished = true;
+            if (weight >= weightGoal.endValue) {
+                weightGoal.finished = true;
+                goalMessage = {
+                    message: 'Goal has been achieved!',
+                    goal: weightGoal,
+                }
+            }
             weightGoal.currentValue = weight;
 
             // weightGoal.currentValue = weight > weightGoal.currentValue ? weight : weightGoal.currentValue;
         }
         if (weightGoal?.category === 'weightDown' && weightGoal) {
-            if (weight <= weightGoal.endValue) weightGoal.finished = true;
+            if (weight <= weightGoal.endValue) {
+                weightGoal.finished = true;
+                goalMessage = {
+                    message: 'Goal has been achieved!',
+                    goal: weightGoal,
+                }
+
+            }
             weightGoal.currentValue = weight;
 
             // weightGoal.currentValue = weight < weightGoal.currentValue ? weight : weightGoal.currentValue;
         }
-        console.log(user.weightHistory)
+        // console.log(user.weightHistory)
         const result = await user.save();
-        res.json(user);
+        res.json({user, goalMessage});
     } catch (e) {
         res.status(500).json({message: e.message});
     }

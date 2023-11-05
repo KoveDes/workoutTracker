@@ -35,11 +35,11 @@ export default function CustomExerciseForm({setError, setIsSubmitting, success, 
                 message = 'New custom exercise created!';
             }
             setSuccess(true);
-            // setChange(v => !v);
+            setChange(v => !v);
             setSuccess(message);
 
         } catch (e) {
-            setError(e.message);
+            setError(e?.response?.data?.message || e.message);
             console.log(e)
         } finally {
             setIsSubmitting(false);

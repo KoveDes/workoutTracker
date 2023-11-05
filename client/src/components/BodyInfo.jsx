@@ -14,7 +14,6 @@ const bodyParts = ['leftCalf', 'rightCalf', 'leftThigh', 'rightThigh', 'hips', '
 
 function BodyInfo({refresh, setRefresh}) {
     const [data, setData] = useState([]);
-
     const axiosPrivate = useAxiosPrivate();
     const {auth} = useAuth();
 
@@ -76,9 +75,10 @@ function BodyInfo({refresh, setRefresh}) {
                               key={i}
                         >
 
-                            <Button
-                                component={CustomNavLink}
-                                to={bodyPart}>{niceParam(bodyPart)}</Button>
+                            <CustomNavLink
+                                to={bodyPart}>
+                                {niceParam(bodyPart)}
+                            </CustomNavLink>
                             <Typography fontWeight='500'>{size}</Typography>
                         </Grid>
                     )

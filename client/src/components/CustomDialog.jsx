@@ -8,7 +8,7 @@ import DialogActions from "@mui/material/DialogActions";
 import Button from "@mui/material/Button";
 import CustomExerciseForm from "../forms/CustomExerciseForm.jsx";
 
-function CustomDialog({open, handleClose: x, label, data, children, width, formId, showButtons=false}) {
+function CustomDialog({open, handleClose: x,isForm=true, label, data, children, width, formId, showButtons=false}) {
     const {
         success,
         error,
@@ -25,13 +25,13 @@ function CustomDialog({open, handleClose: x, label, data, children, width, formI
     }
     // const formChildren = Array.isArray(children) ? children[0] : children;
 
-    const passedForm = React.cloneElement(children, {
+    const passedForm = isForm ? React.cloneElement(children, {
         data,
         success,
         setSuccess,
         setError,
         setIsSubmitting,
-    })
+    }) : children;
 
     return (
         <Dialog
@@ -39,6 +39,7 @@ function CustomDialog({open, handleClose: x, label, data, children, width, formI
             maxWidth={width}
             open={open}
             onClose={handleClose}
+
         >
             <DialogTitle id="change-pwd">
                 <Grid container mt={0} gap={0.5} alignItems={'center'}>

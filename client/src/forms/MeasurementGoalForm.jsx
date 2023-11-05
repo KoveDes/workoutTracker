@@ -1,6 +1,6 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import useAxiosPrivate from "../hooks/useAxiosPrivate.js";
-import {Form, Formik} from "formik";
+import {Form, Formik, useFormikContext} from "formik";
 import {Box, Divider, Typography, Unstable_Grid2 as Grid} from "@mui/material";
 import CustomInput, {CustomRadioList} from "../components/CustomInputs.jsx";
 import measurementGoalSchema from "../schemas/measurementGoalSchema.js";
@@ -9,7 +9,6 @@ import useAuth from "../hooks/useAuth.js";
 const bodyParamsList = ['leftCalf', 'rightCalf', 'leftThigh', 'rightThigh', 'hips', 'waist', 'chest', 'neck', 'shoulders', 'leftForearm', 'rightForearm', 'leftArm', 'rightArm'];
 
 function MeasurementGoalForm({setError, setIsSubmitting, success, setSuccess, data, setChange}) {
-    const [currentMeasurement, setCurrentMeasurement] = useState(0);
     const axiosPrivate = useAxiosPrivate();
     const {auth} = useAuth();
 
@@ -29,10 +28,11 @@ function MeasurementGoalForm({setError, setIsSubmitting, success, setSuccess, da
                 message = 'Goal updated';
             } else {
                 const {data} = await axiosPrivate.get(`body/${values.bodyParameter}?user=${auth.user}`)
-                const currentSize = data[0]?.size || 0;
+                const currentSize = data?.data.reverse()[data?.data.length - 1]?.size || 0;
+                console.log(data)
                 console.log(currentSize)
-                if (values.endValue === currentSize) {
-                    throw Error('You cant set your current size');
+                if (values.endValue <= currentSize) {
+                    throw Error(`Goal size should be higher than current one: ${currentSize} cm`);
                 }
                 const response = await axiosPrivate.post('/goal', {
                     category: 'measurement',
@@ -59,7 +59,7 @@ function MeasurementGoalForm({setError, setIsSubmitting, success, setSuccess, da
             enableReinitialize={true}
             initialValues={{
                 bodyParameter: data?.bodyParameter || '',
-                endValue: data?.endValue || currentMeasurement,
+                endValue: data?.endValue || 0,
             }}
             validationSchema={measurementGoalSchema}
             onSubmit={handleSubmit}
@@ -85,12 +85,8 @@ function MeasurementGoalForm({setError, setIsSubmitting, success, setSuccess, da
                         </>
                     )}
 
-                    <Grid container spacing={0} direction='column'>
-                        <Typography variant='h5' textAlign='center' m='15px'>{props.values.bodyParameter}</Typography>
-
-                        <Grid container justifyContent={'space-between'}>
-
-                        </Grid>
+                    <Grid container gap={2} direction='column'>
+                        <Typography variant='h5' textAlign='center' m='15px 0 0 0'>{props.values.bodyParameter}</Typography>
                         <Grid container justifyContent={'center'}>
                             <Box sx={{width: '35%'}}>
                                 <CustomInput

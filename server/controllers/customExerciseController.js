@@ -44,7 +44,6 @@ const create = async (req, res) => {
     if(!(activeMuscles instanceof Array)) return res.status(400).json({message: "'activeMuscles' must be an array"})
     try {
         const user = await User.findOne({login: req.user}, {customExercises: 1});
-        //TODO sprawdzic czy znajduja się w liscie miesni (enum?)
         const exercise = {
             name: String(name.trim()),
             url: String(url),
@@ -52,6 +51,10 @@ const create = async (req, res) => {
             equipment,
             primaryMuscle: String(primaryMuscle).trim().toLowerCase(),
         };
+        if(user.customExercises.find(ex => ex.name === name)) {
+            return res.status(400).json({message: 'Exercise with this name already exists!'});
+        }
+
         user.customExercises = [...user.customExercises, exercise];
         const result = await user.save();
         res.json(result);
@@ -87,6 +90,9 @@ const update = async (req, res) => {
             primaryMuscle: primaryMuscle ? String(primaryMuscle).trim().toLowerCase() : exercise.primaryMuscle,
 
         };
+        if(user.customExercises.find(ex => ex.name === name)) {
+            return res.status(400).json({message: 'Exercise with this name already exists!'});
+        }
         user.customExercises = user.customExercises.map(obj => {
            return obj.equals(exercise) ? {...obj, ...updatedProperties} : obj; //don't change obj's ID
         });
