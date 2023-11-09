@@ -163,7 +163,7 @@ const updateInfo = async (req, res) => {
         user.username = username ? username.trim() : user.username;
         user.gender = gender ? gender.trim() : user.gender;
         user.age = age ? age : user.age;
-        user.height = height ? height : height;
+        user.height = height ? height : user.height;
         //if weight added in the same day, delete rest dates from the same day
         const currentDay = dateYearFormatter(new Date());
         const differentDayEntries = user.weightHistory.filter(entry => {

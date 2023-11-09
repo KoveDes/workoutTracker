@@ -9,7 +9,6 @@ const useLogout = () => {
             const response = await axios('/auth/logout', {
                 withCredentials: true
             });
-            console.log(response);
             setAuth({});
             setPersist(false);
             localStorage.removeItem('persist');

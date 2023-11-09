@@ -1,23 +1,4 @@
 
-/*.container {*/
-/*  position: relative;*/
-/*  !*max-width: 1000px;*!*/
-/*  min-width: 280px;*/
-/*  margin: 0 auto;*/
-/*  padding: 50px 20px 20px;*/
-/*}*/
-/*.navbar {*/
-/*  font-size: 16px;*/
-/*  text-transform: uppercase;*/
-/*  flex: 1;*/
-/*  display: flex;*/
-/*  justify-content: space-between;*/
-/*  font-weight: bold;*/
-/*}*/
-/*.nav-links a {*/
-/*  padding: 0 10px;*/
-/*}*/
-
 * {
   margin: 0;
   padding: 0;
@@ -27,35 +8,17 @@
   font-family: "BeauSans" ;
   src: url("fonts/BT-BeauSans-Regular.ttf");
 }
-:root {
-  /*font-family: BeauSans;*/
-}
 
 :root {
   /*font-family:  'Plus Jakarta Sans',BeauSans, Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;*/
   font-family: BeauSans, Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 600;
-  color-scheme: light dark;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
-}
-
-.passwordContainer {
-  display: flex;
-  position: relative;
-  align-items: center;
-}
-.togglePwd {
-  font-size: 1.5rem;
-  color: white;
-  position: absolute;
-  right: 7px;
-  top: 50%;
-  transform: translateY(-50%);
 }
 
 .error {
@@ -113,58 +76,14 @@ form label {
     opacity: 1;
   }
 }
+/*MUI STYLES*/
+.MuiStepIcon-root.Mui-active.Mui-active {
+  color: #3b3b3f
+}
+.MuiStepIcon-root * {
+  color: #3b3b3f
+}
 
-/*input,*/
-/*select {*/
-/*  width: 100%;*/
-/*  padding: 0.65rem 0.5rem;*/
-/*  font-size: 1rem;*/
-/*  color: white;*/
-/*  border: 2px solid #4a5568;*/
-/*  background-color: #2d3748;*/
-/*  border-radius: 10px;*/
-/*  outline: none;*/
-/*}*/
-
-/*input:focus,*/
-/*select:focus {*/
-/*  border-color: #4299e1;*/
-/*}*/
-
-/*input::placeholder,*/
-/*select::placeholder {*/
-/*  color: #a0aec0;*/
-/*}*/
-
-/*input[type="checkbox"] {*/
-/*  width: fit-content;*/
-/*  margin-right: 0.5rem;*/
-/*  transform: scale(1.25);*/
-/*}*/
-
-/*button {*/
-/*  display: block;*/
-/*  margin: 1rem 0;*/
-/*  padding: 0.35rem 0.5rem;*/
-/*  background-color: #4299e1;*/
-/*  color: #1a202c;*/
-/*  border: none;*/
-/*  border-radius: 3px;*/
-/*  width: 100%;*/
-/*  font-size: 1rem;*/
-/*  font-weight: bold;*/
-/*  cursor: pointer;*/
-/*}*/
-
-/*.input-error,*/
-/*.input-error {*/
-/*  border-color: #fc8181;*/
-/*}*/
-
-/*button:disabled {*/
-/*  opacity: 0.35;*/
-/*}*/
-/*.checkbox label {*/
-/*  margin: 0;*/
-/*}*/
-
+.MuiButtonBase-root.MuiCheckbox-root.Mui-checked {
+  color: #3b3b3f
+}

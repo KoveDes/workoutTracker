@@ -2,8 +2,6 @@ import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
-import Checkbox from '@mui/material/Checkbox';
-import FormGroup from '@mui/material/FormGroup';
 import Typography from '@mui/material/Typography';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import {InputAdornment, OutlinedInput, Radio, RadioGroup} from "@mui/material";
@@ -63,8 +61,8 @@ export const EQUIPMENT_OPTIONS = [
     "Wheel roller"
 ];
 
-export default memo(function ExercisesFilters({setExercisesFilters}) {
-    const {filters, setFilters} = useFilters();
+export default memo(function ExercisesFilters() {
+    const {setFilters} = useFilters();
     const [s, setS] = useState({target: '', equipment: '', search: ''});
     const handleSearch = (e) => {
         setFilters(v => ({
@@ -90,51 +88,37 @@ export default memo(function ExercisesFilters({setExercisesFilters}) {
     }
 
     return (
-        <Box
-            // height='875px'
-        >
-
+        <Box >
             <Stack
                 direction="row"
                 alignItems="center"
                 justifyContent="space-between"
                 sx={{px: 1, py: 2}}
             >
-                <Typography variant="h6" sx={{ml: 1}} >
+                <Typography variant="h6" sx={{ml: 1}}>
                     Filters
                 </Typography>
-                <Button fontWeight='bold' sx={{ml: 1}}  onClick={handleClear}>
+                <Button fontWeight='bold' sx={{ml: 1, color: '#3b3b3f'}} onClick={handleClear}>
                     Clear all
                 </Button>
             </Stack>
-
-
-            <Divider/>
-
-            {/*<Scrollbar>*/}
-
-            {/*<Grid container>*/}
             <Stack spacing={3} sx={{p: 3}}>
                 <Stack spacing={1}>
                     <Typography variant="subtitle2">Search</Typography>
                     <OutlinedInput
-                        // value={filterName}
-                        // onChange={onFilterName}
                         placeholder="Search user..."
                         onChange={handleSearch}
                         value={s.search}
                         startAdornment={
                             <InputAdornment position="start">
-                                {/*<Iconify*/}
-                                {/*    icon="eva:search-fill"*/}
-                                {/*    sx={{ color: 'text.disabled', width: 20, height: 20 }}*/}
-                                {/*/>*/}
                             </InputAdornment>
                         }
                         sx={{backgroundColor: '#dfe7ff'}}
                     />
-                    <RenderRadioInputList label={'Targeted muscles'} handleCheckboxChange={handleCheckboxChange} itemArray={TARGET_MUSCLES} param='target' s={s} />
-                    <RenderRadioInputList label={'Equipment'} handleCheckboxChange={handleCheckboxChange} itemArray={EQUIPMENT_OPTIONS} param='equipment' s={s}/>
+                    <RenderRadioInputList label={'Targeted muscles'} handleCheckboxChange={handleCheckboxChange}
+                                          itemArray={TARGET_MUSCLES} param='target' s={s}/>
+                    <RenderRadioInputList label={'Equipment'} handleCheckboxChange={handleCheckboxChange}
+                                          itemArray={EQUIPMENT_OPTIONS} param='equipment' s={s}/>
                 </Stack>
             </Stack>
 
@@ -143,26 +127,24 @@ export default memo(function ExercisesFilters({setExercisesFilters}) {
 })
 
 export function RenderRadioInputList({label, handleCheckboxChange, itemArray, param, s}) {
-   return( <>
+    return (<>
         <Typography variant="subtitle2">{label}</Typography>
-       <Stack spacing={1} sx={{
-           maxHeight: '25vh',
-           overflowY: 'scroll',
-           borderRadius: '20px',
-           border: '2px solid #dfe7ff',
-           // boxShadow: "rgba(0, 0, 0, 0.08) 0px 5px 22px, rgba(0, 0, 0, 0.03) 0px 0px 0px 0.5px",
-           '::-webkit-scrollbar': {
-               // backgroundColor: '#e3e3e3',
-               borderRadius: '0  20px 20px 0',
-           },
-           '::-webkit-scrollbar-thumb': {
-               backgroundColor: '#dfe7ff',
-               width: '50%',
-               borderRadius: '20px',
-           }
-       }}>
-            <RadioGroup sx={{backgroundColor: 'transparent'}}
-            value={s[param]}
+        <Stack spacing={1} sx={{
+            maxHeight: '25vh',
+            overflowY: 'scroll',
+            borderRadius: '20px',
+            border: '2px solid #dfe7ff',
+            '::-webkit-scrollbar': {
+                borderRadius: '0  20px 20px 0',
+            },
+            '::-webkit-scrollbar-thumb': {
+                backgroundColor: '#dfe7ff',
+                width: '50%',
+                borderRadius: '20px',
+            }
+        }}>
+            <RadioGroup sx={{backgroundColor: 'transparent', pl: '7.5px'}}
+                        value={s[param]}
             >
                 {itemArray.map((item) => (
                     <FormControlLabel

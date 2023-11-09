@@ -1,21 +1,20 @@
 import useAxiosPrivate from "../hooks/useAxiosPrivate.js";
 import {Form, Formik} from "formik";
 import customExerciseSchema from "../schemas/customExerciseSchema.js";
-import {Box, Unstable_Grid2 as Grid} from "@mui/material";
+import {Box, Grid} from "@mui/material";
 import CustomInput, {CustomCheckboxList, CustomRadioList} from "../components/CustomInputs.jsx";
 import {EQUIPMENT_OPTIONS, TARGET_MUSCLES} from "../components/exercises/ExercisesFilters.jsx";
-import React from "react";
 
 export default function CustomExerciseForm({setError, setIsSubmitting, success, setSuccess, setChange, customExercise}) {
     const axiosPrivate = useAxiosPrivate();
-    const handleSubmit = async (values, actions) => {
+    const handleSubmit = async (values) => {
         setError('');
         setSuccess(false);
         setIsSubmitting(true);
         let message = '';
         try {
             if (customExercise?.name) {
-                const response = await axiosPrivate.patch('/customExercise', {
+                await axiosPrivate.patch('/customExercise', {
                     name: values.name,
                     url: values.url,
                     active: values.activeMuscles,
@@ -25,7 +24,7 @@ export default function CustomExerciseForm({setError, setIsSubmitting, success, 
                 })
                 message = 'Custom exercise updated';
             } else {
-                const response = await axiosPrivate.post('/customExercise', {
+                await axiosPrivate.post('/customExercise', {
                     name: values.name,
                     url: values.url,
                     active: values.activeMuscles,
@@ -40,7 +39,6 @@ export default function CustomExerciseForm({setError, setIsSubmitting, success, 
 
         } catch (e) {
             setError(e?.response?.data?.message || e.message);
-            console.log(e)
         } finally {
             setIsSubmitting(false);
 

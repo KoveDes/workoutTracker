@@ -1,86 +1,64 @@
-import React from 'react';
+import React, {memo} from 'react';
 import CustomNavLink from "./customNavLink.jsx";
-import {Link, useNavigate} from "react-router-dom";
+import {Link} from "react-router-dom";
 import '../Navbar.css'
 import useAuth from "../hooks/useAuth.js";
-import useLogout from "../hooks/useLogout.js";
-import ProfileMenu from "./ProfileMenu.jsx";
-import {Avatar} from "@mui/material";
-import ProfileAvatar from "./ProfileAvatar.jsx";
+import ProfileMenu from "./profile/ProfileMenu.jsx";
+import ProfileAvatar from "./profile/ProfileAvatar.jsx";
 import useDropdownMenu from "../hooks/useDropdownMenu.js";
+import {Box, Grid, Typography} from "@mui/material";
 
-function Navbar(props) {
+function Navbar() {
     const {auth} = useAuth();
-    const logout = useLogout();
-    const navigate = useNavigate();
-    const avatar = `https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/People/Person.png`
     const dropdownMenu = useDropdownMenu();
     return (
-        <nav>
-            <div className="left">
-                <Link className='logo' to='/'>
-                    <img src="/public/logo.jpg" alt=""/>
-                </Link>
-                <CustomNavLink to='/'>Home</CustomNavLink>
-                <CustomNavLink to='/about'>About us</CustomNavLink>
-                <CustomNavLink to='/workoutPlans'>Workout plans</CustomNavLink>
-                <CustomNavLink to='/exercises'>Exercises</CustomNavLink>
-                <CustomNavLink to='/body'>Body</CustomNavLink>
-            </div>
-            <div className="right">
-                {auth.user ? (<>
-                        <div onClick={dropdownMenu.handleOpen}
-                             ref={dropdownMenu.anchorRef}>
-                        <ProfileAvatar />
+        <Grid
+            component='nav'
+            container
+            alignItems='center'
+            justifyContent='space-between'
+            px='3%'
+            sx={{
+                height: '70px',
+                backgroundColor: '#f0f2f6',
+            }}
+        >
 
-                        </div>
+            <Link to='/'>
+                <Typography variant='h6' fontWeight='bold' sx={{color: '#5200ff'}}>GymTrackr</Typography>
+            </Link>
+            <Box>
+                {auth?.user &&(<>
+                <CustomNavLink style={{marginLeft: '10px'}} to='/'>History</CustomNavLink>
+                <CustomNavLink style={{marginLeft: '10px'}} to='/workoutPlans'>Workout plans</CustomNavLink>
+                <CustomNavLink style={{marginLeft: '10px'}} to='/body'>Body</CustomNavLink>
+                <CustomNavLink style={{marginLeft: '10px'}} to='/exercises'>Exercises</CustomNavLink>
+                </>)}
+
+            </Box>
+            <div className="right">
+                {auth.user ? (
+                    <>
+                        <Box
+                            onClick={dropdownMenu?.handleOpen}
+                            ref={dropdownMenu?.anchorRef}>
+                            <ProfileAvatar/>
+                        </Box>
                         <ProfileMenu
                             anchorEl={dropdownMenu.anchorRef.current}
                             open={dropdownMenu.open}
                             onClose={dropdownMenu.handleClose}
                         />
                     </>
-                    /*<BasicMenu/>*/
                 ) : (
                     <>
                         <CustomNavLink to='/login'>Log in</CustomNavLink>
                         <CustomNavLink to='/register'>Sign up</CustomNavLink>
                     </>
                 )}
-                {/*<CustomNavLink to='/register'>🙍‍♂️</CustomNavLink>*/}
             </div>
-        </nav>
-        // <div className='navbar container'>
-        //     <Link to='/'><img width={40} src="logo.jpg" alt="GymFlow logo"/></Link>
-        //     <nav
-        //         // style={{display: "flex", gap: '10px'}}
-        //         className='nav-links'
-        //     >
-        //
-        //         <CustomNavLink to='/'>Home</CustomNavLink>
-        //         <CustomNavLink to='/about'>About us</CustomNavLink>
-        //         <CustomNavLink to='/exercises'>Exercises</CustomNavLink>
-        //         <CustomNavLink to='/body'>Body</CustomNavLink>
-        //
-        //         <CustomNavLink to='/login'>Login</CustomNavLink>
-        //         <CustomNavLink to='/register'>Sign up</CustomNavLink>
-        //         <CustomNavLink to='/register'>🙍‍♂️</CustomNavLink>
-        //
-        //         {/*<CustomNavLink to='/stats'>Stats</CustomNavLink>*/}
-        //         {/*<CustomNavLink to='/settings'>Settings</CustomNavLink>*/}
-        //
-        //         {/*<CustomNavLink to='/'>Home</CustomNavLink>*/}
-        //         {/*<CustomNavLink to='/about'>About</CustomNavLink>*/}
-        //         {/*<CustomNavLink to='/login'>Login</CustomNavLink>*/}
-        //         {/*<CustomNavLink to='/register'>Register</CustomNavLink>*/}
-        //         {/*<CustomNavLink to='/stats'>Stats</CustomNavLink>*/}
-        //         {/*<CustomNavLink to='/body'>Body</CustomNavLink>*/}
-        //         {/*<CustomNavLink to='/settings'>Settings</CustomNavLink>*/}
-        //         {/*<CustomNavLink to='/exercises'>Exercises</CustomNavLink>*/}
-        //     </nav>
-        // </div>
-        // </>
+        </Grid>
     );
 }
 
-export default Navbar;
+export default memo(Navbar);

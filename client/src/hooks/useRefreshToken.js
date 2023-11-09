@@ -2,13 +2,12 @@ import React from 'react';
 import useAuth from "./useAuth";
 import axios from "../api/axios";
 
-function UseRefreshToken(props) {
+function UseRefreshToken() {
     const {setAuth, setUser} = useAuth();
     return async () => {
         const response = await axios.get('/auth/refresh', {
             withCredentials: true, //allows to send cookies along with request
         });
-        console.log(response)
         setAuth(prev => {
             return ({
                 ...prev,

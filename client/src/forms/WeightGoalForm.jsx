@@ -1,47 +1,28 @@
-import React, {useEffect, useState} from 'react';
 import {Form, Formik} from "formik";
-import customExerciseSchema from "../schemas/customExerciseSchema.js";
-import {Box, Typography, Unstable_Grid2 as Grid} from "@mui/material";
-import CustomInput, {CustomCheckboxList, CustomRadioList} from "../components/CustomInputs.jsx";
-import {EQUIPMENT_OPTIONS, TARGET_MUSCLES} from "../components/exercises/ExercisesFilters.jsx";
+import {Box, Typography, Grid} from "@mui/material";
+import CustomInput from "../components/CustomInputs.jsx";
 import useAxiosPrivate from "../hooks/useAxiosPrivate.js";
 import weightGoalSchema from "../schemas/weightGoalSchema.js";
+import useFetch from "../hooks/useFetch.js";
 
 function WeightGoalForm({setError, setIsSubmitting, setChange, setSuccess,data}) {
-    const[currentWeight, setCurrentWeight] = useState(0);
     const axiosPrivate = useAxiosPrivate();
-    useEffect(() => {
-        let ignore = false;
-        const controller = new AbortController();
-        const getData = async () => {
-            try {
-                const response = await axiosPrivate.get(`/user/weight`, {
-                    signal: controller.signal
-                })
-                if (!ignore) {
-                    setCurrentWeight(response.data.weight);
-                }
-            } catch (e) {
-                console.log(e);
-                setCurrentWeight(0);
-            }
-        }
-        getData();
-        return () => {
-            ignore = true;
-            controller.abort('useEffect');
-        }
-    }, [])
+    const {response} = useFetch(({
+        method: 'get',
+        path: '/user/weight',
+        deps: [],
+    }))
+    const currentWeight = response?.weight;
 
 
-    const handleSubmit = async (values, actions) => {
+    const handleSubmit = async (values) => {
         setError('');
         setSuccess(false);
         setIsSubmitting(true);
         let message = '';
         try {
             if (data) {
-                const response = await axiosPrivate.patch('/goal', {
+                await axiosPrivate.patch('/goal', {
                     endValue: values.endValue,
                     id: data._id,
                 })
@@ -50,7 +31,7 @@ function WeightGoalForm({setError, setIsSubmitting, setChange, setSuccess,data})
                 if(values.endValue === currentWeight) {
                     throw Error('You cant set your current weight');
                 }
-                const response = await axiosPrivate.post('/goal', {
+                await axiosPrivate.post('/goal', {
                     category: values.endValue > currentWeight ? 'weightUp' : 'weightDown',
                     currentValue: Number(currentWeight),
                     endValue: values.endValue,

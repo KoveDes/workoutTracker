@@ -20,9 +20,7 @@ function SelectedExercise({exercise, index, remove}) {
         transition,
     };
     const handleDelete = () => {
-        console.log('elo');
         remove(index)
-        // setSelected(arr => arr.filter(item => item.name !== exercise.name))}
     }
     return (
         <ListItem
@@ -33,39 +31,33 @@ function SelectedExercise({exercise, index, remove}) {
             }}>
 
             <Grid container wrap='nowrap' gap={2} alignItems='center'>
-                {/*IMG*/}
                 <Box
                     src={exercise?.exercise?.gifUrl}
                     component='img'
                     alt={exercise?.exercise.name}
                     sx={{height: '90px', objectFit: 'cover'}}
                 />
-                {/*DETAILS*/}
                 <Grid container direction='column' justifyContent='center' gap={0}>
                     <Tooltip title={exercise?.exercise.name.length > 20 ? exercise?.exercise.name : ''}>
-                    <Typography
-                        fontWeight='bold'
-                        letterSpacing={-0.25}
-                        // textTransform='uppercase'
-                        // fontSize='1.3rem'
-                        sx={{
-                            fontSize: {
-                                xl: '1.3rem',
-                                md: '0.9rem'
-                            }
-                        }}
-                        color='#000000c2'
-                    >{exercise?.exercise.name.length > 20 ? exercise?.exercise.name.slice(0,13)  + '...' : exercise?.exercise.name}</Typography>
+                        <Typography
+                            fontWeight='bold'
+                            letterSpacing={-0.25}
+                            sx={{
+                                fontSize: {
+                                    xl: '1.3rem',
+                                    md: '0.9rem'
+                                }
+                            }}
+                            color='#000000c2'
+                        >{exercise?.exercise.name.length > 20 ? exercise?.exercise.name.slice(0, 13) + '...' : exercise?.exercise.name}</Typography>
                     </Tooltip>
-                        <Grid container>
+                    <Grid container>
                         <Chip
                             sx={{backgroundColor: 'dodgerblue', color: 'white'}}
                             size='small' label={`Target: ${exercise?.exercise.target}`}/>
                     </Grid>
                 </Grid>
                 {/*DND OPTIONS*/}
-                {/*<Typography variant='body'>#{index}</Typography>*/}
-
                 <IconButton onClick={handleDelete}
                 ><ClearIcon sx={{color: 'dodgerblue'}}/></IconButton>
                 <IconButton

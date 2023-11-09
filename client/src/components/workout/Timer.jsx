@@ -5,7 +5,7 @@ import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import PauseIcon from '@mui/icons-material/Pause';
 import SkipNextIcon from '@mui/icons-material/SkipNext';
 
-function Timer({restTime, setShowTimer, setCurrentSet, currentSet}) {
+function Timer({restTime, setShowTimer, setCurrentSet}) {
     const [seconds, setSeconds] = React.useState(restTime)
     const [running, setRunning] = React.useState(true)
     const ref = React.useRef(null);
@@ -38,7 +38,6 @@ function Timer({restTime, setShowTimer, setCurrentSet, currentSet}) {
     return (
         <Box
             sx={{
-                // border: '2px solid black',
                 p: 2,
                 borderRadius: '50px',
             }}>
@@ -47,14 +46,11 @@ function Timer({restTime, setShowTimer, setCurrentSet, currentSet}) {
             <Stack direction='row' gap={1} mt='10px' justifyContent='center'>
                 <IconButton
                     variant='outlined'
-                    // disabled={finished}
-                    // sx={{background: running === true ? 'red' : 'green'}}
                     onClick={handleClick}>
                     {running === true ? <PauseIcon/> : <PlayArrowIcon/>}
                 </IconButton>
                 <IconButton
                     variant='outlined'
-                    // disabled={finished}
                     onClick={handleSkipClick}><SkipNextIcon/></IconButton>
             </Stack>
         </Box>

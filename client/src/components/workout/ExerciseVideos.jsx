@@ -1,11 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import {Box, Grid, Link, Tooltip, Typography} from "@mui/material";
 import {fetchRapidAPIData, ytSearchOptions} from "../../api/fetchRapidAPI.js";
-import Button from "@mui/material/Button";
 
 function ExerciseVideos({name, target}) {
     const [videos, setVideos] = useState([]);
-    console.log(name)
     useEffect(() => {
         let ignore = false;
         const controller = new AbortController();

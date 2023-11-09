@@ -17,16 +17,16 @@ function WorkoutInfo({workout}) {
     return (
         <Grid>
             <Box sx={{
-                // boxShadow: "rgba(0, 0, 0, 0.04) 0px 5px 22px, rgba(0, 0, 0, 0.03) 0px 0px 0px 0.5px",
             }}>
                 <TableContainer sx={{
                     boxShadow: "rgba(0, 0, 0, 0.04) 0px 5px 22px, rgba(0, 0, 0, 0.03) 0px 0px 0px 0.5px",
                     borderRadius: '15px',
                     mt: '20px',
+                    backgroundColor: 'white',
                 }}>
                     <Table>
-                        <TableHead sx={{backgroundColor: 'royalblue'}}>
-                            <TableRow>
+                        <TableHead sx={{backgroundColor: '#3b3b3f'}}>
+                            <TableRow sx={{'&:last-child td, &:last-child th': {border: 0}}}>
                                 <TableCell/>
                                 <TableCell><Typography fontWeight='bold'
                                                        sx={{color: 'white'}}>Exercise</Typography></TableCell>
@@ -46,16 +46,17 @@ function WorkoutInfo({workout}) {
                         <Typography
                             variant='subtitle2'
                             fontWeight='bold'
-                            sx={{position: 'absolute', color: 'royalblue', p:'5px'}}
+                            sx={{position: 'absolute', color: '#3b3b3f', p:'5px'}}
                         >Note</Typography>
 
                         <TextField
                             fullWidth
                             variant='filled'
-                            value={workout?.note}
+                            value={workout?.note || ""}
                             minRows={4}
                             disabled
                             multiline
+
                         />
                     </Box>
                 </TableContainer>

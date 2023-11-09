@@ -1,42 +1,46 @@
 import React from 'react';
 import {Link, useLocation} from "react-router-dom";
 import {Box, Grid, Typography} from "@mui/material";
-import Button from "@mui/material/Button";
 import WorkoutInfo from "../components/workout/WorkoutInfo.jsx";
-import StretchingSuggestion from "../components/StretchingSuggestion.jsx";
+import StretchingSuggestion from "../components/workout/StretchingSuggestion.jsx";
+import InvalidUseImg from '../assets/InvalidUse.png'
+import CongratsImg from '../assets/Party Popper.png';
+import StyledButton from "../components/StyledButton.jsx";
+import GoalFinished from "../components/GoalFinished.jsx";
 
-
-function WorkoutDetails(props) {
+function WorkoutDetails() {
     const {state: workout} = useLocation();
-
     if (!workout) {
         return (
             <Grid container direction='column' justifyContent='center' alignItems='center' gap={3} mt={'50px'}>
                 <Box
                     component='img'
-                    src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Smilies/Face%20with%20Crossed-Out%20Eyes.png"
+                    src={InvalidUseImg}
                     sx={{width: '200px', height: '200px'}}
                 />
                 <Typography variant='h4' fontWeight='bold' sx={{color: 'black'}}>Invalid use</Typography>
-                <Button
-                    variant='outlined'
-                    sx={{color: 'royalblue', borderColor: 'royalblue'}}
+                <StyledButton
                     component={Link}
                     to='/workoutPlans'
                 >
                     Choose Workout routine
-                </Button>
+                </StyledButton>
             </Grid>
         )
     }
 
     return (
         <Grid container direction='column' alignItems='center' gap={0}>
-            {/*{JSON.stringify(workout)}*/}
-
+            {workout?.goalMessage && (
+                <GoalFinished
+                    message={workout?.goalMessage?.message}
+                    goal={workout?.goalMessage.goal}
+                    isArray={Array.isArray(workout?.goalMessage.goal)}
+                />
+            )}
             <Box
                 component='img'
-                src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Activities/Party%20Popper.png"
+                src={CongratsImg}
                 sx={{
                     width: '100px',
                     height: '100px',
@@ -57,12 +61,12 @@ function WorkoutDetails(props) {
                 <Typography component='span' variant='h6' sx={{color: 'black'}}> {workout?.name} </Typography>
                 workout </Typography>
             <WorkoutInfo workout={workout}/>
-            <Button component={Link} to='/' variant='outlined' sx={{my: '30px'}}>Go Home</Button>
+            <StyledButton component={Link} to='/' variant='outlined' sx={{my: '30px'}}>Go Home</StyledButton>
 
             <Typography variant='h5'>
                 After great workout it's great to do some stretching.
             </Typography>
-            <Typography variant='hbody1'>
+            <Typography variant='body1'>
                 Based on your exercises, here are some stretches that are great for the target muscles you worked on!
             </Typography>
             <StretchingSuggestion bodyParts={workout.bodyParts}/>

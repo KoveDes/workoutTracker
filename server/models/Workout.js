@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+ const mongoose = require('mongoose');
 
 const workoutSchema = new mongoose.Schema({
     user: {
@@ -34,7 +34,7 @@ const workoutSchema = new mongoose.Schema({
         },
     }],
 
-    //Implementation for musclesUsed in Stats
+    //Implementation for musclesUsed in Records
     //for each exercise in exercises[] add exercise.bodyPart
     // bodyPartsUsed: [{
     //     bodyPart: String,

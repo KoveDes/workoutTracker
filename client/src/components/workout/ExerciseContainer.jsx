@@ -2,23 +2,24 @@ import React, {useCallback, useEffect, useState} from 'react';
 import {Box, Grid, Typography} from "@mui/material";
 import ExerciseInfo from "./ExerciseInfo.jsx";
 import {FieldArray, Form, Formik} from "formik";
-import Button from "@mui/material/Button";
 import Set from "./Set.jsx";
 import Timer from "./Timer.jsx";
 import workoutSetSchema from "../../schemas/workoutSetSchema.js";
+import StyledButton from "../StyledButton.jsx";
 
-function ExerciseContainer({
-                               exercise,
-                               serverError,
-                               handleSave,
-                               setWorkout,
-                               isLastExercise,
-                               setCurrentExercise,
-                               currentSet,
-                               setCurrentSet,
-                               setShowTimer,
-                               showTimer
-                           }) {
+function ExerciseContainer(
+    {
+        exercise,
+        serverError,
+        handleSave,
+        setWorkout,
+        isLastExercise,
+        setCurrentExercise,
+        currentSet,
+        setCurrentSet,
+        setShowTimer,
+        showTimer
+    }) {
     const exerciseDetails = exercise.exercise;
     const [error, setError] = useState(false);
     const [formValues, setFormValues] = useState(null);
@@ -39,7 +40,7 @@ function ExerciseContainer({
         if (!isLastExercise) {
             setCurrentExercise(v => v + 1);
         } else {
-                setInvokeSave(v => !v);
+            setInvokeSave(v => !v);
         }
     }
     useEffect(() => {
@@ -74,7 +75,7 @@ function ExerciseContainer({
         if (!finished) {
             setShowTimer(true);
         } else {
-            if(!(exercise.sets.length -1 === currentSet && !isLastExercise)) {
+            if (!(exercise.sets.length - 1 === currentSet && !isLastExercise)) {
                 setCurrentSet(v => v + 1);
             }
         }
@@ -113,9 +114,6 @@ function ExerciseContainer({
                         >
                             {({values, setFieldValue, errors, ...props}) => (<>
                                     <Form>
-                                        {/*{JSON.stringify(props.validateOnChange)}*/}
-                                        {/*{JSON.stringify(values)}*/}
-                                        {/*{JSON.stringify(errors)}*/}
                                         {showTimer ? (<Box>
                                             <Timer
                                                 restTime={exercise.restTime}
@@ -124,7 +122,7 @@ function ExerciseContainer({
                                                 setShowTimer={changeShowTimer}/>
                                         </Box>) : (
                                             <FieldArray name={'sets'}>
-                                                {(props) => (
+                                                {() => (
                                                     <Box>
                                                         {values.sets.length > 0 ? values.sets.map((set, index) => (
                                                             <Box key={index}>
@@ -149,21 +147,21 @@ function ExerciseContainer({
                                     {!showTimer && (
                                         <Box>
                                             {error ? (
-                                                    <Typography sx={{color: 'red'}} mt='15px'>
+                                                    <Typography sx={{color: 'red'}} variant='caption' fontWeight='bold' mt='15px'>
                                                         Set correct values to continue
                                                     </Typography>)
                                                 : null}
-
                                             <Box>
                                                 {currentSet > 0 &&
-                                                    <Button onClick={() => {
+                                                    <StyledButton onClick={() => {
                                                         setCurrentSet(v => v - 1)
                                                         setError(false)
-                                                    }}>
+                                                    }}
+                                                    sx={{mr: '15px'}}>
                                                         Previous set
-                                                    </Button>}
+                                                    </StyledButton>}
                                                 {currentSet + 1 < exercise.sets.length ?
-                                                    (<Button
+                                                    (<StyledButton
                                                         onClick={async () => {
                                                             const validated = await validateNextStep(values, props, errors);
                                                             if (validated) {
@@ -174,8 +172,8 @@ function ExerciseContainer({
                                                             }
                                                         }}>
                                                         Next Set
-                                                    </Button>)
-                                                    : <Button onClick={async () => {
+                                                    </StyledButton>)
+                                                    : <StyledButton onClick={async () => {
                                                         const validated = await validateNextStep(values, props);
                                                         if (validated) {
                                                             await props.submitForm();
@@ -185,7 +183,7 @@ function ExerciseContainer({
 
                                                     }}>
                                                         {!isLastExercise ? 'Next Exercise' : 'Finish workout'}
-                                                    </Button>}
+                                                    </StyledButton>}
                                             </Box>
 
                                         </Box>

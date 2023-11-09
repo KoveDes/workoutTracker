@@ -1,31 +1,26 @@
-import React, {useState} from 'react';
 import useAxiosPrivate from "../hooks/useAxiosPrivate.js";
-import useAuth from "../hooks/useAuth.js";
 import {Form, Formik} from "formik";
-import measurementGoalSchema from "../schemas/measurementGoalSchema.js";
-import {Box, Divider, Typography, Unstable_Grid2 as Grid} from "@mui/material";
-import CustomInput, {CustomRadioList} from "../components/CustomInputs.jsx";
+import {Box, Unstable_Grid2 as Grid} from "@mui/material";
+import CustomInput from "../components/CustomInputs.jsx";
 import countGoalSchema from "../schemas/countGoalSchema.js";
 
 function CountGoalForm({setError, setIsSubmitting, setChange, setSuccess, data}) {
     const axiosPrivate = useAxiosPrivate();
-    const {auth} = useAuth();
     console.log()
-    const handleSubmit = async (values, actions) => {
+    const handleSubmit = async (values) => {
         setError('');
         setSuccess(false);
         setIsSubmitting(true);
-        console.log('elo')
         let message = '';
         try {
             if (data) {
-                const response = await axiosPrivate.patch('/goal', {
+                await axiosPrivate.patch('/goal', {
                     endValue: values.endValue,
                     id: data._id,
                 })
                 message = 'Goal updated';
             } else {
-                const response = await axiosPrivate.post('/goal', {
+                await axiosPrivate.post('/goal', {
                     category: 'workoutCount',
                     endValue: values.endValue,
                     currentValue: 0,
@@ -38,7 +33,6 @@ function CountGoalForm({setError, setIsSubmitting, setChange, setSuccess, data})
 
         } catch (e) {
             setError(e?.response?.data?.message || e.message);
-            console.log(e)
         } finally {
             setIsSubmitting(false);
 
@@ -53,7 +47,7 @@ function CountGoalForm({setError, setIsSubmitting, setChange, setSuccess, data})
             validationSchema={countGoalSchema}
             onSubmit={handleSubmit}
         >
-            {(props) => (
+            {() => (
                 <Form id='countGoalForm'
                       style={{
                           maxWidth: 'inherit',

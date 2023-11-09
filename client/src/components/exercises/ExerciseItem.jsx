@@ -1,10 +1,9 @@
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Typography from '@mui/material/Typography';
-import {Grid, Tooltip} from "@mui/material";
+import {Alert, Grid, Snackbar, Tooltip} from "@mui/material";
 import React, {forwardRef, useState} from "react";
 import Button from "@mui/material/Button";
-import useDropdownMenu from "../../hooks/useDropdownMenu.js";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate.js";
 import useAuth from "../../hooks/useAuth.js";
 
@@ -15,18 +14,17 @@ const errorImg = {
 }
 
 
-// export default function ExerciseItem({exercise, custom, setChange}) {
 const ExerciseItem = forwardRef(({exercise, custom, setChange, listeners, attributes, dragStyle}, ref) => {
     const [srcError, setSrcError] = useState(false);
-    const {open, handleClose, handleOpen} = useDropdownMenu();
+    const [error, setError] = useState('');
     const axiosPrivate = useAxiosPrivate();
     const {auth} = useAuth();
     const handleDelete = async () => {
         try {
-            const response = await axiosPrivate.delete(`/customExercise?id=${exercise._id}&user=${auth.user}`)
+            await axiosPrivate.delete(`/customExercise?id=${exercise._id}&user=${auth.user}`);
             setChange(v => !v);
         } catch (e) {
-            alert('Error');
+           setError('Server error, try again later');
         }
     }
     return (
@@ -37,8 +35,6 @@ const ExerciseItem = forwardRef(({exercise, custom, setChange, listeners, attrib
             sx={{
                 ...dragStyle,
                 border: '2px solid #fbfbfb',
-                // backgroundColor: 'lightsalmon',
-                // height: '270px',
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'space-around',
@@ -66,21 +62,30 @@ const ExerciseItem = forwardRef(({exercise, custom, setChange, listeners, attrib
                         src={srcError ? errorImg.src : exercise.gifUrl}
                         sx={{
                             width: '100px',
-                            // height: '%',
                             objectFit: 'cover',
                         }}
                     />
                 )}
             </Box>
+            {error ? (
+                <Snackbar
+                    open={!!error}
+                    severity='true'
+                    autoHideDuration={2000}
+                    anchorOrigin={{vertical: 'top', horizontal: 'center'}}
+                    onClose={() => setError('')}
+                >
+                    <Alert severity="error" sx={{width: '100%'}}>
+                        {error}
+                    </Alert>
+                </Snackbar>
+            ) : null}
             <Box p='0 10px 10px'
             >
                 <Grid container gap={2} justifyContent='center'
                 >
                     <InfoItem label={exercise.target}/>
                     <InfoItem label={exercise.equipment} bgColor='#3f3f3f'/>
-                    {/*<Typography>{exercise.equipment}</Typography>*/}
-                    {/*<Typography>{exercise.target}</Typography>*/}
-                    {/*    /!*<ColorPreview colors={product.colors} />*!/*/}
                 </Grid>
                 <Tooltip title={exercise.name.length > 25 ? exercise.name : ''}>
                     <Typography
@@ -108,7 +113,6 @@ export function InfoItem({label, bgColor}) {
         }}>
             <Tooltip title={label.length > 15 ? label : ''}>
                 <Typography
-                    // fontWeight='500'
                     letterSpacing={.5}
                     fontSize='0.75rem'
                 >{label.length > 20 ? `${label.slice(0, 16)}...` : label}</Typography>

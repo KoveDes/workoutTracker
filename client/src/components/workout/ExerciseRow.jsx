@@ -1,15 +1,15 @@
-import React from "react";
 import {Box, Collapse, IconButton, Table, TableBody, TableCell, TableHead, TableRow, Typography} from "@mui/material";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp.js";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown.js";
 import {formatSeconds} from "../../utils/formatters.js";
+import {useState} from "react";
 
 function ExerciseRow({row}) {
-    const [open, setOpen] = React.useState(false);
+    const [open, setOpen] = useState(false);
 
     return (
-        <React.Fragment>
-            <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
+        <>
+            <TableRow sx={{'&:last-child td, &:last-child th': {border: 0}}}>
                 <TableCell>
                     <IconButton
                         aria-label="expand row"
@@ -54,7 +54,7 @@ function ExerciseRow({row}) {
                     </Collapse>
                 </TableCell>
             </TableRow>
-        </React.Fragment>
+        </>
     );
 }
 export default ExerciseRow;

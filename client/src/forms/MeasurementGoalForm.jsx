@@ -1,6 +1,5 @@
-import React, {useEffect, useState} from 'react';
 import useAxiosPrivate from "../hooks/useAxiosPrivate.js";
-import {Form, Formik, useFormikContext} from "formik";
+import {Form, Formik} from "formik";
 import {Box, Divider, Typography, Unstable_Grid2 as Grid} from "@mui/material";
 import CustomInput, {CustomRadioList} from "../components/CustomInputs.jsx";
 import measurementGoalSchema from "../schemas/measurementGoalSchema.js";
@@ -13,7 +12,7 @@ function MeasurementGoalForm({setError, setIsSubmitting, success, setSuccess, da
     const {auth} = useAuth();
 
 
-    const handleSubmit = async (values, actions) => {
+    const handleSubmit = async (values) => {
         console.log('elo')
         setError('');
         setSuccess(false);
@@ -21,7 +20,7 @@ function MeasurementGoalForm({setError, setIsSubmitting, success, setSuccess, da
         let message = '';
         try {
             if (data) {
-                const response = await axiosPrivate.patch('/goal', {
+                await axiosPrivate.patch('/goal', {
                     endValue: values.endValue,
                     id: data._id,
                 })
@@ -34,7 +33,7 @@ function MeasurementGoalForm({setError, setIsSubmitting, success, setSuccess, da
                 if (values.endValue <= currentSize) {
                     throw Error(`Goal size should be higher than current one: ${currentSize} cm`);
                 }
-                const response = await axiosPrivate.post('/goal', {
+                await axiosPrivate.post('/goal', {
                     category: 'measurement',
                     bodyParameter: values.bodyParameter,
                     currentValue: Number(currentSize),
@@ -48,7 +47,6 @@ function MeasurementGoalForm({setError, setIsSubmitting, success, setSuccess, da
 
         } catch (e) {
             setError(e?.response?.data?.message || e.message);
-            console.log(e)
         } finally {
             setIsSubmitting(false);
 
@@ -78,7 +76,6 @@ function MeasurementGoalForm({setError, setIsSubmitting, success, setSuccess, da
                                     name='bodyParameter'
                                     color={success ? 'success' : null}
                                     itemArray={bodyParamsList}
-                                    // exerciseValue={customExercise?.equipment}
                                 />
                             </Grid>
                             <Divider/>

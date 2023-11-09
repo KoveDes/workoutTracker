@@ -5,13 +5,11 @@ import Box from "@mui/material/Box";
 function StretchExerciseDetails({exercise}) {
     return (
         <Grid container direction='column' >
-        {/*<div>{JSON.stringify(exercise)}</div>*/}
             <Box
                 component="img"
                 alt={exercise.name}
                 src={`../${exercise.gifUrl}`}
                 sx={{
-                    // height: '%',
                     maxWidth: '100%',
                     objectFit: 'contain',
                 }}

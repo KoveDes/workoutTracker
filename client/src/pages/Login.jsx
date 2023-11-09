@@ -1,28 +1,43 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Form, Formik} from "formik";
-import * as Yup from 'yup';
 import axios from "../api/axios";
 import useAuth from "../hooks/useAuth";
 import {useLocation, useNavigate} from "react-router-dom";
 import CustomInput, {CustomCheckbox, PasswordInput} from "../components/CustomInputs.jsx";
 import loginSchema from "../schemas/loginSchema.js";
 import Button from "@mui/material/Button";
+import {Alert, Box, Grid, Snackbar, Typography} from "@mui/material";
+import {exerciseOptions, fetchRapidAPIData} from "../api/fetchRapidAPI.js";
 
 
-function LoginForm(props) {
-    //auth
-    const {setAuth, setUser, persist, setPersist} = useAuth();
-
-
-    //navigate to site where user wanted to go
+function LoginForm() {
+    const [error, setError] = useState(null);
+    const {setAuth, setUser, setPersist} = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
     const from = location?.state?.from?.pathname || '/';
+    useEffect(() => {
+        const controller = new AbortController();
+        const fetchExercises = async () => {
+            try {
+                const storedExercises = sessionStorage.getItem('exercisesData');
+                if (!storedExercises) {
+                    const response = await fetchRapidAPIData(
+                        'https://exercisedb.p.rapidapi.com/exercises?limit=4000',
+                        exerciseOptions);
+                    if (!controller.signal.aborted) {
+                       sessionStorage.setItem('exercisesData', JSON.stringify(response?.data))
+                    }
+                }
+            } catch (e) {
+                console.log(e)
+            }
+        }
+        fetchExercises();
+        return () => controller.abort();
+    }, []);
 
-    const [error, setError] = useState(null);
-    const [success, setSuccess] = useState(false);
-
-    const handleSubmit = async (values, actions) => {
+    const handleSubmit = async (values) => {
         setError(null);
         const {login, password, persist: formPersist} = values;
         try {
@@ -40,70 +55,85 @@ function LoginForm(props) {
             setAuth({user: login, accessToken});
             setUser({gender: response?.data?.gender, username: response?.data?.username})
             setPersist(formPersist);
-            setSuccess('Logged in!');
             localStorage.setItem('persist', formPersist)
-            //display congrats message first
             navigate(from, {replace: true});
         } catch ({response}) {
             if ([400, 401].includes(response.request.status)) {
                 setError(response.data.message)
             } else {
-                setError('Invalid server response')
+                setError('Server error, try again later')
             }
         }
     }
 
     return (
-        <>
-            {success ? (<section>
-                <h1>{success}</h1>
-                <p>Persist: {persist.toString()}</p>
-            </section>) : (
-                <div>
-                    <h1>Login</h1>
-                    <Formik
-                        initialValues={{
-                            login: '',
-                            password: '',
-                            persist: false,
+        <Box>
+            <Typography variant='h4' textAlign='center'>Login</Typography>
+            <Formik
+                initialValues={{
+                    login: '',
+                    password: '',
+                    persist: false,
 
-                        }}
-                        validationSchema={loginSchema}
-                        onSubmit={handleSubmit}>
-                        {(props) => (
-                            <Form style={{display: success ? 'none' : 'block'}}>
-                                <CustomInput
-                                    type='text'
-                                    label='login'
-                                    name='login'
-                                    id='login'
-                                    placeholder='login'
-                                    // autoFocus
-                                />
-                                <PasswordInput
-                                    label='Password'
-                                    name='password'
-                                    id='password'
-                                    placeholder='password'
-                                />
-                                <Button type='submit' disabled={props.isSubmitting}>
-                                    {props.isSubmitting ? "Logging in..." : 'Login'}
-                                </Button>
-                                <CustomCheckbox
-                                    label='Trust this device (24 hours)'
-                                    name='persist'
-                                    id='persist'
-                                />
-                            </Form>
-                        )}
-                    </Formik>
-                    {error ?
-                        <h1 style={{color: 'red'}}>{error}</h1>
-                        : null}
-                </div>
-
-            )}
-        </>
+                }}
+                validationSchema={loginSchema}
+                onSubmit={handleSubmit}>
+                {(props) => (
+                    <Form>
+                        <Grid container direction='column'>
+                            <CustomInput
+                                type='text'
+                                label='login'
+                                name='login'
+                                id='login'
+                                placeholder='login'
+                            />
+                            <PasswordInput
+                                label='Password'
+                                name='password'
+                                id='password'
+                                placeholder='password'
+                            />
+                            <CustomCheckbox
+                                label='Trust this device (24 hours)'
+                                name='persist'
+                                id='persist'
+                            />
+                            <Button
+                                type='submit'
+                                disabled={props.isSubmitting}
+                                variant='text'
+                                sx={{
+                                    alignSelf: 'end',
+                                    width: '150px',
+                                    backgroundColor: '#3b3b3f',
+                                    color: 'white',
+                                    '&:hover': {
+                                        backgroundColor: '#3b3b3f',
+                                        opacity: 0.7,
+                                    }
+                                }}
+                            >
+                                {props.isSubmitting ? "Logging in..." : 'Login'}
+                            </Button>
+                        </Grid>
+                    </Form>
+                )}
+            </Formik>
+            {error ? (
+                <Snackbar
+                    open={!!error}
+                    severity='true'
+                    autoHideDuration={2000}
+                    anchorOrigin={{vertical: 'top', horizontal: 'center'}}
+                    onClose={() => setError('')}
+                >
+                    <Alert severity="error" sx={{width: '100%'}}>
+                        {error}
+                    </Alert>
+                </Snackbar>
+            ) : null}
+        </Box>
     )
 }
 

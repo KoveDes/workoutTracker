@@ -2,21 +2,13 @@ import React from 'react';
 import {Box, Chip, Grid, Typography} from "@mui/material";
 import useDropdownMenu from "../../hooks/useDropdownMenu.js";
 import CustomDialog from "../CustomDialog.jsx";
-import Button from "@mui/material/Button";
 import ExerciseVideos from "./ExerciseVideos.jsx";
+import StyledButton from "../StyledButton.jsx";
 
 function ExerciseInfo({exercise}) {
     const howTo = useDropdownMenu();
     return (
-        <Grid container alignItems='center' direction='column' gap={1}
-              sx={{
-                  // backgroundColor: 'coral'
-              }}>
-            {/*<Typography*/}
-            {/*    variant='h5'*/}
-            {/*    textAlign='center'*/}
-            {/*>{exercise.name}*/}
-            {/*</Typography>*/}
+        <Grid container alignItems='center' direction='column' gap={1}>
             <Box
                 component='img'
                 src={exercise.gifUrl}
@@ -26,11 +18,11 @@ function ExerciseInfo({exercise}) {
                 <Chip label={exercise.target} sx={{backgroundColor: 'gold'}}/>
                 {exercise.secondaryMuscles.map(muscle => (<Chip key={muscle} label={muscle}/>))}
             </Grid>
-            <Button
+            <StyledButton
                 variant='outlined'
                 onClick={howTo.handleOpen}>
                 How to execute
-            </Button>
+            </StyledButton>
             <CustomDialog
                 width={'lg'}
                 label={`${exercise.name}`}

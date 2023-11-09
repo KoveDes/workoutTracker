@@ -1,36 +1,40 @@
-import React, {useState} from 'react';
-import {Link, Outlet, useLocation} from "react-router-dom";
-import '../Body.css'
-import BodyInfo from "../components/BodyInfo.jsx";
-import WeightInfo from "../components/WeightInfo.jsx";
-import '../weightInfo.css'
+import React, {useCallback, useState} from 'react';
+import {Outlet, useLocation} from "react-router-dom";
+import BodyInfo from "../components/body/BodyInfo.jsx";
+import WeightInfo from "../components/body/WeightInfo.jsx";
 import {Box, Grid} from "@mui/material";
 
-function Body(props) {
-    const [refresh, setRefresh] = useState();
+function Body() {
+    const [refresh, setRefresh] = useState(false);
     const location = useLocation();
     const isBodyLocation = location.pathname === '/body';
+    const handleRefresh = useCallback(() => {
+        setRefresh(v => !v);
+    }, []);
 
     return (
-        <Box sx={{
-            margin: '30px 2.5%',
-            textAlign: 'center',
-        }}>
-            <Box className='about-page' style={{
-                margin: '30px 0'
-            }}>
-                {/*<BodyInfo />*/}
-                <Box className="grid-container">
-                    <Box className="first-div" p='20px'>
-                        <BodyInfo refresh={refresh} setRefresh={setRefresh}/>
-                    </Box>
-                    <Box className="second-div weight">
-                        {isBodyLocation ? <WeightInfo refresh={refresh} /> :  <Outlet context={setRefresh}/>}
-                    </Box>
+        <Box>
+
+            <Grid container gap='30px' wrap='nowrap' sx={{height: '780px'}}>
+                <Box
+                    className="first-div"
+                    sx={{
+                        p: '20px',
+                        minWidth: '375px',
+                        maxWidth: '375px',
+                        boxSizing: 'border-box',
+                        borderRadius: '25px',
+                        backgroundColor: 'lavender'
+                }}>
+                    <BodyInfo refresh={refresh} setRefresh={handleRefresh}/>
                 </Box>
-
-
-            </Box>
+                <Box
+                    // className="second-div weight"
+                    flexGrow='1'
+                >
+                    {isBodyLocation ? <WeightInfo refresh={refresh}/> : <Outlet context={setRefresh}/>}
+                </Box>
+            </Grid>
         </Box>
     );
 }

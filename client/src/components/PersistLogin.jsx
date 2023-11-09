@@ -3,27 +3,25 @@ import {useEffect, useState} from "react";
 import useRefreshToken from "../hooks/useRefreshToken";
 import useAuth from "../hooks/useAuth";
 
-function PersistLogin(props) {
+function PersistLogin() {
     const [isLoading, setIsLoading] = useState(true);
     const refresh = useRefreshToken();
     const {auth, persist} = useAuth();
 
-    //component load
     useEffect(() => {
-        let isMounted = true;
+        let ignore = false;
 
         const verifyRT = async () => {
             try {
-                await refresh();
+                if(!ignore) await refresh();
             } catch (e) {
                 console.error(e);
-            } finally {
-                setIsLoading(false);
             }
+            setIsLoading(false);
         }
         persist && !auth?.accessToken  ? verifyRT(): setIsLoading(false);
 
-        return () => isMounted = false;
+        return () => ignore = true;
     }, [auth.user])
 
     return (

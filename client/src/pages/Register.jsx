@@ -1,29 +1,17 @@
-import React, {useEffect, useState} from 'react';
-import {Form, FieldArray, Formik, useFormik} from "formik";
+import React, {useState} from 'react';
 import CustomInput, {CustomRadio, PasswordInput} from "../components/CustomInputs.jsx";
 import {default as registerSchemaAuth, registerSchemaDetails} from "../schemas/registerSchema.js";
-import {
-    Box,
-    Button,
-    CircularProgress,
-    FormControl,
-    FormLabel,
-    Grid,
-    RadioGroup,
-    Step,
-    StepLabel,
-    Stepper
-} from "@mui/material";
+import {Alert, Box, Grid, Snackbar, Typography} from "@mui/material";
+import FormikStepper from "../components/forms/FormikStepper.jsx";
+import FormikStep from "../components/forms/FormikStep.jsx";
+import axios from "../api/axios.js";
+import {useNavigate} from "react-router-dom";
 
-const REGISTER_URL = '/register'
-
-export function Register(props) {
-    const [success, setSuccess] = useState(false);
+export function Register() {
     const [error, setError] = useState('');
-
+    const navigate = useNavigate();
     return (<>
-
-        <h1>Register</h1>
+        <Typography variant='h4' textAlign='center'>Registration</Typography>
         <FormikStepper
             submittingText='Creating an account...'
             submitText='Sign up'
@@ -39,30 +27,25 @@ export function Register(props) {
                 weight: ''
             }}
 
-            onSubmit={async (values, actions) => {
-                // setTimeout(() => {
-                //     actions.setSubmitting(false);
-                //     // actions.resetForm();
-                //     setSuccess(true);
-                // }, 2000);
+            onSubmit={async (values) => {
+
                 setError('');
-                const {login, password} = values;
-                alert(JSON.stringify(values));
                 try {
-                    // const response = await axios.post(
-                    //     'http://localhost:3500/register',
-                    //     JSON.stringify({login, password}),
-                    //     {
-                    //         headers: {
-                    //             'Content-Type': 'application/json'
-                    //         },
-                    //         withCredentials: true,
-                    //     }
-                    // );
-                    // setSuccess(response.message);
-                    actions.resetForm();
+                    await new Promise(res => setTimeout(() => {
+                        res();
+                    }, 1000))
+                    await axios.post(
+                        'register',
+                        JSON.stringify(values),
+                        {
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            withCredentials: true,
+                        }
+                    );
+                    navigate('/login');
                 } catch ({response}) {
-                    // console.log(response.status);
                     setError(response.status === 409 ? response.data.message : "Error!")
                 }
 
@@ -78,17 +61,12 @@ export function Register(props) {
                         label='Login'
                         name='login'
                         placeholder='login'
-                        // autoFocus
                     />
-                </Box>
-                <Box>
                     <PasswordInput
                         label='Password'
                         name='password'
                         placeholder='password'
                     />
-                </Box>
-                <Box>
                     <PasswordInput
                         label='Confirm password'
                         name='matchPassword'
@@ -99,24 +77,26 @@ export function Register(props) {
                 label='User information'
                 validationSchema={registerSchemaDetails}
             >
-                <Grid container
-                      spacing={6} direction='row' wrap='nowrap'
-                >
-                    <Grid item>
-                        <CustomInput
-                            type='email'
-                            label='Email'
-                            name='email'
+                <Box sx={{width: '700px'}}>
+                    <Grid
+                        container
+                        spacing={6}
+                        justifyContent='center'
 
-                            // autoFocus
-                        />
-                        <CustomInput
-                            label='Username'
-                            name='username'
-                        />
-                        <FormControl>
-                            <FormLabel id='sex'>Gender</FormLabel>
-                            <RadioGroup row id='sex'>
+                    >
+                        <Grid item>
+                            <CustomInput
+                                type='email'
+                                label='Email'
+                                name='email'
+                            />
+                            <CustomInput
+                                label='Username'
+                                name='username'
+                            />
+                            <Grid
+                                container gap={3} alignItems='flex-start'
+                            >
                                 <CustomRadio
                                     label='Male'
                                     name='gender'
@@ -127,189 +107,47 @@ export function Register(props) {
                                     name='gender'
                                     value='female'
                                 />
-                            </RadioGroup>
-                        </FormControl>
-                    </Grid>
-                    {/*Gender checkbox    */}
-                    <Grid item>
-                        <CustomInput
-                            name='age'
-                            label="Age"
-                            type='number'
+                            </Grid>
+                        </Grid>
+                        <Grid item>
+                            <CustomInput
+                                name='age'
+                                label="Age"
+                                type='number'
 
-                        />
-                        <CustomInput
-                            name='height'
-                            label="Height (cm)"
-                            type='number'
-                            adornment='cm'
-                        />
-                        <CustomInput
-                            name='weight'
-                            label="Weight (kg)"
-                            type='number'
-                            adornment='kg'
-                        />
+                            />
+                            <CustomInput
+                                name='height'
+                                label="Height (cm)"
+                                type='number'
+                                adornment='cm'
+                            />
+                            <CustomInput
+                                name='weight'
+                                label="Weight (kg)"
+                                type='number'
+                                adornment='kg'
+                            />
+                        </Grid>
                     </Grid>
-                </Grid>
+                </Box>
 
             </FormikStep>
-
-            {/*    </>*/}
-            {/*)}*/}
-
         </FormikStepper>
-        {error ? <h1>{error}</h1> : null}
-        {success ? (<section>
-            <h1>{success}</h1>
-            <div>{JSON.stringify(props.values)}</div>
-        </section>) : null}
+        <Snackbar
+            open={!!error}
+            severity='true'
+            autoHideDuration={3000}
+            anchorOrigin={{vertical: 'bottom', horizontal: 'center'}}
+            onClose={() => {
+                error && setError('');
+            }}
+        >
+            <Alert severity={'error'} sx={{width: '100%'}}>
+                {error}
+            </Alert>
+        </Snackbar>
     </>)
-}
-
-export function FormikStepWithValues({children, formValues, ...props}) {
-
-    return (
-    <>
-        {children({formValues})}
-    </>
-    )
-    // return <>
-    //     {children}
-    //
-    // </>
-}
-
-export function FormikStep({children, formValues, ...props}) {
-
-    return <Grid container justifyContent='center'>
-        {children}
-    </Grid>;
-    // return <>
-    //     {children}
-    //
-    // </>
-}
-
-
-export function FormikStepper({children, submittingText, submitText, exercises, ...props}) {
-    const childrenArr = React.Children.toArray(children);
-    const [step, setStep] = useState(0);
-    const [newInit, setNewInit] = useState(props.initialValues);
-    const [completed, setCompleted] = useState(false);
-    const currentChild = childrenArr[step];
-    const isLastStep = step === childrenArr.length - 1;
-
-
-
-    return (<Formik {...props}
-                    validationSchema={currentChild.props?.validationSchema}
-                    onSubmit={async (values, actions) => {
-                        if (isLastStep) {
-                            await props.onSubmit(values, actions);
-                            setCompleted(true);
-
-                        } else {
-                            await actions.setTouched({}, false)
-                            setStep(s => s + 1);
-                        }
-                    }}
-    >
-        {(props) => (<Form style={{maxWidth: 'initial'}}>
-            {/*<pre>{JSON.stringify(props.values, undefined, 1)}</pre>*/}
-            <Stepper alternativeLabel activeStep={step}>
-                {childrenArr.map((child, index) => (
-                    <Step key={child?.props.label} completed={step > index || completed}>
-                        <StepLabel>{child?.props.label}</StepLabel>
-                    </Step>
-                ))}
-            </Stepper>
-            {React.cloneElement(currentChild, {formValues: props.values})}
-            <Grid container spacing={2} paddingTop={2} justifyContent='center'>
-                {step > 0 ? <Grid item>
-                    <Button
-                        variant='outlined'
-                        disabled={props.isSubmitting}
-                        onClick={() => setStep(s => s - 1)}>Back</Button>
-                </Grid> : null}
-                {JSON.stringify(props.errors)}
-
-                <Grid item>
-                    <Button
-                        startIcon={props.isSubmitting ? <CircularProgress size='1rem'/> : null}
-                        disabled={props.isSubmitting}
-                        variant={isLastStep ? 'contained' : 'outlined'} color='primary'
-                        type='submit'>{props.isSubmitting ? submittingText : isLastStep ? submitText : 'Next'}</Button></Grid>
-            </Grid>
-        </Form>)}
-    </Formik>)
-}
-
-
-export function RegisterForm(props) {
-    const formik = useFormik({
-        initialValues: {
-            login: '', password: '', matchPassword: '', username: '', gender: 'male'
-        }, validationSchema: registerSchema, onSubmit: (values) => {
-            // await new Promise(resolve => setTimeout(resolve, 2000))
-            alert(JSON.stringify(values));
-        }
-    })
-    return (<>
-        <h1>Register</h1>
-        <form onSubmit={formik.handleSubmit}>
-            {/*Login*/}
-            <label htmlFor="login">Login</label>
-            <input
-                className={formik.errors.login && formik.touched.login ? 'input-error' : ''}
-                autoFocus
-                type="text"
-                placeholder='login'
-                id='login'
-                name='login'
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                value={formik.values.login}
-            />
-            {formik.touched.login && formik.errors.login ? <p className='error'>{formik.errors.login}</p> : null}
-
-            {/*Password*/}
-            <label htmlFor="password">Password</label>
-            <input
-                className={formik.errors.password && formik.touched.password ? 'input-error' : ''}
-                type="password"
-                id='password'
-                name='password'
-                placeholder='password'
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                value={formik.values.password}/>
-            {formik.touched.password && formik.errors.password ?
-                <p className='error'>{formik.errors.password}</p> : null}
-            {/*Confirm Password*/}
-            <label htmlFor="matchPassword">Confirm Password</label>
-            <input
-                className={formik.errors.matchPassword && formik.touched.matchPassword ? 'input-error' : ''}
-                type="password"
-                id='matchPassword'
-                name='matchPassword'
-                placeholder='password'
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                value={formik.values.matchPassword}
-            />
-            {formik.touched.matchPassword && formik.errors.matchPassword ?
-                <p className='error'>{formik.errors.matchPassword}</p> : null}
-            <button type="submit">Register</button>
-        </form>
-        <div>
-            <h3>Values</h3>
-            <p>Login: {formik.values.login}</p>
-            <p>password: {formik.values.password}</p>
-            <p>matchPassword: {formik.values.matchPassword}</p>
-        </div>
-
-    </>);
 }
 
 export default Register;

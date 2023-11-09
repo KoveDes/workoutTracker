@@ -1,8 +1,8 @@
 import React from 'react';
-import {Box, Container} from "@mui/material";
-import WorkoutRoutineForm from "../forms/WorkoutRoutineForm.jsx";
+import {Box} from "@mui/material";
+import WorkoutRoutineForm from "../forms/workoutRoutine/WorkoutRoutineForm.jsx";
 
-function AddWorkoutRoutine(props) {
+function AddWorkoutRoutine() {
     return (
         <Box>
             <WorkoutRoutineForm />

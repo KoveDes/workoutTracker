@@ -1,7 +1,7 @@
 import React from 'react';
 import {Box, Grid, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography} from "@mui/material";
 
-function RpeInfo(props) {
+function RpeInfo() {
     return (
         <Grid container direction='column' alignItems='center'>
             <Box>
@@ -9,10 +9,6 @@ function RpeInfo(props) {
                     The RPE stands for rate of perceived exertion.
                     It helps you to decide how much weight you should be lifting by measuring how hard you worked.
                 </Typography>
-                {/*<Typography variant='body2' fontWeight='bold' mt='15px'>Suggestions: </Typography>*/}
-                {/*<Typography variant='body2'> 1. As a beginner aim for 7-8 points</Typography>*/}
-                {/*<Typography variant='body2'> 2. Normally try to reach for 8-9 points</Typography>*/}
-
                 <Box>
                     <TableContainer>
                         <Table >

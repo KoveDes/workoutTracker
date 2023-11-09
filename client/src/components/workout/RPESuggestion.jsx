@@ -8,14 +8,7 @@ function RpeSuggestion({rpe}) {
     const recommendation = rpe >= 9 ? 'lowering the load' : rpe >= 7 ? 'keeping the same load' : 'increasing the load'
     const description = `Based on your previous RPE (${rpe}), we suggest ${recommendation}` ;
     return (
-        <Tooltip
-            title={description}
-            sx={{
-                ".tooltip": {
-                    backgroundColor: '#ff7592'
-                }
-                }}
-        >
+        <Tooltip title={description}>
             <Box
                 component='img'
                 src={rpe >= 9 ? LoadDown : rpe >= 7 ? LoadOk : LoadUp}

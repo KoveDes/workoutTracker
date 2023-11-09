@@ -2,7 +2,7 @@ import React from 'react';
 import {FieldArray} from "formik";
 import {Accordion, AccordionDetails, AccordionSummary, Box, Grid, IconButton, Typography} from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore.js";
-import {CustomSlider, CustomSwitch} from "../../components/CustomInputs.jsx";
+import {CustomSlider} from "../../components/CustomInputs.jsx";
 import {formatSeconds} from "../../utils/formatters.js";
 import Button from "@mui/material/Button";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever.js";
@@ -10,12 +10,11 @@ import DeleteForeverIcon from "@mui/icons-material/DeleteForever.js";
 function ExerciseDetails({formValues}) {
     return (
         <FieldArray name={'exercises'}>
-            {({insert, remove, push}) => (
+            {() => (
                 <Grid container direction='column' gap='30px' mt='30px'>
                     {formValues.exercises.length > 0 &&
                         formValues.exercises.map((exercise, index) => (
                             <Accordion key={index} sx={{
-                                // border: '2px dashed cornflowerblue',
                                 boxShadow: "rgba(0, 0, 0, 0.04) 0px 5px 22px, rgba(0, 0, 0, 0.03) 0px 0px 0px 0.5px",
                                 border: '2px solid #45a0fd8c'
                             }}>
@@ -104,23 +103,6 @@ function ExerciseDetails({formValues}) {
                                                                             name={`exercises.${index}.sets.${setIndex}.reps`}
                                                                         />
                                                                     </Box>
-                                                                    {/*<Box>*/}
-                                                                    {/*    <CustomSwitch*/}
-                                                                    {/*        label='Duration exercise'*/}
-                                                                    {/*        name={`exercises.${index}.sets.${setIndex}.showDuration`}*/}
-                                                                    {/*    />*/}
-                                                                    {/*</Box>*/}
-                                                                    {/*{(exercise.sets[setIndex]?.showDuration) ? (*/}
-                                                                    {/*    <Box>*/}
-                                                                    {/*        <CustomSlider*/}
-                                                                    {/*            formater={formatSeconds}*/}
-                                                                    {/*            displayLabel='off'*/}
-                                                                    {/*            label='Duration'*/}
-                                                                    {/*            name={`exercises.${index}.sets.${setIndex}.duration`}*/}
-                                                                    {/*        />*/}
-                                                                    {/*    </Box>*/}
-                                                                    {/*) : null}*/}
-
                                                                 </AccordionDetails>
                                                             </Accordion>
                                                         ))}

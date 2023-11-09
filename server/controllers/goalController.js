@@ -56,11 +56,11 @@ const createGoal = async (req, res) => {
         if (user.goals.filter(obj => !obj.finished).length === 4) {
             return res.status(406).json({message: "You can have only 4 unfinished goals"});
         }
-        if (exercise && user.goals.find(obj => (obj.exercise === exercise && !obj.finished))) {
-            return res.status(406).json({message: "Goal with this exercise already exists"});
+        if (exercise && user.goals.find(obj => (obj.category === 'load' && !obj.finished))) {
+            return res.status(406).json({message: "Load goal already exists"});
         }
-        if (bodyParameter && user.goals.find(obj => (obj.bodyParameter === bodyParameter && !obj.finished))) {
-            return res.status(406).json({message: "Goal with this bodyParameter already exists"});
+        if (bodyParameter && user.goals.find(obj => (obj.category === 'measurement' && !obj.finished))) {
+            return res.status(406).json({message: "Measurement goal already exists"});
         }
         if (category === "workoutCount" && user.goals.find(obj => (obj.category === 'workoutCount' && !obj.finished))) {
             return res.status(406).json({message: "Workout count goal already exists"});

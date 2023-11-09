@@ -1,11 +1,9 @@
 import React from 'react';
-import {Box, Chip, Grid, Slider, Typography} from "@mui/material";
+import {Grid, Slider, Typography} from "@mui/material";
 import CustomInput from "../CustomInputs.jsx";
 import {useField} from "formik";
-import InfoIcon from "@mui/icons-material/Info.js";
 import useDropdownMenu from "../../hooks/useDropdownMenu.js";
 import CustomDialog from "../CustomDialog.jsx";
-import ExerciseVideos from "./ExerciseVideos.jsx";
 import RPEInfo from "./RPEInfo.jsx";
 import RPESuggestion from "./RPESuggestion.jsx";
 
@@ -21,7 +19,6 @@ function Set({previousValues, id, index, setsCount}) {
             container
             direction='column'
         >
-            {JSON.stringify(previousValues)}
             <Typography variant='h4' fontWeight='bold' color='#6495ed' mb={'10px'}>
                 Set {index + 1} of {setsCount}
             </Typography>
@@ -45,7 +42,6 @@ function Set({previousValues, id, index, setsCount}) {
                 name={`sets.${index}.load`}
             />
                 {previousValues?.rpe &&<RPESuggestion rpe={previousValues?.rpe}/>}
-                {/*<RPESuggestion rpe={7}/>*/}
 
             </Grid>
             <RPESlider
@@ -60,8 +56,7 @@ function Set({previousValues, id, index, setsCount}) {
 
 
 function RPESlider({label, ...props}) {
-    const [field, meta, helpers] = useField(props);
-    const id = props.name;
+    const [field] = useField(props);
     const scaleColor = colors[field.value - 1];
     const showTable = useDropdownMenu();
     return (
@@ -70,16 +65,9 @@ function RPESlider({label, ...props}) {
                 <label htmlFor={field.name}>{label}</label>
 
             </Grid>
-            <Typography component='p'
-                        sx={{
-                            textAlign: 'left',
-                            // backgroundColor: 'forestgreen',
-                            // color: 'white',
-                            // p: ' 2px 15px',
-                            // borderRadius: '15px',
-                            // m: '10px 0'
-                        }}
-                        fontWeight='bold'>{field?.value || 0}</Typography>
+            <Typography component='p' textAlign='left' fontWeight='bold'>
+                {field?.value || 0}
+            </Typography>
 
             <Slider
                 sx={{
@@ -110,7 +98,6 @@ function RPESlider({label, ...props}) {
                     }}
                 >What is RPE?</Typography>
                 <CustomDialog
-                    // width={'lg'}
                     label='RPE Scale'
                     isForm={false}
                     showButtons={false}
@@ -120,9 +107,6 @@ function RPESlider({label, ...props}) {
 
                 </CustomDialog>
             </Grid>
-            {meta.touched && meta.error ? (
-                <p className='error'>{meta.error}</p>
-            ) : null}
         </Grid>
     );
 }

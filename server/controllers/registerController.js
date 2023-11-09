@@ -2,7 +2,7 @@ const User = require('../models/User');
 const bcrypt = require('bcrypt');
 
 const createUser = async (req, res) => {
-    const {login, password} = req.body; //String or undefined
+    const {login, password, email, username, gender, age, height, weight} = req.body; //String or undefined
     if (!login || !password) {
         return res.status(400).json({
             message: "Login and password are required"
@@ -29,6 +29,14 @@ const createUser = async (req, res) => {
         const user = await User.create({
             login: String(login),
             password: String(hashedPassword),
+            email,
+            username,
+            gender,
+            age,
+            height,
+            weightHistory: [
+                {weight}
+            ],
         });
         res.status(201).json({message: "New user created", newUser: user});
     } catch (e) {

@@ -1,17 +1,15 @@
-import React from 'react';
 import {Outlet} from "react-router-dom";
 import Navbar from "./Navbar.jsx";
-import Footer from "./Footer.jsx";
+import {Box, Container} from "@mui/material";
 
-function Layout(props) {
+function Layout() {
     return (
-        <>
+        <Box sx={{minHeight: '100vh'}}>
             <Navbar/>
-            <main style={{minHeight: '80vh'}}>
-                <Outlet/>
-            </main>
-            <Footer/>
-        </>
+            <Container maxWidth='xl' sx={{py: 6, minHeight: 'calc(100vh - 100px)'}}>
+            <Outlet/>
+            </Container>
+        </Box>
     );
 }
 

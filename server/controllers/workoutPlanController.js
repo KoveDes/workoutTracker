@@ -26,8 +26,6 @@ const addPlan = async (req, res) => {
         const {_id: userId} = await User.findOne({login: req.user}, {_id: 1});
         let userPlans = await WorkoutPlan.find({user: userId});
         const duplicate = userPlans.filter(obj => obj.name === name);
-        console.log(userPlans)
-        //if main change other mains to true
         if (userPlans.length && main === true) {
             for(const plan of userPlans) {
                 plan.main = false;
@@ -35,14 +33,7 @@ const addPlan = async (req, res) => {
                 console.log('Updated')
             }
         }
-        // console.log({elo: 'Hej', user: userPlans});
-        if (duplicate.length) return res.status(409).json({message: "Plan with this name already exists!"});
-        // if (userPlans) {
-        //     userPlans.forEach(async (plan) => {
-        //         console.log(plan)
-        //         await plan.save()
-        //     })
-        // }
+        if (duplicate.length) return res.status(400).json({message: "Plan with this name already exists!"});
         const workoutPlan = await WorkoutPlan.create({
             user: userId,
             name: String(name),
@@ -63,11 +54,20 @@ const updatePlan = async (req, res) => {
     }
     try {
         const {_id: userId} = await User.findOne({login: req.user}, {_id: 1});
+        let userPlans = await WorkoutPlan.find({user: userId});
+        if (userPlans.length && main === true) {
+            for(const plan of userPlans) {
+                plan.main = false;
+                await plan.save();
+                console.log('Updated')
+            }
+        }
         const plan = await WorkoutPlan.findOne({user: userId, _id: id}, {user: 0, workoutRoutine: 0});
         if (!plan) res.sendStatus(204);
         plan.name = String(name);
         plan.description = description;
         plan.main = main;
+
         const result = await plan.save();
         res.json(result);
     } catch (e) {

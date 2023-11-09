@@ -9,7 +9,6 @@ import {
     Radio,
     RadioGroup,
     Slider,
-    Switch,
     TextField,
     Typography
 } from "@mui/material";
@@ -17,47 +16,22 @@ import {Visibility, VisibilityOff} from "@mui/icons-material";
 import Stack from "@mui/material/Stack";
 import Checkbox from "@mui/material/Checkbox";
 
-
-export function CustomSwitch({label, ...props}) {
-    const [field, meta, helpers] = useField(props);
-    const id = props.name;
-    return (
-        <Grid container alignItems='center' gap='10px'>
-            <p>{label}</p>
-            <Switch
-                size='small'
-                {...field} {...props} id={id}
-            />
-        </Grid>
-    );
-}
-
-
-export function CustomSlider({
-                                 label,
-                                 formater,
-                                 position = 'center',
-                                 displayLabel = 'on',
-                                 min = 15,
-                                 max = 300,
-                                 step = 15,
-                                 ...props
-                             }) {
-    const [field, meta, helpers] = useField(props);
-    const id = props.name;
+export function CustomSlider(
+    {
+        label,
+        formater,
+        position = 'center',
+        displayLabel = 'on',
+        min = 15,
+        max = 300,
+        step = 15,
+        ...props
+    }) {
+    const [field, meta] = useField(props);
     return (
         <Grid container direction='column' alignItems={position}>
             <label style={{textAlign: 'center'}} htmlFor={field.name}>{label}
-                <Typography component='p'
-                            sx={{
-                                textAlign: position,
-                                // backgroundColor: 'forestgreen',
-                                // color: 'white',
-                                // p: ' 2px 15px',
-                                // borderRadius: '15px',
-                                // m: '10px 0'
-                            }}
-                            fontWeight='bold'>{formater(field?.value || 0)}</Typography></label>
+                <Typography component='p' fontWeight='bold'>{formater(field?.value || 0)}</Typography></label>
             <Slider
                 sx={{
                     width: '75%',
@@ -85,7 +59,7 @@ export function CustomSlider({
 }
 
 export default function CustomInput({width, label, adornment, ...props}) {
-    const [field, meta, helpers] = useField(props);
+    const [field, meta] = useField(props);
     const id = props.name;
 
     return (
@@ -99,7 +73,6 @@ export default function CustomInput({width, label, adornment, ...props}) {
                 }}
                 sx={{width: width || '100%'}}
                 {...field} {...props} id={id} type={props.type || "text"}
-                // className={meta.touched && meta.error ? 'input-error' : ''} //style MUI classes instead
             />
             {meta.touched && meta.error ? (
                 <p className='error'>{meta.error}</p>
@@ -109,21 +82,18 @@ export default function CustomInput({width, label, adornment, ...props}) {
 }
 
 export function CustomInput2({label, adornment = '', ...props}) {
-    const [field, meta, helpers] = useField(props);
+    const [field, meta] = useField(props);
     const id = props.name;
 
     return (
         <Box height='40px'>
             <TextField
-
                 size='small' fullWidth
                 error={!!(meta.touched && meta.error)}
                 InputProps={{
                     endAdornment: adornment ? <InputAdornment position="start">{adornment}</InputAdornment> : null,
                 }}
-
                 {...field} {...props} id={id} type={props.type || "text"}
-                // className={meta.touched && meta.error ? 'input-error' : ''} //style MUI classes instead
             />
             {meta.touched && meta.error ? (
                 <p className='error'>{meta.error}</p>
@@ -135,18 +105,15 @@ export function CustomInput2({label, adornment = '', ...props}) {
 export function CustomRadio({label, ...props}) {
     const [field, meta] = useField(props);
     return (
-        <>
-            {/*{JSON.stringify()}*/}
-
-
-            <label className={meta.touched && meta.error ? 'error' : ''}>{label}
-                <input {...field} {...props} type='radio'
-                       checked={field.value === props.value}
-                    // className={meta.touched && meta.error ? 'input-error' : ''}
-                />
-            </label>
-
-        </>
+        <label className={meta.touched && meta.error ? 'error' : ''}>{label}
+            <input {...field} {...props} type='radio'
+                   checked={field.value === props.value}
+                   style={{
+                       accentColor: 'black',
+                       marginLeft: '5px',
+                   }}
+            />
+        </label>
     );
 }
 
@@ -160,9 +127,7 @@ export function CustomRadioList({label, exerciseValue, handleCheckboxChange, ite
             overflowY: 'scroll',
             borderRadius: '20px',
             border: '2px solid #dfe7ff',
-            // boxShadow: "rgba(0, 0, 0, 0.08) 0px 5px 22px, rgba(0, 0, 0, 0.03) 0px 0px 0px 0.5px",
             '::-webkit-scrollbar': {
-                // backgroundColor: '#e3e3e3',
                 borderRadius: '0  20px 20px 0',
             },
             '::-webkit-scrollbar-thumb': {
@@ -172,13 +137,10 @@ export function CustomRadioList({label, exerciseValue, handleCheckboxChange, ite
             }
         }}>
             <RadioGroup
-                sx={{backgroundColor: 'transparent'}}
-
-
+                sx={{backgroundColor: 'transparent', pl: '7.5px'}}
             >
                 {itemArray.map((item) => (
                     <FormControlLabel
-
                         {...props}
                         {...field}
                         key={item} value={item}
@@ -202,7 +164,7 @@ export function CustomCheckboxList(
         param,
         ...props
     }) {
-    const [field, meta] = useField(props);
+    const [meta] = useField(props);
     const id = props.name;
     return (<>
         <label htmlFor={id}>{label}</label>
@@ -210,15 +172,12 @@ export function CustomCheckboxList(
         <Grid container wrap={wrap ? 'wrap' : 'nowrap'} sx={{
             width: wrap ? 'auto' : '100%',
             overflowX: wrap ? 'none' : 'scroll',
-            // direction:'column',
             maxHeight: wrap ? '25vh' : 'auto',
             overflowY: wrap ? 'scroll' : 'none',
             gap: '15px',
             borderRadius: '20px',
             border: '2px solid #dfe7ff',
-            // boxShadow: "rgba(0, 0, 0, 0.08) 0px 5px 22px, rgba(0, 0, 0, 0.03) 0px 0px 0px 0.5px",
             '::-webkit-scrollbar': {
-                // backgroundColor: '#e3e3e3',
                 borderRadius: '0  20px 20px 0',
             },
             '::-webkit-scrollbar-thumb': {
@@ -229,20 +188,10 @@ export function CustomCheckboxList(
 
         }}>
             {itemArray.map((item) => (
-                // <ListItem key={item}>
-                //     <ListItemIcon>
-                //         <CustomCheckbox label={item} name={props.name} value={item}/>
-                //     </ListItemIcon>
-                //     <ListItemText primary={item}/>
-                // </ListItem>
-                // <FormControlLabel
-                //     key={item} control={<CheckBox {...props.name} checked={false}/> } label={item}/>
                 <CustomCheckbox label={item} name={props.name} value={item} key={item}/>
             ))}
         </Grid>
-        {/*</List>*/}
-        {/*</Stack>*/}
-        {meta.touched && meta.error && <div className="error">{meta.error}</div>}
+        {meta?.touched && meta.error && <div className="error">{meta.error}</div>}
 
     </>)
 }
@@ -271,7 +220,7 @@ export function CustomCheckbox({label, showError = false, isChecked, ...props}) 
     );
 }
 
-export function PasswordInput({label, emojiVisible = '🤗', emojiInvisible = '🤐', ...props}) {
+export function PasswordInput({label, ...props}) {
     const [field, meta] = useField(props);
     const [visible, setVisible] = useState(false);
     const id = props.name;
@@ -280,15 +229,13 @@ export function PasswordInput({label, emojiVisible = '🤗', emojiInvisible = '�
     }
 
     return (
-        <>
+        <Box>
             <label htmlFor={id}>{label}</label>
             <div className="passwordContainer">
                 <TextField
                     error={!!(meta.touched && meta.error)}
                     fullWidth
                     size='small'
-
-                    // END OF MUI PROPS
                     {...field} {...props}
                     id={id}
                     type={visible ? 'text' : 'password'}
@@ -297,18 +244,18 @@ export function PasswordInput({label, emojiVisible = '🤗', emojiInvisible = '�
                     InputProps={{
                         endAdornment: (
                             <IconButton onClick={handleClick}>
-                                {visible ? <Visibility/> : <VisibilityOff/>}
+                                {visible ?
+                                    <Visibility sx={{color: '#3b3b3f'}}/>
+                                    : <VisibilityOff sx={{color: '#3b3b3f'}}/>}
                             </IconButton>
                         ),
                     }}
-
                 />
-                {/*<p className='togglePwd' onClick={handleClick}>{visible ? emojiVisible : emojiInvisible}</p>*/}
             </div>
             {meta.touched && meta.error ? (
-                <p className='error'>{meta.error}</p>
+                <Typography variant='caption' className='error'>{meta.error}</Typography>
             ) : null}
-        </>
+        </Box>
     )
 }
 

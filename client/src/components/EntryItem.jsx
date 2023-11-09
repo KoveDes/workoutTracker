@@ -1,82 +1,58 @@
 import React, {useState} from 'react';
 import useAuth from "../hooks/useAuth.js";
 import useAxiosPrivate from "../hooks/useAxiosPrivate.js";
-import {IconButton, TableCell, TableRow, TextField, Typography} from "@mui/material";
+import {Alert, IconButton, Snackbar, TableCell, TableRow, TextField, Typography} from "@mui/material";
 import {dateYearFormatter} from "../utils/formatters.js";
 import EditIcon from "@mui/icons-material/Edit.js";
 import DeleteIcon from "@mui/icons-material/Delete.js";
 import ClearIcon from '@mui/icons-material/Clear';
 import DoneIcon from '@mui/icons-material/Done';
-import GoalFinished from "./GoalFinished.jsx";
 
-function EntryItem({data, setChange, setReload, setShowGoal, payloadParam, setRefresh,apiPath, dataValue}) {
+function EntryItem({data, setChange, setReload, setShowGoal, payloadParam, setRefresh, apiPath, dataValue}) {
     const [editing, setEditing] = useState(false);
     const [inputValue, setInputValue] = useState(dataValue);
     const {auth} = useAuth();
+    const [error, setError] = useState('')
     const axiosPrivate = useAxiosPrivate();
     const handleEdit = (e) => {
         setInputValue(e.target.value);
     }
-    const handleDeleteClick = async (e) => {
-        let ignore = false;
-        const controller = new AbortController();
+    const handleDeleteClick = async () => {
         try {
-            const response = await axiosPrivate.delete(`${payloadParam === 'weight' ? '/user/weight' : apiPath}?id=${data._id}&user=${auth.user}`,
-                {signal: controller.signal})
-            if (!ignore && response.statusText === 'OK') {
-                setChange(c => !c);
-                setReload(v => !v);
-                setRefresh && setRefresh(c => !c);
-            }
-            console.log(response.data)
-            if(response?.data?.goalMessage){
-                console.log('Goal')
+            const response = await axiosPrivate.delete(`${payloadParam === 'weight' ? '/user/weight' : apiPath}?id=${data._id}&user=${auth.user}`)
+            setChange(c => !c);
+            setReload(v => !v);
+            setRefresh && setRefresh(c => !c);
+            if (response?.data?.goalMessage) {
                 setShowGoal(response?.data?.goalMessage)
             }
 
         } catch (e) {
-            console.log(e);
-        }
-        return () => {
-            ignore = true;
-            controller.abort('useEffect');
+            setError('Server error. Try again later');
         }
     }
-    const handleSaveClick = async (e) => {
-        let ignore = false;
-        const controller = new AbortController();
+    const handleSaveClick = async () => {
+
         try {
             const response = await axiosPrivate.patch(payloadParam === 'weight' ? '/user/weight' : apiPath,
                 JSON.stringify({
                     user: auth.user,
                     id: data._id,
                     [payloadParam]: Number.parseInt(inputValue),
-                }),
-                {signal: controller.signal})
-            if(response?.data?.goalMessage){
-                console.log('Goal')
+                }))
+            if (response?.data?.goalMessage) {
                 setShowGoal(response?.data?.goalMessage)
             }
-            if (!ignore) {
-                setEditing(false);
-                setChange(c => !c);
-                setReload(c => !c);
-                setRefresh && setRefresh(c => !c);
-                console.log(response.data)
-            }
+            setEditing(false);
+            setChange(c => !c);
+            setReload(c => !c);
+            setRefresh && setRefresh(c => !c);
 
         } catch (e) {
-            console.log(e);
+            setError('Server error. Try again later');
         }
-        return () => {
-            ignore = true;
-            controller.abort('useEffect');
-        }
+
     }
-
-    // const formattedDate = new Date(data.date).toLocaleDateString('en-Gb');
-    const formattedDate = data.date;
-
     return (
         <TableRow>
             <TableCell sx={{}}>
@@ -88,7 +64,7 @@ function EntryItem({data, setChange, setReload, setShowGoal, payloadParam, setRe
                             variant='outlined'
                             size='small'
                             helperText={inputValue < 30 || inputValue > 442 ?
-                                '(30kg - 442kg allowed)': ''}
+                                '(30kg - 442kg allowed)' : ''}
                             value={inputValue}
                             onChange={handleEdit}
                         />
@@ -121,9 +97,22 @@ function EntryItem({data, setChange, setReload, setShowGoal, payloadParam, setRe
                             <IconButton size='small' onClick={() => setEditing(true)}><EditIcon fontSize="small"
                                                                                                 sx={{color: 'black'}}/></IconButton>
                             <IconButton size='small' onClick={handleDeleteClick}><DeleteIcon fontSize="small"
-                                                                                             sx={{color: 'black'}}/></IconButton>
+                                                                                             sx={{color: 'orangered'}}/></IconButton>
                         </>
                     )}
+                {error ? (
+                    <Snackbar
+                        open={!!error}
+                        severity='true'
+                        autoHideDuration={2000}
+                        anchorOrigin={{vertical: 'top', horizontal: 'center'}}
+                        onClose={() => setError('')}
+                    >
+                        <Alert severity="error" sx={{width: '100%'}}>
+                            {error}
+                        </Alert>
+                    </Snackbar>
+                ) : null}
             </TableCell>
         </TableRow>
 

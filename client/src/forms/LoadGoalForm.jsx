@@ -5,71 +5,55 @@ import {Form, Formik} from "formik";
 import {Box, Divider, Typography, Unstable_Grid2 as Grid} from "@mui/material";
 import CustomInput, {CustomRadioList} from "../components/CustomInputs.jsx";
 import loadGoalSchema from "../schemas/loadGoalSchema.js";
+import useFetch from "../hooks/useFetch.js";
 
 function LoadGoalForm({setError, setIsSubmitting, success, setSuccess, data, setChange}) {
-    const [userExercises, setUserExercises] = useState([]);
     const axiosPrivate = useAxiosPrivate();
-    const {auth} = useAuth();
+    const {response} = useFetch(({
+        method: 'get',
+        path: 'workoutPlan/all',
+        deps: [],
+    }))
+    const userExercises = response?.reduce((accumulator, workoutPlan) =>
+            [...accumulator, ...workoutPlan.workoutRoutine.reduce((acc, routine) => (
+                [...acc, ...routine.exercises.map(e => e?.exercise?.name)]
+            ), [])]
+        , []);
+
+    const {response: exercisesRecords} = useFetch(({
+        method: 'get',
+        path: 'stats/records',
+        deps: [],
+    }))
+
+    const findValue = (name) => exercisesRecords?.find(record => record.name.toLowerCase() === name.toLowerCase())?.maxLoad
 
 
-    useEffect(() => {
-        let ignore = false;
-        const controller = new AbortController();
-        const getData = async () => {
-            try {
-                const response = await axiosPrivate.get(`/workoutPlan/all?user=${auth.user}`, {
-                    signal: controller.signal
-                })
-                if (!ignore) {
-                    const data = response.data
-                    const workoutRoutines = data.reduce((accumulator, workoutPlan) =>
-                            [...accumulator, ...workoutPlan.workoutRoutine.reduce((acc, routine) => (
-                                [...acc, ...routine.exercises.map(e => e?.exercise?.name)]
-                            ), [])]
-                        , []);
-                    console.log(workoutRoutines)
-                    setUserExercises(workoutRoutines);
-                }
-            } catch (e) {
-                console.log(e);
-                setUserExercises([]);
-            }
-        }
-        getData();
-        return () => {
-            ignore = true;
-            controller.abort('useEffect');
-        }
-    }, [])
-
-
-    const handleSubmit = async (values, actions) => {
+    const handleSubmit = async (values) => {
         setError('');
         setSuccess(false);
         setIsSubmitting(true);
         let message = '';
         try {
             if (data) {
-                const response = await axiosPrivate.patch('/goal', {
+                if(findValue(values.exercise) >= values.endValue) {
+                    throw new Error('Value must be greater then current record')
+                }
+                await axiosPrivate.patch('/goal', {
                     endValue: values.endValue,
                     id: data._id,
                 })
                 message = 'Goal updated';
             } else {
-                // const {data} = await axiosPrivate.get(`body/${values.bodyParameter}?user=${auth.user}`)
-                // const currentSize = data[0]?.size || 0;
-                // console.log(currentSize)
-                // if(values.endValue === currentSize) {
-                //     throw Error('You cant set your current size');
-                // }
-
-
 
                 // if load is below record load throw error
-                const response = await axiosPrivate.post('/goal', {
+                if(findValue(values.exercise) >= values.endValue) {
+                    throw new Error('Value must be greater then current record')
+                }
+                await axiosPrivate.post('/goal', {
                     category: 'load',
                     exercise: values.exercise,
-                    currentValue: 0,
+                    currentValue: findValue(values.exercise),
                     endValue: values.endValue,
 
                 })
@@ -108,16 +92,17 @@ function LoadGoalForm({setError, setIsSubmitting, success, setSuccess, data, set
                             label='Exercises from workout plans'
                             name='exercise'
                             color={success ? 'success' : null}
-                            itemArray={userExercises}
+                            itemArray={userExercises || []}
                         />
                     </Grid>
                     <Divider/>
                     </>)}
                     <Grid container spacing={0} direction='column'>
                         <Typography variant='h5' textAlign='center' m='15px'>{props.values.exercise}</Typography>
-                        <Grid container justifyContent={'space-between'}>
-                        </Grid>
-                        <Grid container justifyContent={'center'}>
+                        <Grid container alignItems='center' direction='column'>
+                            <Typography>Current Value</Typography>
+                            <Typography>{findValue(props.values.exercise)} kg</Typography>
+                            <br/>
                             <Box sx={{width: '35%'}}>
                                 <CustomInput
                                     name='endValue'

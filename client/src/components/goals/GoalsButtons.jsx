@@ -6,6 +6,7 @@ import WeightGoalForm from "../../forms/WeightGoalForm.jsx";
 import LoadGoalForm from "../../forms/LoadGoalForm.jsx";
 import CountGoalForm from "../../forms/CountGoalForm.jsx";
 import MeasurementGoalForm from "../../forms/MeasurementGoalForm.jsx";
+import StyledButton from "../StyledButton.jsx";
 
 function GoalsButtons({currentGoals, setChange}) {
     const [weightOpen, setWeightOpen] = useState(false);
@@ -42,27 +43,23 @@ function GoalsButtons({currentGoals, setChange}) {
 
             <Grid container justifyContent='center' gap={3}>
                 {currentGoals === 4 ? <h3>You can have only 4 current goals</h3> : (<>
-                    <Button
-                        onClick={() => setWeightOpen(true)}
-                        variant='outlined'>
+                    <StyledButton
+                        onClick={() => setWeightOpen(true)}>
                         Add Weight Goal
-                    </Button>
+                    </StyledButton>
 
-                    <Button
-                        onClick={() => setLoadOpen(true)}
-                        variant='outlined'>
+                    <StyledButton
+                        onClick={() => setLoadOpen(true)}>
                         Add Exercise Load Goal
-                    </Button>
-                    <Button
-                        onClick={() => setCountOpen(true)}
-                        variant='outlined'>
+                    </StyledButton>
+                    <StyledButton
+                        onClick={() => setCountOpen(true)}>
                         Add Workout Count Goal
-                    </Button>
-                    <Button
-                        onClick={() => setMeasurementOpen(true)}
-                        variant='outlined'>
+                    </StyledButton>
+                    <StyledButton
+                        onClick={() => setMeasurementOpen(true)}>
                         Add Measurement Goal
-                    </Button>
+                    </StyledButton>
                 </>)}
             </Grid>
         </Box>

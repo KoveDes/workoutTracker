@@ -11,7 +11,7 @@ const getWorkouts = async (req, res) => {
         const {_id: userId} = await User.findOne({login: req.user}, {_id: 1});
         const workouts = await Workout.find({user: userId}, {user: 0});
         if (!workouts.length) return res.sendStatus(204);
-        res.json(pagination(workouts,limit, skip));
+        res.json({data: pagination(workouts.reverse(),limit, skip), count: workouts?.length});
     } catch (e) {
         res.status(500).json({message: e.message});
     }
@@ -42,7 +42,7 @@ const saveWorkout = async (req, res) => {
         let goalMessage;
         const user = await User.findOne({login: req.user}, {goals: 1});
         //GOAL category === workoutCount
-        const workoutCountGoal = user.goals.find(goal => (goal.category === "workoutCount" && !goal.finished));
+        const workoutCountGoal = user.goals.find(goal => (goal?.category === "workoutCount" && !goal?.finished));
         if (workoutCountGoal) {
             workoutCountGoal.currentValue++;
             if (workoutCountGoal.currentValue >= workoutCountGoal.endValue) {
@@ -54,8 +54,8 @@ const saveWorkout = async (req, res) => {
             }
         }
         //GOAL category === load
-        const loadGoal = user.goals.find(goal => (goal.category === "load" && !goal.finished));
-        const goalExercise = exercises.filter(obj => obj.name === loadGoal.exercise)[0];
+        const loadGoal = user.goals.find(goal => (goal?.category === "load" && !goal?.finished));
+        const goalExercise = exercises.filter(obj => obj.name === loadGoal?.exercise)[0];
         if (loadGoal && goalExercise) {
             //get bes load of the exercises
             const {load: bestLoad} = goalExercise.sets.reduce((prev, curr) => {
@@ -68,6 +68,12 @@ const saveWorkout = async (req, res) => {
                     message: "Goal has been achieved!",
                     goal: loadGoal
                 }
+            }
+        }
+        if (loadGoal?.finished && workoutCountGoal?.finished) {
+            goalMessage = {
+                    message: 'You finished 2 goals!',
+                    goal: [loadGoal, workoutCountGoal]
             }
         }
         // Change performed in routine
@@ -99,12 +105,13 @@ const saveWorkout = async (req, res) => {
     }
 }
 const removeWorkout = async (req, res) => {
-    const {id: workoutId} = req.body;
+    const {id: workoutId} = req.query;
     console.log(workoutId);
     try {
         //Goals don't need to be updated
-        const {_id: userId} = await User.findOne({login: req.user}, {_id: 1});
+        const {_id: userId} = await User.findOne({login: req.query.user}, {_id: 1});
         const deleted = await Workout.deleteOne({user: userId, _id: workoutId});
+
         if (!deleted.deletedCount) return res.sendStatus(204) //nothing has been deleted
         res.json(deleted);
     } catch (e) {
@@ -115,7 +122,7 @@ const removeWorkout = async (req, res) => {
 const getNotes = async (req,res) => {
     const {limit, skip} = req.params;
     try {
-        const {_id: userId} = await User.findOne({login: req.user}, {_id: 1});
+        const {_id: userId} = await User.findOne({login: req.params.user}, {_id: 1});
         const workoutsNotes = await Workout.find({user: userId}, {note: 1});
         if(!workoutsNotes) return res.sendStatus(204);
         res.json(pagination(workoutsNotes, limit, skip));
@@ -130,5 +137,5 @@ module.exports = {
     getWorkout: [verifyId, getWorkout],
     saveWorkout,
     getNotes,
-    removeWorkout: [verifyId, removeWorkout]
+    removeWorkout,
 }

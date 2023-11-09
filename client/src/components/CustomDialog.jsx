@@ -2,13 +2,24 @@ import React from 'react';
 import useFormState from "../hooks/useFormState.js";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
-import {Divider, Unstable_Grid2 as Grid} from "@mui/material";
+import {Divider, Typography, Unstable_Grid2 as Grid} from "@mui/material";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
-import Button from "@mui/material/Button";
-import CustomExerciseForm from "../forms/CustomExerciseForm.jsx";
+import ErrorImg from '../assets/Error.png'
+import SuccessImg from '../assets/Success.png'
+import StyledButton from "./StyledButton.jsx";
 
-function CustomDialog({open, handleClose: x,isForm=true, label, data, children, width, formId, showButtons=false}) {
+function CustomDialog({
+                          open,
+                          handleClose: x,
+                          isForm = true,
+                          label,
+                          data,
+                          children,
+                          width,
+                          formId,
+                          showButtons = false
+                      }) {
     const {
         success,
         error,
@@ -23,8 +34,6 @@ function CustomDialog({open, handleClose: x,isForm=true, label, data, children, 
         setSuccess('');
         x();
     }
-    // const formChildren = Array.isArray(children) ? children[0] : children;
-
     const passedForm = isForm ? React.cloneElement(children, {
         data,
         success,
@@ -51,27 +60,31 @@ function CustomDialog({open, handleClose: x,isForm=true, label, data, children, 
             <Divider/>
 
             <DialogContent>
-                {success ? (<div style={{display: "flex", alignItems: 'center', flexDirection: 'column'}}><img
+                {success ? (
+                    <Grid container direction='column' alignItems='center'>
+                        <img
+                            style={{width: '30%'}}
+                            src={SuccessImg}
+                            alt="Success icon"/>
+                        <Typography variant='h5'>{success}</Typography>
+                    </Grid>) : null}
+                {error ? (<Grid container direction='column' alignItems='center'>
+                    <img
                     style={{width: '15%'}}
-                    src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Hand%20gestures/Clapping%20Hands%20Light%20Skin%20Tone.png"
-                    alt="Clapping Hands Light Skin Tone"/>
-                    <p>{success}</p></div>) : null}
-                {error ? (<div style={{display: "flex", alignItems: 'center', flexDirection: 'column'}}><img
-                    style={{width: '15%'}}
-                    src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Symbols/No%20Entry.png"
-                    alt="No Entry"/>
-                    <p>{error}</p></div>) : null}
-                {passedForm}
+                    src={ErrorImg}
+                    alt="Error icon"/>
+                    <p>{error}</p></Grid>) : null}
+                {!success ? passedForm : null}
             </DialogContent>
-            {showButtons ? (
-            <DialogActions>
-                <Button onClick={handleClose}>Cancel</Button>
-                <Button form={formId} type='submit'
-                        disabled={isSubmitting}
-                >
-                    {isSubmitting ? "Saving" : "Save"}
-                </Button>
-            </DialogActions>
+            {showButtons && !success ? (
+                <DialogActions>
+                    <StyledButton onClick={handleClose}>Cancel</StyledButton>
+                    <StyledButton form={formId} type='submit'
+                            disabled={isSubmitting}
+                    >
+                        {isSubmitting ? "Saving" : "Save"}
+                    </StyledButton>
+                </DialogActions>
             ) : null}
         </Dialog>
     );
