@@ -2,7 +2,6 @@ const User = require('../models/User');
 const WorkoutPlan = require('../models/WorkoutPlan');
 const verifyId = require("../middlewares/verifyID");
 const verifyRoutineId = require("../middlewares/verifyRoutineID");
-const mongoose = require("mongoose");
 
 const getPlan = async (req, res) => {
     const {id} = req.query;
@@ -34,7 +33,7 @@ const addPlan = async (req, res) => {
             }
         }
         if (duplicate.length) return res.status(400).json({message: "Plan with this name already exists!"});
-        const workoutPlan = await WorkoutPlan.create({
+        await WorkoutPlan.create({
             user: userId,
             name: String(name),
             description: description ? String(description) : undefined,
@@ -122,10 +121,6 @@ const addRoutine = async (req, res) => {
     if (req?.body?.days && !(days instanceof Array)) {
         return res.status(400).json({message: "Days must be an array"})
     }
-    // if (days && !days.some(day => day < 0 || day > 6)) {
-    //
-    //     return res.status(400).json({message: "Invalid array's items value "})
-    // }
     if (exercises && !(exercises instanceof Array)) return res.status(400).json({message: "Exercises should be stored in Array "})
 
     try {
@@ -145,7 +140,7 @@ const addRoutine = async (req, res) => {
             icon: icon || '',
         }
         plan.workoutRoutine = [...plan.workoutRoutine, newRoutine];
-        const result = await plan.save();
+        await plan.save();
         res.json(plan.workoutRoutine)
     } catch (e) {
         res.status(500).json({message: e.message});
@@ -157,9 +152,7 @@ const updateRoutine = async (req, res) => {
     if (req?.body?.days && !(days instanceof Array)) {
         return res.status(400).json({message: "Days must be an array"})
     }
-    // if (days && !days.some(day => !Number.isInteger(day) || day <= 0 || day > 6)) {
-    //     return res.status(400).json({message: "Invalid array's items value "})
-    // }
+
     if (exercises && !(exercises instanceof Array)) return res.status(400).json({message: "Exercises should be stored in Array "})
 
     try {
@@ -175,7 +168,7 @@ const updateRoutine = async (req, res) => {
         routine.icon = icon || '';
         routine.exercises = exercises ? exercises : routine.exercises;
 
-        const result = await plan.save();
+        await plan.save();
         res.json(routine)
     } catch
         (e) {
@@ -200,13 +193,11 @@ const removeRoutine = async (req, res) => {
 
 
 module.exports = {
-    // getPlan: [verifyId, getPlan],
     getPlan,
     addPlan,
     updatePlan: [verifyId, updatePlan],
     removePlan,
     getAllPlans,
-    // getRoutine: [verifyId, verifyRoutineId, getRoutine],
     getRoutine,
     addRoutine: [verifyId, addRoutine],
     updateRoutine: [verifyId, verifyRoutineId, updateRoutine],

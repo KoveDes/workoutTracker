@@ -15,31 +15,21 @@ const workoutSchema = new mongoose.Schema({
             return Date.now()
         }
     },
-    // duration: Number,
     name: String,
     icon: String,
     note: String,
     exercises: [{
         name: {type: String, required: true},
-        restTime: Number, //implement
+        restTime: Number,
         sets: {
             type: [{
-                // restTime: Number,
                 reps: Number,
                 load: Number,
-                // duration: Number,
                 rpe: Number,
             }],
             required: true,
         },
     }],
-
-    //Implementation for musclesUsed in Records
-    //for each exercise in exercises[] add exercise.bodyPart
-    // bodyPartsUsed: [{
-    //     bodyPart: String,
-    //     count: Number
-    // }]
 });
 // collection: workouts
 module.exports = mongoose.model('Workout', workoutSchema);

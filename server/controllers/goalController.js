@@ -1,7 +1,7 @@
 const User = require('../models/User');
 const verifyId = require("../middlewares/verifyID");
 const {bodyParamsSchema} = require("../models/BodyParams");
-const pagination = require("../utils/transformToPagination"); // maybe won't be useful
+const pagination = require("../utils/transformToPagination");
 
 //bodyParameters
 const params = Object.keys(bodyParamsSchema.obj);
@@ -78,7 +78,7 @@ const createGoal = async (req, res) => {
         }
         user.goals = [...user.goals, newGoal];
         console.log(user)
-        const result = await user.save();
+        await user.save();
         res.json(newGoal);
 
     } catch (e) {

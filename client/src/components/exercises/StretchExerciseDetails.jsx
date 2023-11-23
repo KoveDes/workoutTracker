@@ -8,7 +8,7 @@ function StretchExerciseDetails({exercise}) {
             <Box
                 component="img"
                 alt={exercise.name}
-                src={`../${exercise.gifUrl}`}
+                src={exercise.gifUrl}
                 sx={{
                     maxWidth: '100%',
                     objectFit: 'contain',
@@ -16,7 +16,7 @@ function StretchExerciseDetails({exercise}) {
             />
             <Typography variant='h6' sx={{color: 'royalblue'}}>Instructions:</Typography>
             {exercise?.instructions.map((line, index ) =>(
-                <Typography>{index + 1}. {line}</Typography>
+                <Typography key={index}>{index + 1}. {line}</Typography>
             ))}
 
         </Grid>

@@ -10,7 +10,6 @@ const dateYearFormatter = (date) =>
         year: '2-digit',
     });
 
-//Weight
 const getLatestWeight = async (req, res) => {
     try {
 
@@ -54,7 +53,7 @@ const updateWeight = async (req, res) => {
             }
             if(weightGoal) weightGoal.currentValue = weight;
             weightEntry.weight = weight ? weight : weightEntry.weight;
-            const result = await user.save();
+            await user.save();
             res.json({
                 message: "Weight in entry updated",
                 id: weightEntry._id,
@@ -201,11 +200,9 @@ const updateInfo = async (req, res) => {
 
             }
             weightGoal.currentValue = weight;
-
-            // weightGoal.currentValue = weight < weightGoal.currentValue ? weight : weightGoal.currentValue;
         }
-        // console.log(user.weightHistory)
-        const result = await user.save();
+
+        await user.save();
         res.json({user, goalMessage});
     } catch (e) {
         res.status(500).json({message: e.message});
@@ -236,7 +233,7 @@ const changeAuth = async (req, res) => {
             const user = await User.findOne({login: req.user}, {password: 1});
             const hashedPassword = await bcrypt.hash(password, 14);
             user.password = password ? String(hashedPassword) : user.password;
-            const result = await user.save()
+            await user.save()
             res.json({message: "New password has been set"});
         } catch (e) {
             res.status(500).json({message: e.message});
@@ -249,7 +246,6 @@ module.exports = {
     getSingleWeight: getLatestWeight,
     updateWeight: [verifyId, updateWeight],
     removeWeight,
-    // removeWeight: [verifyId, removeWeight],
     getAll,
     getInfo,
     updateInfo,

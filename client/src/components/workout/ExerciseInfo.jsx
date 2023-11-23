@@ -11,12 +11,12 @@ function ExerciseInfo({exercise}) {
         <Grid container alignItems='center' direction='column' gap={1}>
             <Box
                 component='img'
-                src={exercise.gifUrl}
+                src={exercise?.gifUrl}
             />
             <Typography fontWeight='500'></Typography>
             <Grid container justifyContent='center' gap={1}>
-                <Chip label={exercise.target} sx={{backgroundColor: 'gold'}}/>
-                {exercise.secondaryMuscles.map(muscle => (<Chip key={muscle} label={muscle}/>))}
+                <Chip label={exercise?.target} sx={{backgroundColor: 'gold'}}/>
+                {exercise?.secondaryMuscles?.map(muscle => (<Chip key={muscle} label={muscle}/>))}
             </Grid>
             <StyledButton
                 variant='outlined'
@@ -25,12 +25,12 @@ function ExerciseInfo({exercise}) {
             </StyledButton>
             <CustomDialog
                 width={'lg'}
-                label={`${exercise.name}`}
+                label={`${exercise?.name}`}
                 isForm={false}
                 showButtons={false}
                 open={howTo.open}
                 handleClose={howTo.handleClose}>
-                <ExerciseVideos name={exercise.name} target={exercise.target}/>
+                <ExerciseVideos name={exercise?.name} target={exercise?.target}/>
 
             </CustomDialog>
         </Grid>

@@ -34,7 +34,7 @@ function Workout({}) {
         setError(false);
         try {
                 const response = await axiosPrivate.post('/workouts', {
-                    name: workoutRoutine.name,
+                    name: workoutRoutine?.name,
                     icon: workoutRoutine?.icon,
                     note: note || null,
                     exercises: workout.exercises,

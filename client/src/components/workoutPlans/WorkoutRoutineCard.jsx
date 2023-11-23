@@ -38,6 +38,7 @@ export const WorkoutRoutineCard = ({workoutRoutine, setChange, planId}) => {
                     parentId={planId}
                     isRoutine={true}
                     handleEdit={editRoutine.handleOpen}
+                    sharable={true}
                 />
 
                 {shouldPerformToday  ? (

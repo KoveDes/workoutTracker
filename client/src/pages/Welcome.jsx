@@ -34,7 +34,7 @@ function Welcome() {
             </StyledButton>
             <StyledButton
                 component={Link}
-                to='/'
+                to='/register'
             >Sign up
             </StyledButton>
             </Stack>

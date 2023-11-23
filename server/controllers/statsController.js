@@ -1,7 +1,6 @@
 const User = require("../models/User");
 const Workout = require("../models/Workout");
 const getRecords = async (req, res) => {
-    //rekord dla każdego ćwiczenia
     try {
         const {_id: userId} = await User.findOne({login: req.user}, {_id: 1});
 
@@ -22,25 +21,6 @@ const getRecords = async (req, res) => {
                     maxLoad: 1
                 }
             }
-            // {
-            //     $project: {
-            //         _id: 0,
-            //         exercises: {
-            //             $map: {
-            //                 input: "$exercises",
-            //                 as: "exercise",
-            //                 in: {
-            //                     name: "$$exercise.name",
-            //                     maxLoad: {
-            //                         $max: '$$exercise.sets.load'
-            //                     }
-            //                 },
-            //
-            //             }
-            //         }
-            //     },
-            // }
-
         ]);
         res.json(stats);
 
@@ -60,7 +40,6 @@ const getStats = async (req, res) => {
             },
             {
                 $project: {
-                    // totalTime: "$duration",
                     setsInWorkout: {
                         $sum: {
                             $map: {
@@ -109,30 +88,10 @@ const getStats = async (req, res) => {
             }
 
         ]);
-        // const bodyPartsStats = await Workout.aggregate([
-        //     {$match: {user: userId}},
-        //     {$unwind: "$bodyPartsUsed"},
-        //     {
-        //         $group: {
-        //             _id: "$bodyPartsUsed.bodyPart",
-        //             totalCount: {$sum: "$bodyPartsUsed.count"}
-        //         }
-        //     },
-        //     {
-        //         $project: {
-        //             _id: 0,
-        //             "bodyPart": "$_id",
-        //             count: "$totalCount"
-        //         }
-        //     }
-        // ]);
         res.json({
             workoutsCount: stats[0].totalWorkouts,
             setsCount: stats[0].setsCount,
             repsCount: stats[0].repsCount,
-            totalWorkoutTime: stats[0].totalTime,
-            // avgWorkoutTime: stats[0].totalTime / stats[0].totalWorkouts,
-            // bodyPartsUsage: bodyPartsStats
         });
     } catch (e) {
         res.status(500).json({message: e.message});

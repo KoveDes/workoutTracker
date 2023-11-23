@@ -1,33 +1,21 @@
 import React, {useEffect, useState} from 'react';
 import {Container, Grid} from "@mui/material";
 import StretchExercise from "../exercises/StretchExercise.jsx";
+import useLogout from "../../hooks/useLogout.js";
 
 function StretchingSuggestion({bodyParts}) {
     const [exercises, setExercises] = useState([]);
 
     useEffect(() => {
-        let ignore = false;
-        const controller = new AbortController();
-        const getData = async () => {
-            try {
-                const response = await fetch(`../input.json`, {
-                    signal: controller.signal
-                });
-                const stretchExercises = await response.json();
-                const data = stretchExercises.filter(exercise => exercise.name.includes('stretch') && bodyParts.includes(exercise.target)) ;
-                if (!ignore) {
-                    setExercises(data);
-                }
-            } catch (e) {
-                console.log(e);
-                setExercises([]);
-            }
+        const storedExercises = JSON.parse(sessionStorage.getItem('exercisesData'));
+        if (!storedExercises) {
+            const logout = useLogout();
+            logout();
+        } else {
+            const stretchExercises = storedExercises.filter(exercise => exercise.name.includes('stretch') && bodyParts.includes(exercise.target))
+            setExercises(stretchExercises)
         }
-        getData();
-        return () => {
-            ignore = true;
-            controller.abort('useEffect');
-        }
+
     }, [])
 
     return (

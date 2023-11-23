@@ -18,14 +18,6 @@ const statsSchema = new mongoose.Schema({
             },
         }
     ],
-    //How many times each muscle group has been used in 1 day
-    musclesUsage: [{
-        muscleGroup: String,
-        count: Number,
-        date: Date //Day
-    }
-    ],
-    //Zapisać w bazie danych czy liczyć na podstawie dokumentów w BD
     workoutsCount: [{
         count: Number,
         date: Date,
@@ -38,12 +30,6 @@ const statsSchema = new mongoose.Schema({
         count: Number,
         date: Date,
     }],
-    exercisesCount: [{
-        count: Number,
-        date: Date,
-    }],
-
-
 });
 
 statsSchema.records.pre('save', (next) => {

@@ -4,13 +4,14 @@ import useDropdownMenu from "../hooks/useDropdownMenu.js";
 import useAxiosPrivate from "../hooks/useAxiosPrivate.js";
 import useAuth from "../hooks/useAuth.js";
 import SettingsImg from '../assets/Settings.png'
+import ShareDialog from "./share/ShareDialog.jsx";
 
-function OptionsMenu({setChange,width, data, apiPath, handleEdit, parentId, isRoutine, showEdit = true}) {
+function OptionsMenu({setChange,width, data, apiPath, handleEdit, parentId, isRoutine, showEdit = true, sharable}) {
     const dropdownMenu = useDropdownMenu();
     const axiosPrivate = useAxiosPrivate();
     const {auth} = useAuth();
     const [error, setError] = useState('');
-
+    const share = useDropdownMenu();
     const handleDelete = async () => {
         try {
             if (isRoutine) {
@@ -60,16 +61,21 @@ function OptionsMenu({setChange,width, data, apiPath, handleEdit, parentId, isRo
                 }}
             >
 
-                <MenuList
-                    dense
-                    sx={{p: '8px'}}
-                >
+                <MenuList dense sx={{p: '8px'}}>
                     {showEdit &&
                         <MenuItem onClick={() => {
                             dropdownMenu.handleClose();
                             handleEdit()
                         }}>
                             Edit
+                        </MenuItem>
+                    }
+                    {sharable &&
+                        <MenuItem onClick={() => {
+                            share.handleOpen();
+                            dropdownMenu.handleClose();
+                        }}>
+                            Share
                         </MenuItem>
                     }
 
@@ -81,6 +87,13 @@ function OptionsMenu({setChange,width, data, apiPath, handleEdit, parentId, isRo
                     </MenuItem>
                 </MenuList>
             </Popover>
+            {share.open && (
+                <ShareDialog
+                    handleClose={share.handleClose}
+                    open={share.open}
+                    data={data}
+                    />
+            )}
             {error ? (
                 <Snackbar
                     open={!!error}

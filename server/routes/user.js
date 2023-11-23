@@ -11,17 +11,13 @@ router.route('/weight')
 
 router.route("/weight/all/:limit?/:skip?").get(getAll);
 
-
-
-/* const {email, username, gender, age, height, weight(latest)} = req.body; */
 router.route('/')
     .get(getInfo)
     .patch(updateInfo)
     // .delete() user can't delete his account's info
 router.route('/auth')
     .get(getAuth)
-    .patch(changeAuth) //user can only change password, that's why nickname exists
-    // .post(); user can't add new login or password
+    .patch(changeAuth) //user can only change password
 
 
 

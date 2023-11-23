@@ -1,4 +1,4 @@
-const CustomExercise = require('../models/CustomExercise');
+
 const User = require('../models/User');
 const verifyId = require("../middlewares/verifyID");
 
@@ -19,7 +19,7 @@ const getSingle = async (req, res) => {
     try {
         const user = await User.findOne({login: req.user});
         const exercise = user.customExercises.find(obj => {
-            return  obj._id.equals(req.body.id);
+            return  obj._id.equals(id);
         });
         if (!exercise) {
             return res.sendStatus(204); //no content

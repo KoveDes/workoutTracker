@@ -5,17 +5,12 @@ const workoutGroup = new mongoose.Schema({
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
         },
-        name: {
-            type: String,
-        },
+        name: String,
         main: Boolean,
         description: String,
 
         workoutRoutine: [{
-            name: {
-                type: String,
-                // required: true,
-            },
+            name: String,
             createdAt: {
                 type: Date,
                 immutable: true,

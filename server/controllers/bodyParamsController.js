@@ -1,6 +1,5 @@
 const User = require('../models/User');
 const {bodyParamsSchema} = require("../models/BodyParams");
-const mongoose = require("mongoose");
 const verifyId = require("../middlewares/verifyID");
 const pagination = require("../utils/transformToPagination");
 
@@ -27,14 +26,12 @@ const getLatestAll = async (req, res) => {
                 preserveNullAndEmptyArrays: true
             }
         };
-        //1st element is the newest
         const sort = {
             $sort: {[`bodyParameters.${param}.date`]: -1}
         };
 
         pipeline.push(unwind, sort);
     });
-    //add projection
     pipeline.push({$project: {_id: 0, bodyParameters: 1}});
     try {
         const latestSizes = await User.aggregate(pipeline).limit(1).exec();

@@ -85,7 +85,6 @@ const saveWorkout = async (req, res) => {
         routine.performed += 1;
         await workoutPlan.save()
 
-        //////
         await user.save();
         const workout = await Workout.create({
             user: user._id,
@@ -95,8 +94,7 @@ const saveWorkout = async (req, res) => {
             exercises,
             routineId,
             planId,
-            // duration,
-            // bodyPartsUsed,
+
         })
         res.json({workout, goalMessage})
 

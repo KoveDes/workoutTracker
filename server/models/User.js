@@ -17,7 +17,6 @@ const userSchema = new mongoose.Schema({
         minLength: 4,
         required: true,
     },
-    //Security
     refreshToken: [String],
     email: {
         type: String
@@ -38,7 +37,7 @@ const userSchema = new mongoose.Schema({
         type: Number,
         min: 65,
         max: 251,
-    }, //in cm
+    },
     weightHistory: [
         {
             date: {
@@ -72,29 +71,11 @@ const userSchema = new mongoose.Schema({
             rightArm : [],
 
         })
-    }
-    ,
+    },
     customExercises: [customExerciseSchema]
 
 }, {
-    timestamps: true, //createdAt, updatedAt
+    timestamps: true,
 });
-
-// userSchema.pre('validate', function (next) {
-//     // Check if weightHistory or other fields are modified
-//     const weightHistoryModified = this.isModified('weightHistory');
-//     const otherFieldsModified = Object.keys(this).some(field => field !== 'weightHistory');
-//
-//     // If weightHistory is not modified but other fields are, prevent addition of new weightHistory item
-//     if (!weightHistoryModified && otherFieldsModified) {
-//         // Remove the last item from weightHistory
-//         if (this?.weightHistory?.length > 0) {
-//             this?.weightHistory.pop();
-//         }
-//     }
-//
-//     next();
-// });
-
 // collection: users
 module.exports = mongoose.model('User', userSchema);

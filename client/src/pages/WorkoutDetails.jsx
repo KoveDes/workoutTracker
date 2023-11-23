@@ -7,9 +7,12 @@ import InvalidUseImg from '../assets/InvalidUse.png'
 import CongratsImg from '../assets/Party Popper.png';
 import StyledButton from "../components/StyledButton.jsx";
 import GoalFinished from "../components/GoalFinished.jsx";
+import ShareDialog from "../components/share/ShareDialog.jsx";
+import useDropdownMenu from "../hooks/useDropdownMenu.js";
 
 function WorkoutDetails() {
     const {state: workout} = useLocation();
+    const share = useDropdownMenu();
     if (!workout) {
         return (
             <Grid container direction='column' justifyContent='center' alignItems='center' gap={3} mt={'50px'}>
@@ -61,7 +64,19 @@ function WorkoutDetails() {
                 <Typography component='span' variant='h6' sx={{color: 'black'}}> {workout?.name} </Typography>
                 workout </Typography>
             <WorkoutInfo workout={workout}/>
-            <StyledButton component={Link} to='/' variant='outlined' sx={{my: '30px'}}>Go Home</StyledButton>
+            <Grid container gap={3} justifyContent='center' sx={{my: '30px'}}>
+                <StyledButton component={Link} to='/' >Go Home</StyledButton>
+                <StyledButton onClick={share.handleOpen} sx={{backgroundColor: '#5200ff'}}>Share your workout!</StyledButton>
+            </Grid>
+
+
+            {share.open && (
+                <ShareDialog
+                    handleClose={share.handleClose}
+                    open={share.open}
+                    data={workout}
+                />
+            )}
 
             <Typography variant='h5'>
                 After great workout it's great to do some stretching.

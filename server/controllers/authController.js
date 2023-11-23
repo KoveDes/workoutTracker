@@ -8,13 +8,10 @@ const cookieOptions = {
     sameSite: 'lax',
     secure: false,
     maxAge: 24 * 60 * 60 * 1000,
-    // cacheControl: 'no-store'
 }
 const expirationTime = {
     RT: '1d',
     AT: '15min',
-    // RT: '10s',
-    // AT: '5s'
 }
 
 
@@ -32,15 +29,12 @@ exports.handleLogin = async (req, res) => {
         const match = await bcrypt.compare(String(password), foundUser.password)
         if (match) {
             //Create JWT tokens
-            // console.log(foundUser.login)
             const accessToken = jwt.sign(
                 {
                     "username": foundUser.login,
-                    //TODO store something else in AT? f.e nickname, role, current workout?
                 },
                 process.env.ACCESS_TOKEN_SECRET,
                 {expiresIn: expirationTime.AT}
-                // {expiresIn: '10s'}
             );
             const newRefreshToken = jwt.sign(
                 {"username": foundUser.login},
@@ -99,72 +93,6 @@ exports.handleLogout = async (req, res) => {
     }
 
 };
-
-// exports.handleRefreshToken = async (req, res) => {
-//     const cookies = req.cookies;
-//
-//     if (!cookies?.jwt) {
-//         return res.status(401).json({message: "Unauthorized"}); //request doesn't have jwt cookie
-//     }
-//     const refreshToken = cookies.jwt;
-//
-//     res.clearCookie('jwt', cookieOptions);
-//
-//     try {
-//         const foundUser = await User.findOne({refreshToken}).exec();
-//         // Too hard
-//         /**/
-//         if (!foundUser) {
-//             jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, async (err, decoded) => {
-//                 if (err) return res.status(403).json({message: "Forbiddennnnnnnnnn"});
-//                 const user = await User.findOne({login: decoded.username}).exec();
-//                 // user.refreshToken = [];
-//                 await user.save();
-//             });
-//             return res.status(403).json({message: "Forbidden (no user)",});
-//         }
-//         const newRTArray = foundUser.refreshToken.filter(rt => rt !== refreshToken);
-//         // const newRTArray = foundUser.refreshToken;
-//
-//         jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, async (err, decoded) => {
-//             //RT is invalid
-//             console.log({tokenUsera: foundUser.refreshToken,nowaRTArr: newRTArray,})
-//             if (err) {
-//                 foundUser.refreshToken = newRTArray;
-//                 await foundUser.save();
-//             }
-//             if (err || foundUser.login !== decoded.username) {
-//                 return res.status(403).json({message: "Forbidden"});
-//             }
-//             //RT is valid
-//             const accessToken = jwt.sign(
-//                 {"username": decoded.username},
-//                 process.env.ACCESS_TOKEN_SECRET,
-//                 {expiresIn: expirationTime.AT}
-//                 // {expiresIn: '10s'}
-//             );
-//
-//             //create new RT
-//             const newRefreshToken = jwt.sign(
-//                 {"username": foundUser.login},
-//                 process.env.REFRESH_TOKEN_SECRET,
-//                 {expiresIn: expirationTime.RT}
-//             );
-//             foundUser.refreshToken = [...newRTArray, newRefreshToken];
-//             const result = await foundUser.save();
-//             res.cookie('jwt', newRefreshToken, {
-//                 ...cookieOptions,
-//             });
-//             res.json({
-//                 accessToken,
-//                 user: foundUser.login,
-//             });
-//         })
-//     } catch (e) {
-//         res.status(500);
-//     }
-// }
-
 
 //Without RT Reuse. User will be logged in just for 1 day
 exports.handleRefreshToken = async (req, res) => {

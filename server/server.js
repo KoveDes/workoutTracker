@@ -19,12 +19,8 @@ const port = process.env.PORT || 3500;
 app.use(express.json());
 app.use(credentials); //fetch cookies credentials requirement
 app.use(cors(corsOptions));
-// app.use((req, res, next) => {
-//     res.setHeader('Cache-Control', 'no-store'); // lub 'no-cache'
-//     next();
-// });
 app.use(cookieParser());
-app.use(logger); //logging path and method
+app.use(logger); //console log path and method
 
 //Routers
 app.use('/register', require('./routes/register'));

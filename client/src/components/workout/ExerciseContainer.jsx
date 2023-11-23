@@ -6,6 +6,7 @@ import Set from "./Set.jsx";
 import Timer from "./Timer.jsx";
 import workoutSetSchema from "../../schemas/workoutSetSchema.js";
 import StyledButton from "../StyledButton.jsx";
+import useLogout from "../../hooks/useLogout.js";
 
 function ExerciseContainer(
     {
@@ -20,7 +21,20 @@ function ExerciseContainer(
         setShowTimer,
         showTimer
     }) {
-    const exerciseDetails = exercise.exercise;
+    const [exerciseDetails, setExerciseDetails] = useState({});
+
+    useEffect(() => {
+        const storedExercises = JSON.parse(sessionStorage.getItem('exercisesData'));
+        if (!storedExercises) {
+            const logout = useLogout();
+            logout();
+        } else {
+            const selectedExercise = storedExercises.find(ex => ex.name === exercise?.exercise?.name)
+            setExerciseDetails(selectedExercise)
+        }
+
+    }, [])
+    // const exerciseDetails = exercise.exercise;
     const [error, setError] = useState(false);
     const [formValues, setFormValues] = useState(null);
     const [invokeSave, setInvokeSave] = useState(false)
@@ -49,13 +63,13 @@ function ExerciseContainer(
         }
 
     }, [invokeSave])
+
     const changeShowTimer = useCallback(() => setShowTimer(false), [])
     const changeCurrentSet = useCallback(() => setCurrentSet(v => v + 1), [])
-
     useEffect(() => {
         // Update form values when exercise.sets prop changes
         setFormValues({
-            name: exerciseDetails.name,
+            name: exercise.exercise.name || 'elo',
             restTime: exercise.restTime,
             sets: exercise.sets.map(set => {
                 const tpr = {

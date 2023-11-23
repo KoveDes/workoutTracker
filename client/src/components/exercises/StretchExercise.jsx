@@ -52,7 +52,7 @@ function StretchExercise({exercise}) {
                 <Box
                     component="img"
                     alt={exercise.name}
-                    src={`../${exercise.gifUrl}`}
+                    src={exercise.gifUrl}
                     sx={{
                         width: '100px',
                         objectFit: 'cover',
