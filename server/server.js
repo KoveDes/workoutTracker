@@ -41,7 +41,7 @@ app.get('/*', (req, res) => {
 //If the connection is successfull, start HTTP server
 mongoose.connection.once('open', () => {
     console.log('Connected to MongoDB');
-    app.listen(port, 'localhost', () => {
+    app.listen(port, '0.0.0.0', () => {
         console.log(`Listening on http://localhost:${port}`);
     })
 })
