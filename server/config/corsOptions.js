@@ -1,5 +1,6 @@
 const whiteLists = [
     'http://localhost:3000',
+    'https://gymtrackr.onrender.com/',
 
 ];
 const corsOptions = {
