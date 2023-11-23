@@ -7,7 +7,8 @@ export const fetchRapidAPIData = async(url, options) => {
 export const ytSearchOptions = {
     method: 'GET',
     headers: {
-        'X-RapidAPI-Key': '28e4c56cbdmshdb396c157ee277fp1cffc7jsn72380036d7df',
+        // 'X-RapidAPI-Key': '28e4c56cbdmshdb396c157ee277fp1cffc7jsn72380036d7df',
+        'X-RapidAPI-Key': process.env.RAPIDAPI_KEY, //deployment
         'X-RapidAPI-Host': 'youtube-search-and-download.p.rapidapi.com'
     }
 }
@@ -16,7 +17,7 @@ export const ytSearchOptions = {
 export const exerciseOptions = {
     method: 'GET',
     headers: {
-        'X-RapidAPI-Key': '28e4c56cbdmshdb396c157ee277fp1cffc7jsn72380036d7df',
+        'X-RapidAPI-Key': process.env.RAPIDAPI_KEY,
         'X-RapidAPI-Host': 'exercisedb.p.rapidapi.com'
     }
 }
