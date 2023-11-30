@@ -114,7 +114,7 @@ function LoginForm() {
                                     }
                                 }}
                             >
-                                {props.isSubmitting ? "Logging in..." : 'Login'}
+                                {props.isSubmitting ? "Logging in..." : 'Log in'}
                             </Button>
                         </Grid>
                     </Form>
