@@ -1,4 +1,4 @@
-import React, {memo} from 'react';
+import React, {memo, useState} from 'react';
 import CustomNavLink from "./customNavLink.jsx";
 import {Link} from "react-router-dom";
 import '../Navbar.css'
@@ -11,6 +11,10 @@ import {Box, Grid, Typography} from "@mui/material";
 function Navbar() {
     const {auth} = useAuth();
     const dropdownMenu = useDropdownMenu();
+    const [anchorEl, setAnchorEl] = useState(null);
+    const handleClick = e => {
+        setAnchorEl(e.currentTarget);
+    }
     return (
         <Grid
             component='nav'
@@ -40,14 +44,15 @@ function Navbar() {
                 {auth.user ? (
                     <>
                         <Box
-                            onClick={dropdownMenu?.handleOpen}
+                            onClick={handleClick}
                             ref={dropdownMenu?.anchorRef}>
                             <ProfileAvatar/>
                         </Box>
                         <ProfileMenu
-                            anchorEl={dropdownMenu.anchorRef.current}
+                            anchorEl={anchorEl}
                             open={dropdownMenu.open}
-                            onClose={dropdownMenu.handleClose}
+                            onClose={() => setAnchorEl(null)}
+                            setAnchorEl={setAnchorEl}
                         />
                     </>
                 ) : (
@@ -61,4 +66,4 @@ function Navbar() {
     );
 }
 
-export default memo(Navbar);
+export default Navbar;

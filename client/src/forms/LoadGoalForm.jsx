@@ -14,7 +14,7 @@ function LoadGoalForm({setError, setIsSubmitting, success, setSuccess, data, set
         path: 'workoutPlan/all',
         deps: [],
     }))
-    const userExercises = response?.reduce((accumulator, workoutPlan) =>
+    const userExercises = response?.length > 0 && response?.reduce((accumulator, workoutPlan) =>
             [...accumulator, ...workoutPlan.workoutRoutine.reduce((acc, routine) => (
                 [...acc, ...routine.exercises.map(e => e?.exercise?.name)]
             ), [])]
@@ -86,7 +86,11 @@ function LoadGoalForm({setError, setIsSubmitting, success, setSuccess, data, set
                           marginTop: '20px'
                       }}
                 >
-                    {data ? null : (<>
+                    {response?.length === 0 ? (
+                        <Box>
+                            Create workout routine in order to add this goal!
+                        </Box>
+                    ) : (<>
                     <Grid mb='30px'>
                         <CustomRadioList
                             label='Exercises from workout plans'

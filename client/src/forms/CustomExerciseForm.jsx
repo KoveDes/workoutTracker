@@ -64,8 +64,8 @@ export default function CustomExerciseForm({setError, setIsSubmitting, success, 
                           maxWidth: 'inherit'
                       }}
                 >
-                    <Grid container spacing={5}>
-                        <Grid md={3}>
+                    <Grid container spacing={3} justifyContent='space-around'>
+                        <Grid md={2}>
                             <Box>
                                 <CustomInput
                                     label='Name'

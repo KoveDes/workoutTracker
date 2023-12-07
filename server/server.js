@@ -8,12 +8,13 @@ const cookieParser = require('cookie-parser');
 const {logger} = require("./middlewares/logger");
 const {credentials} = require("./middlewares/credentials");
 const verifyJWT = require('./middlewares/verifyJWT');
+const {production} = require("./config/config");
 
 //Connect to Database (MongoDB)
 connectDB();
 
 const app = express();
-const port = process.env.PORT || 8000;
+const port = process.env.PORT || 3500;
 
 //Middlewares
 app.use(express.json());
@@ -41,7 +42,7 @@ app.get('/*', (req, res) => {
 //If the connection is successfull, start HTTP server
 mongoose.connection.once('open', () => {
     console.log('Connected to MongoDB');
-    app.listen(port, '0.0.0.0', () => {
+    app.listen(port,  production ? '0.0.0.0' : 'localhost', () => {
         console.log(`Listening on http://localhost:${port}`);
     })
 })

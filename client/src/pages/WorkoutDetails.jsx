@@ -75,6 +75,7 @@ function WorkoutDetails() {
                     handleClose={share.handleClose}
                     open={share.open}
                     data={workout}
+                    type='workout'
                 />
             )}
 

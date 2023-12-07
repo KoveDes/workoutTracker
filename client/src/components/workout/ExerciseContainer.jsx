@@ -53,16 +53,15 @@ function ExerciseContainer(
         setShowTimer(false);
         if (!isLastExercise) {
             setCurrentExercise(v => v + 1);
-        } else {
-            setInvokeSave(v => !v);
-        }
-    }
-    useEffect(() => {
-        if (isLastExercise) {
-            handleSave();
         }
 
-    }, [invokeSave])
+    }
+    // useEffect(() => {
+    //     if (isLastExercise) {
+    //         handleSave();
+    //     }
+    //
+    // }, [invokeSave])
 
     const changeShowTimer = useCallback(() => setShowTimer(false), [])
     const changeCurrentSet = useCallback(() => setCurrentSet(v => v + 1), [])

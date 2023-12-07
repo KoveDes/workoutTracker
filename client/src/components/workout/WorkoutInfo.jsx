@@ -23,6 +23,7 @@ function WorkoutInfo({workout}) {
                     borderRadius: '15px',
                     mt: '20px',
                     backgroundColor: 'white',
+                    maxHeight: '600px',
                 }}>
                     <Table>
                         <TableHead sx={{backgroundColor: '#3b3b3f'}}>

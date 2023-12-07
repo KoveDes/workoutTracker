@@ -30,8 +30,11 @@ function Workout({}) {
     const axiosPrivate = useAxiosPrivate();
     const navigate = useNavigate();
 
+    console.log(workout.exercises.length, workoutRoutine.exercises.length);
+
+
     const onSubmit = async () => {
-        setError(false);
+        // setError(false);
         try {
                 const response = await axiosPrivate.post('/workouts', {
                     name: workoutRoutine?.name,
@@ -41,7 +44,7 @@ function Workout({}) {
                     routineId: workoutRoutine._id,
                     planId: state.planId,
                 });
-            navigate('details', {state: {
+            navigate('workout/details', {state: {
                         goalMessage: response?.data?.goalMessage,
                         name: workoutRoutine.name,
                         icon: workoutRoutine?.icon,
@@ -59,7 +62,9 @@ function Workout({}) {
         }
     }
 
-
+    if(workout.exercises.length ===  workoutRoutine.exercises.length) {
+        onSubmit();
+    }
 
     if(!workoutRoutine) {
         return (
@@ -128,18 +133,22 @@ function Workout({}) {
                         </CustomDialog>
                         <Typography variant='h4' >Exercises</Typography>
                         <Tabs
+                            sx={{
+                                cursor: 'default',
+                            }}
                             orientation="vertical"
                             TabIndicatorProps={{
                                 sx: {
                                     backgroundColor: '#3b3b3f',
                                     width: '100%',
                                     zIndex: -1,
-                                    transition: 'all 0.3s'
+                                    transition: 'all 0.3s',
+                                    cursor: 'default',
 
                                 }
                             }}
                             value={currentExercise}
-                            onChange={handleExerciseChange}
+                            // onChange={handleExerciseChange}
                         >
                             {workoutRoutine.exercises.map((exercise, index) => (
                                 <Tab
@@ -175,7 +184,7 @@ function Workout({}) {
                             serverError={error}
                             isLastExercise={workoutRoutine.exercises.length === currentExercise + 1}
                         />
-                        {JSON.stringify(workout)}
+                        {/*{JSON.stringify(workout)}*/}
                         {error ? (
                             <Snackbar
                                 open={!!error}

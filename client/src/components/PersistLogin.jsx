@@ -15,7 +15,7 @@ function PersistLogin() {
             try {
                 if(!ignore) await refresh();
             } catch (e) {
-                console.error(e);
+                // console.error(e);
             }
             setIsLoading(false);
         }

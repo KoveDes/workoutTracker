@@ -92,6 +92,7 @@ function OptionsMenu({setChange,width, data, apiPath, handleEdit, parentId, isRo
                     handleClose={share.handleClose}
                     open={share.open}
                     data={data}
+                    type='routine'
                     />
             )}
             {error ? (

@@ -1,5 +1,6 @@
 import axios from "axios";
-const BASE_URL = 'https://gymtrackr-api.onrender.com/'
+import production from "../../config.js";
+const BASE_URL = production ? 'https://gymtrackr-api.onrender.com' : '/api'
 
 const axiosPublic = axios.create({
     baseURL: BASE_URL

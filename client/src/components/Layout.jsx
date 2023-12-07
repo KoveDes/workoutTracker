@@ -1,6 +1,7 @@
 import {Outlet} from "react-router-dom";
 import Navbar from "./Navbar.jsx";
 import {Box, Container} from "@mui/material";
+import {memo} from "react";
 
 function Layout() {
     return (
@@ -13,4 +14,4 @@ function Layout() {
     );
 }
 
-export default Layout;
+export default memo(Layout);

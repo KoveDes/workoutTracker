@@ -1,5 +1,5 @@
 import React from 'react';
-import {Grid, Table, TableBody, TableCell, TableHead, TableRow, Typography} from "@mui/material";
+import {Box, Grid, Table, TableBody, TableCell, TableHead, TableRow, Typography} from "@mui/material";
 
 function WorkoutContent({data: workout}) {
     return (
@@ -16,9 +16,10 @@ function WorkoutContent({data: workout}) {
                 sx={{
                     margin: 1,
                     backgroundColor: 'lavender',
-                    p: 1,
+                    p: 0,
                     borderRadius: '20px',
                     position: 'relative',
+                    minWidth: '200px'
                 }}
             >
                 <Typography

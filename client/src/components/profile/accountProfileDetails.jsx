@@ -53,7 +53,8 @@ export const AccountProfileDetails = ({user, setChange}) => {
                             <Box sx={{m: -1.5}}>
                                 <Grid
                                     container
-                                    spacing={0}
+                                    direction='column'
+                                    gap={0.5}
                                 >
 
                                     <CustomInput

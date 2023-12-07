@@ -74,7 +74,7 @@ function ExercisesList({reload}) {
                     }
                 } catch
                     (e) {
-                    setExercises([]);
+                    setExercises([...renamedUserExercises]);
                 }
             }
             getData();

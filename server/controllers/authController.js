@@ -1,19 +1,7 @@
 const User = require('../models/User');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-
-
-const cookieOptions = {
-    httpOnly: true,
-    sameSite: 'None',
-    secure: 'true',
-    maxAge: 24 * 60 * 60 * 1000,
-}
-const expirationTime = {
-    RT: '1d',
-    AT: '15min',
-}
-
+const {cookieOptions, expirationTime} = require('../config/cookieOptions')
 
 exports.handleLogin = async (req, res) => {
     const {login, password} = req.body;

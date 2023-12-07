@@ -63,6 +63,7 @@ const ExerciseItem = forwardRef(({exercise, custom, setChange, listeners, attrib
                         sx={{
                             width: '100px',
                             objectFit: 'cover',
+                            my: '10px'
                         }}
                     />
                 )}
@@ -111,11 +112,11 @@ export function InfoItem({label, bgColor}) {
             p: '5px 10px',
             color: 'white',
         }}>
-            <Tooltip title={label.length > 15 ? label : ''}>
+            <Tooltip title={label.length > 16 ? label : ''}>
                 <Typography
                     letterSpacing={.5}
                     fontSize='0.75rem'
-                >{label.length > 20 ? `${label.slice(0, 16)}...` : label}</Typography>
+                >{label.length > 16 ? `${label.slice(0, 15)}...` : label}</Typography>
             </Tooltip>
         </Box>
     )

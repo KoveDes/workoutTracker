@@ -7,7 +7,6 @@ export const fetchRapidAPIData = async(url, options) => {
 export const ytSearchOptions = {
     method: 'GET',
     headers: {
-        // 'X-RapidAPI-Key': '28e4c56cbdmshdb396c157ee277fp1cffc7jsn72380036d7df',
         'X-RapidAPI-Key': import.meta.env.VITE_RAPIDAPI_KEY, //deployment
         'X-RapidAPI-Host': 'youtube-search-and-download.p.rapidapi.com'
     }
