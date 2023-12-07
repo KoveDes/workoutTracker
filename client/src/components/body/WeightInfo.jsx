@@ -92,7 +92,7 @@ function WeightInfo({refresh}) {
                     <TableDialog
                         setChange={setChange}
                         payloadParam='weight'
-                        apiPath='/user/weight/all/'
+                        apiPath='/user/weight/all'
                         open={openDialog}
                         handleClose={() => setOpenDialog(false)}
                         label='Weight (kg)'
