@@ -15,7 +15,7 @@ import {
 import {Visibility, VisibilityOff} from "@mui/icons-material";
 import Stack from "@mui/material/Stack";
 import Checkbox from "@mui/material/Checkbox";
-
+import ErrorIcon from '@mui/icons-material/Error';
 export function CustomSlider(
     {
         label,
@@ -52,7 +52,7 @@ export function CustomSlider(
                 {...field} {...props}
             />
             {meta.touched && meta.error ? (
-                <p className='error'>{meta.error}</p>
+                <p className='error'><ErrorIcon fontSize='small' /> {meta.error}</p>
             ) : null}
         </Grid>
     );
@@ -75,7 +75,7 @@ export default function CustomInput({width, label, adornment, ...props}) {
                 {...field} {...props} id={id} type={props.type || "text"}
             />
             {meta.touched && meta.error ? (
-                <p className='error'>{meta.error}</p>
+                <p className='error'><ErrorIcon fontSize='small' /> {meta.error}</p>
             ) : null}
         </>
     );
@@ -96,7 +96,7 @@ export function CustomInput2({label, adornment = '', ...props}) {
                 {...field} {...props} id={id} type={props.type || "text"}
             />
             {meta.touched && meta.error ? (
-                <p className='error'>{meta.error}</p>
+                <div className='error'>{meta.error}</div>
             ) : null}
         </Box>
     );
@@ -105,7 +105,10 @@ export function CustomInput2({label, adornment = '', ...props}) {
 export function CustomRadio({label, ...props}) {
     const [field, meta] = useField(props);
     return (
-        <label className={meta.touched && meta.error ? 'error' : ''}>{label}
+        <>
+        {meta.touched && meta.error && <div className="error"><ErrorIcon fontSize='small' /> </div>}
+
+    <label className={meta.touched && meta.error ? 'error' : ''}>{label}
             <input {...field} {...props} type='radio'
                    checked={field.value === props.value}
                    style={{
@@ -114,6 +117,7 @@ export function CustomRadio({label, ...props}) {
                    }}
             />
         </label>
+        </>
     );
 }
 
@@ -149,7 +153,7 @@ export function CustomRadioList({label, exerciseValue, handleCheckboxChange, ite
                 ))}
             </RadioGroup>
         </Stack>
-        {meta.touched && meta.error && <div className="error">{meta.error}</div>}
+        {meta.touched && meta.error && <div className="error"><ErrorIcon fontSize='small' /> {meta.error}</div>}
 
     </>)
 }
@@ -164,7 +168,7 @@ export function CustomCheckboxList(
         param,
         ...props
     }) {
-    const [meta] = useField(props);
+    const [,meta] = useField(props);
     const id = props.name;
     return (<>
         <label htmlFor={id}>{label}</label>
@@ -191,7 +195,7 @@ export function CustomCheckboxList(
                 <CustomCheckbox label={item} name={props.name} value={item} key={item}/>
             ))}
         </Grid>
-        {meta?.touched && meta.error && <div className="error">{meta.error}</div>}
+        {meta?.touched && meta.error && <div className="error"><ErrorIcon fontSize='small' />{meta.error}</div>}
 
     </>)
 }
@@ -214,7 +218,7 @@ export function CustomCheckbox({label, showError = false, isChecked, ...props}) 
                 />
                 <label htmlFor={id} style={{margin: 0}}>{label}</label>
             </Grid>
-            {showError ? (meta.touched && meta.error && <div className="error">{meta.error}</div>) : null}
+            {showError ? (meta.touched && meta.error && <div className="error"><ErrorIcon fontSize='small' /> {meta.error}</div>) : null}
 
         </>
     );
@@ -253,7 +257,7 @@ export function PasswordInput({label, ...props}) {
                 />
             </div>
             {meta.touched && meta.error ? (
-                <Typography variant='caption' className='error'>{meta.error}</Typography>
+                <Typography variant='caption' className='error'><ErrorIcon fontSize='small' /> {meta.error}</Typography>
             ) : null}
         </Box>
     )

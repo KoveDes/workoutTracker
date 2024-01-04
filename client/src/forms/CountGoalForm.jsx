@@ -56,7 +56,7 @@ function CountGoalForm({setError, setIsSubmitting, setChange, setSuccess, data})
 
                     <Grid container spacing={0} direction='column'>
                         <Grid container justifyContent={'center'}>
-                            <Box sx={{width: '35%'}}>
+                            <Box sx={{width: '50%'}}>
                                 <CustomInput
                                     name='endValue'
                                     type='number'

@@ -1,6 +1,6 @@
 import React from 'react';
 import {FieldArray} from "formik";
-import {Accordion, AccordionDetails, AccordionSummary, Box, Grid, IconButton, Typography} from "@mui/material";
+import {Accordion, AccordionDetails, AccordionSummary, Alert, Box, Grid, IconButton, Typography} from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore.js";
 import {CustomSlider} from "../../components/CustomInputs.jsx";
 import {formatSeconds} from "../../utils/formatters.js";
@@ -10,7 +10,7 @@ import DeleteForeverIcon from "@mui/icons-material/DeleteForever.js";
 function ExerciseDetails({formValues}) {
     return (
         <FieldArray name={'exercises'}>
-            {() => (
+            {(helpers) => (
                 <Grid container direction='column' gap='30px' mt='30px'>
                     {formValues.exercises.length > 0 &&
                         formValues.exercises.map((exercise, index) => (
@@ -106,15 +106,20 @@ function ExerciseDetails({formValues}) {
                                                                 </AccordionDetails>
                                                             </Accordion>
                                                         ))}
-
                                                 </Grid>
                                             </Box>
-
                                         )}
                                     </FieldArray>
                                 </AccordionDetails>
                             </Accordion>
                         ))}
+                    {helpers.form.errors.exercises ? (
+                        <Box sx={{display: 'flex', justifyContent: 'center', m: '10px'}}>
+                            <Alert severity="error" sx={{ textAlign: 'center'}}>
+                                Make sure you specify the interval time, there is at least one series in each exercise and it has completed values.
+                            </Alert>
+                        </Box>
+                    ) : null}
                 </Grid>
 
             )}

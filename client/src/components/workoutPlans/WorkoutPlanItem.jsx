@@ -29,12 +29,12 @@ function WorkoutPlanItem({workoutPlan, style, setChange}) {
                         <Stack spacing={1}>
                             <Tooltip title={workoutPlan?.description}>
                             <Typography variant="h4">
-                                {workoutPlan?.name.slice(0,40)}
+                                {workoutPlan?.name?.slice(0,40)}
                             </Typography>
                             </Tooltip>
                             <Tooltip title={workoutPlan?.description}>
                             <Typography variant="h6">
-                                {workoutPlan?.description.slice(0,75) + (workoutPlan?.description.length > 75 ? '...' : '') || ""}
+                                {workoutPlan?.description ? workoutPlan?.description.slice(0,75) + (workoutPlan?.description?.length > 75 ? '...' : '') || "" : ''}
                             </Typography>
                             </Tooltip>
                             <Stack

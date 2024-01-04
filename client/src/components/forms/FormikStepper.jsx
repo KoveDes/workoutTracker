@@ -32,8 +32,11 @@ export default function FormikStepper({children, submittingText, submitText, exe
                     </Step>
                 ))}
             </Stepper>
+            {/*{JSON.stringify(props.errors.exercises)}*/}
             {React.cloneElement(currentChild, {formValues: props.values})}
+
             <Grid container paddingTop={2} gap={2} justifyContent='center'>
+
                 {step > 0 ?
                     <StyledButton
                         disabled={props.isSubmitting}

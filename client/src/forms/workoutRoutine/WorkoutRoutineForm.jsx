@@ -148,7 +148,7 @@ function WorkoutRoutineForm({setError,planId, setIsSubmitting, success, setSucce
                     validationSchema={exercisesSchema}
                     label='Exercises'
                 >
-                    {({formValues}) => (
+                    {({formValues, errors}) => (
                         <FieldArray name={'exercises'}>
                             {(helpers) => (
                                 <DndContext onDragEnd={(e) => {
@@ -156,6 +156,7 @@ function WorkoutRoutineForm({setError,planId, setIsSubmitting, success, setSucce
 
                                 }}>
                                     <FiltersProvider>
+                                        {/*{JSON.stringify(helpers.form.errors.exercises)}*/}
 
                                         <Grid container spacing={6} wrap='nowrap'>
                                             <Grid item xs={8}>
@@ -188,7 +189,13 @@ function WorkoutRoutineForm({setError,planId, setIsSubmitting, success, setSucce
                                             </Grid>
                                         </Grid>
                                     </FiltersProvider>
-
+                                    {helpers.form.errors.exercises ? (
+                                        <Box sx={{display: 'flex', justifyContent: 'center', m: '10px'}}>
+                                        <Alert severity="error" sx={{ textAlign: 'center'}}>
+                                            {helpers.form.errors.exercises}
+                                        </Alert>
+                                        </Box>
+                                    ) : null}
                                 </DndContext>
                             )}
 

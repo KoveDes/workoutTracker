@@ -28,7 +28,7 @@ function BodyInfo({refresh, setRefresh}) {
             className='links'
             direction='column'
             justifyContent='space-between'>
-            <Grid container direction='column' gap={3} justifyContent={'flex-start'} alignItems={'flex-start'}>
+            <Grid container direction='column' gap={3} justifyContent={'flex-start'} alignItems={'flex-start'} sx={{mb: '45px'}}>
                 <HeightInfo setRefresh={setRefresh}/>
             </Grid>
             <Button

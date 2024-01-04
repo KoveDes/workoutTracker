@@ -26,6 +26,10 @@
   font-size: 0.75rem;
   text-align: left;
   margin-top: 0.25rem;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+
 }
 
 .checkbox {

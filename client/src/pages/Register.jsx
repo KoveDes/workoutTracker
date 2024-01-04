@@ -77,6 +77,7 @@ export function Register() {
                 label='User information'
                 validationSchema={registerSchemaDetails}
             >
+
                 <Box sx={{width: '700px'}}>
                     <Grid
                         container
@@ -95,7 +96,7 @@ export function Register() {
                                 name='username'
                             />
                             <Grid
-                                container gap={3} alignItems='flex-start'
+                                container gap={3} alignItems='flex-start' sx={{m: '10px 0'}}
                             >
                                 <CustomRadio
                                     label='Male'
