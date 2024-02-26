@@ -31,9 +31,10 @@ function ExerciseContainer(
         } else {
             const selectedExercise = storedExercises.find(ex => ex.name === exercise?.exercise?.name)
             setExerciseDetails(selectedExercise)
+            console.log(selectedExercise)
         }
 
-    }, [])
+    }, [exercise])
     // const exerciseDetails = exercise.exercise;
     const [error, setError] = useState(false);
     const [formValues, setFormValues] = useState(null);
@@ -193,7 +194,8 @@ function ExerciseContainer(
                                                             values.sets[currentSet].finished = true;
 
                                                         }
-
+                                                        //set new exerciseDetails
+                                                        // setExerciseDetails();
                                                     }}>
                                                         {!isLastExercise ? 'Next Exercise' : 'Finish workout'}
                                                     </StyledButton>}

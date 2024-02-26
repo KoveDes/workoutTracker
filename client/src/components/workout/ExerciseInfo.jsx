@@ -7,6 +7,7 @@ import StyledButton from "../StyledButton.jsx";
 
 function ExerciseInfo({exercise}) {
     const howTo = useDropdownMenu();
+    console.log(exercise)
     return (
         <Grid container alignItems='center' direction='column' gap={1}>
             <Box

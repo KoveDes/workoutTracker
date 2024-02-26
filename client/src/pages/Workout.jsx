@@ -174,7 +174,7 @@ function Workout({}) {
                     <Grid item sm={9}>
                         <ExerciseContainer
                             setWorkout={setWorkout}
-                            exercise={workoutRoutine.exercises[currentExercise]}
+                            exercise={workoutRoutine?.exercises[currentExercise]}
                             setCurrentExercise={setCurrentExercise}
                             setCurrentSet={setCurrentSet}
                             currentSet={currentSet}
