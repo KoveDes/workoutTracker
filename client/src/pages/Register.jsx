@@ -85,7 +85,7 @@ export function Register() {
                         justifyContent='center'
 
                     >
-                        <Grid item>
+                        <Grid item xs={5.5}>
                             <CustomInput
                                 type='email'
                                 label='Email'
@@ -110,7 +110,7 @@ export function Register() {
                                 />
                             </Grid>
                         </Grid>
-                        <Grid item>
+                        <Grid item xs={5.5}>
                             <CustomInput
                                 name='age'
                                 label="Age"

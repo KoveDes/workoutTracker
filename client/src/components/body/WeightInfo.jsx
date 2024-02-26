@@ -35,7 +35,8 @@ function WeightInfo({refresh}) {
             height: '100%',
             boxShadow: "none",
             backgroundColor: 'lavender',
-            textAlign: 'center'
+            textAlign: 'center',
+            position: 'relative',
         }}
         >
             <Grid container direction='column' gap={3} justifyContent={'flex-start'} alignItems={'flex-start'}>
@@ -72,7 +73,7 @@ function WeightInfo({refresh}) {
                     width: '100%',
                     height: '500px',
                     position: 'relative',
-                    margin: '50px 0',
+                    margin: '25px 0',
                 }}>
                     <CustomLineChart data={data} dataKey='weight' label='Weight (kg)'/>
                 </Box>

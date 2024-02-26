@@ -12,6 +12,7 @@ import useDropdownMenu from "../hooks/useDropdownMenu.js";
 
 function WorkoutDetails() {
     const {state: workout} = useLocation();
+    console.log(workout)
     const share = useDropdownMenu();
     if (!workout) {
         return (

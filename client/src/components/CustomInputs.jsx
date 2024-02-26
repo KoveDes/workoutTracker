@@ -75,7 +75,7 @@ export default function CustomInput({width, label, adornment, ...props}) {
                 {...field} {...props} id={id} type={props.type || "text"}
             />
             {meta.touched && meta.error ? (
-                <p className='error'><ErrorIcon fontSize='small' /> {meta.error}</p>
+                <p className='error' ><ErrorIcon fontSize='small' /> {meta.error}</p>
             ) : null}
         </>
     );

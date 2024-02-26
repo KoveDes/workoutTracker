@@ -21,6 +21,7 @@ function History() {
     }))
     const total = Math.ceil(workouts?.count / 10) || 1;
     const data = workouts?.data?.reverse();
+    console.log(workouts);
 
     if (!auth?.user) {
         return <Welcome/>
@@ -47,7 +48,7 @@ function History() {
                         />
                     </Grid>
                 </>)
-                :  data?.length === 0 ? (
+                : !data || data?.length === 0 ? (
                     <Grid container direction='column' alignItems='center'>
                         <Typography variant='h3' fontWeight='bold' sx={{color: '#5200ff'}}>You haven't performed any workouts</Typography>
                         <Button

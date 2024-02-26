@@ -44,7 +44,8 @@ function Workout({}) {
                     routineId: workoutRoutine._id,
                     planId: state.planId,
                 });
-            navigate('workout/details', {state: {
+            console.log(response);
+            navigate('/workout/details', {state: {
                         goalMessage: response?.data?.goalMessage,
                         name: workoutRoutine.name,
                         icon: workoutRoutine?.icon,

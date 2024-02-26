@@ -85,6 +85,7 @@ const saveWorkout = async (req, res) => {
         routine.performed += 1;
         await workoutPlan.save()
 
+
         await user.save();
         const workout = await Workout.create({
             user: user._id,
