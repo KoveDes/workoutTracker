@@ -8,6 +8,7 @@ function UseRefreshToken() {
         const response = await axios.get('/auth/refresh', {
             withCredentials: true, //allows to send cookies along with request
         });
+
         setAuth(prev => {
             return ({
                 ...prev,

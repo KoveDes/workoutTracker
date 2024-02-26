@@ -96,8 +96,9 @@ exports.handleRefreshToken = async (req, res) => {
             //jesli będzie niewazny
             if (err) {
                 console.log('RT expired');
-                foundUser.refreshToken = foundUser.refreshToken.filter(rt => rt !== refreshToken);
-                await foundUser.save();
+                if(foundUser) {
+                foundUser.refreshToken = foundUser?.refreshToken.filter(rt => rt !== refreshToken);
+                await foundUser.save();}
             }
             if (err || foundUser?.login !== decoded?.username) {
                 return res.status(403).json({message: "Forbidden"});

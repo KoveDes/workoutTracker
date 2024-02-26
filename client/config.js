@@ -1,2 +1,2 @@
-const production = true;
+const production = false;
 export default production;

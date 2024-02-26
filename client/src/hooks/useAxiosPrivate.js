@@ -2,11 +2,13 @@ import {axiosPrivate} from "../api/axios";
 import {useEffect} from "react";
 import useAuth from "./useAuth";
 import useRefreshToken from "./useRefreshToken";
+import useLogout from "./useLogout.js";
 
 /*Attach interceptors to Axios private instance*/
 const useAxiosPrivate = () => {
+    const logout = useLogout();
     const refresh = useRefreshToken();
-    const {auth} = useAuth();
+    const {auth, setAuth, setPersist, setUser} = useAuth();
 
     useEffect(() => {
         const requestIntercept = axiosPrivate.interceptors.request.use(
@@ -26,10 +28,18 @@ const useAxiosPrivate = () => {
                 const prevReq = error?.config;
                 if (error?.response?.status === 403 && !prevReq?.sent) {
                     prevReq.sent = true; //retry only once
-                    const newAT = await refresh();
-                    console.log('Zapisano nowy AT');
-                    prevReq.headers['Authorization'] = `Bearer ${newAT}`;
-                    return axiosPrivate(prevReq);
+                    try {
+                        const newAT = await refresh();
+                        console.log('Zapisano nowy AT');
+                        prevReq.headers['Authorization'] = `Bearer ${newAT}`;
+                        return axiosPrivate(prevReq);
+                    }
+                    catch(e) {
+                        setAuth({});
+                        setUser({})
+                        setPersist(false);
+                        localStorage.removeItem('persist');
+                    }
                 }
                 return Promise.reject(error);
             }
