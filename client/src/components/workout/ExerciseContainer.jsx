@@ -26,8 +26,9 @@ function ExerciseContainer(
     useEffect(() => {
         const storedExercises = JSON.parse(sessionStorage.getItem('exercisesData'));
         if (!storedExercises) {
-            const logout = useLogout();
-            logout();
+            // const logout = useLogout();
+            // logout();
+            // window.location.reload();
         } else {
             const selectedExercise = storedExercises.find(ex => ex.name === exercise?.exercise?.name)
             setExerciseDetails(selectedExercise)
@@ -195,7 +196,6 @@ function ExerciseContainer(
 
                                                         }
                                                         //set new exerciseDetails
-                                                        // setExerciseDetails();
                                                     }}>
                                                         {!isLastExercise ? 'Next Exercise' : 'Finish workout'}
                                                     </StyledButton>}

@@ -30,7 +30,7 @@ function Workout({}) {
     const axiosPrivate = useAxiosPrivate();
     const navigate = useNavigate();
 
-    console.log(workout.exercises.length, workoutRoutine.exercises.length);
+    console.log(workout?.exercises.length, workoutRoutine?.exercises.length);
 
 
     const onSubmit = async () => {
@@ -40,7 +40,7 @@ function Workout({}) {
                     name: workoutRoutine?.name,
                     icon: workoutRoutine?.icon,
                     note: note || null,
-                    exercises: workout.exercises,
+                    exercises: workout?.exercises,
                     routineId: workoutRoutine._id,
                     planId: state.planId,
                 });
@@ -50,10 +50,10 @@ function Workout({}) {
                         name: workoutRoutine.name,
                         icon: workoutRoutine?.icon,
                         note: note || null,
-                        exercises: workout.exercises,
+                        exercises: workout?.exercises,
                         routineId: workoutRoutine._id,
                         planId: state.planId,
-                        bodyParts: workoutRoutine.exercises.reduce((acc, ex) => {
+                        bodyParts: workoutRoutine?.exercises.reduce((acc, ex) => {
                         return [...acc, ex.exercise.target]
                     }, []),} })
             }
@@ -63,7 +63,7 @@ function Workout({}) {
         }
     }
 
-    if(workout.exercises.length ===  workoutRoutine.exercises.length) {
+    if(workout?.exercises.length ===  workoutRoutine?.exercises.length) {
         onSubmit();
     }
 
@@ -151,10 +151,10 @@ function Workout({}) {
                             value={currentExercise}
                             // onChange={handleExerciseChange}
                         >
-                            {workoutRoutine.exercises.map((exercise, index) => (
+                            {workoutRoutine?.exercises.map((exercise, index) => (
                                 <Tab
                                     disableRipple
-                                    disabled={!!workout.exercises.find(ex => ex.name === exercise.exercise.name)}
+                                    disabled={!!workout?.exercises.find(ex => ex.name === exercise.exercise.name)}
                                     sx={{
                                         alignItems: 'flex-start',
                                         textAlign: 'left',
@@ -183,7 +183,7 @@ function Workout({}) {
                             handleSave={onSubmit}
                             setShowTimer={setShowTimer}
                             serverError={error}
-                            isLastExercise={workoutRoutine.exercises.length === currentExercise + 1}
+                            isLastExercise={workoutRoutine?.exercises.length === currentExercise + 1}
                         />
                         {/*{JSON.stringify(workout)}*/}
                         {error ? (
