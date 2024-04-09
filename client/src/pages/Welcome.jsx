@@ -16,6 +16,8 @@ function Welcome() {
             height: '100vh',
             justifyContent: 'center'
         }}>
+            <Typography variant='p' sx={{color: 'red', textAlign: 'center'}} >This site was deployed on a free platform. Give it a little time until everything loads</Typography>
+
             <Box
                 component='img'
                 src={Robot}
