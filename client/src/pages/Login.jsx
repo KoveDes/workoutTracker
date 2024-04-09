@@ -67,7 +67,9 @@ function LoginForm() {
     }
 
     return (
-        <Box>
+        <Box textAlign='center'>
+            <Typography variant='p' sx={{color: 'red', textAlign: 'center'}} >This site was deployed on a free platform. Give it a little time until everything loads</Typography>
+
             <Typography variant='h4' textAlign='center'>Login</Typography>
             <Formik
                 initialValues={{
@@ -120,6 +122,7 @@ function LoginForm() {
                     </Form>
                 )}
             </Formik>
+
             {error ? (
                 <Snackbar
                     open={!!error}
