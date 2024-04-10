@@ -11,7 +11,6 @@ export function Register() {
     const [error, setError] = useState('');
     const navigate = useNavigate();
     return (<>
-        <Typography variant='p' sx={{color: 'red', textAlign: 'center'}} >This site was deployed on a free platform. Give it a little time until everything loads</Typography>
         <Typography variant='h4' textAlign='center'>Registration</Typography>
         <FormikStepper
             submittingText='Creating an account...'
@@ -136,6 +135,8 @@ export function Register() {
 
             </FormikStep>
         </FormikStepper>
+        <Typography variant='p' sx={{color: 'red', display: 'block', textAlign: 'center'}} >This site is deployed on a free platform. Give it a little time until everything loads</Typography>
+
         <Snackbar
             open={!!error}
             severity='true'
